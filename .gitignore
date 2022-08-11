@@ -1,0 +1,5 @@
+/**/node_modules
+/client/build
+/client/.env
+/client/src-tauri/target
+/server/dist

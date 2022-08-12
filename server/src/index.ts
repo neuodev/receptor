@@ -5,6 +5,7 @@ import dotenv from "dotenv";
 import "colors";
 import { Event } from "./events";
 import UserRepo, { RegisterUserPramas } from "./repositories/userRepo";
+import { userRouter } from "./routes/user";
 
 dotenv.config();
 
@@ -14,17 +15,11 @@ const server = http.createServer(app);
 const io = new Server(server);
 
 io.on(Event.CONNECT, (socket) => {
-  let userRepo = new UserRepo(socket);
-
-  socket.on(Event.REGISTER, async (data: RegisterUserPramas) => {
-    userRepo.registerUser(data);
-  });
+  socket.on(Event.REGISTER, async (data: RegisterUserPramas) => {});
 });
 
 app.use(express.json());
-app.post("/api/v1/user", (req: Request, res: Response, next: NextFunction) => {
-  console.log(req.body);
-});
+app.use("/api/v1", userRouter);
 
 const PORT = process.env.PORT || 8080;
 server.listen(PORT, () =>

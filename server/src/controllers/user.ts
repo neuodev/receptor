@@ -1,7 +1,9 @@
 import { Request, Response, NextFunction } from "express";
 import asyncHandler from "express-async-handler";
 import { validationResult } from "express-validator";
+import { UniqueConstraintError } from "sequelize";
 import { userRepo } from "../repositories/userRepo";
+import ResponseError from "../utils/error";
 
 export const createUser = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -10,9 +12,17 @@ export const createUser = asyncHandler(
       res.status(200).json({ errors: errors.array() });
       return;
     }
-    let userId = userRepo.registerUser(req.body);
-    res.status(200).json({
-      userId,
-    });
+    try {
+      let userId = await userRepo.registerUser(req.body);
+      res.status(200).json({
+        userId,
+      });
+    } catch (error) {
+      if (error instanceof UniqueConstraintError) {
+        return next(new ResponseError("User already exist", 404));
+      }
+
+      throw error;
+    }
   }
 );

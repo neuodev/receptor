@@ -6,6 +6,7 @@ import "colors";
 import { Event } from "./events";
 import UserRepo, { RegisterUserPramas } from "./repositories/userRepo";
 import { userRouter } from "./routes/user";
+import { errorHandler } from "./middleware/errorHandler";
 
 dotenv.config();
 
@@ -20,6 +21,7 @@ io.on(Event.CONNECT, (socket) => {
 
 app.use(express.json());
 app.use("/api/v1", userRouter);
+app.use(errorHandler);
 
 const PORT = process.env.PORT || 8080;
 server.listen(PORT, () =>

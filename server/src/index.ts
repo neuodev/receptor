@@ -1,6 +1,6 @@
 import express, { NextFunction, Request, Response } from "express";
 import http from "http";
-import { Server } from "socket.io";
+import { Server, Socket } from "socket.io";
 import dotenv from "dotenv";
 import "colors";
 import { Event } from "./events";
@@ -16,12 +16,16 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
 
-io.on(Event.CONNECT, (socket) => {
-  socket.on(Event.LOGIN, () => {
-    // Mark user as active
+io.on(Event.CONNECT, (socket: Socket) => {
+  let authToken: null | string = null;
+
+  socket.on(Event.LOGIN, async (data: { token: string }) => {
+    authToken = data.token;
+    await userRepo.handleLogin(socket, authToken);
   });
   socket.on(Event.ADD_FRIEND, async (msg: AddFriendMsg) => {
-    const res = await userRepo.addFriend(msg, socket);
+    // Prevent adding friends twice
+    await userRepo.addFriend({ ...msg, token: authToken }, socket);
   });
 });
 

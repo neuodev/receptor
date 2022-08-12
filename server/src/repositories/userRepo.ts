@@ -12,7 +12,7 @@ export type UserEntry = {
   id: number;
 };
 export type AddFriendMsg = {
-  token: string;
+  token: string | null;
   friendId: number;
 };
 export default class UserRepo {
@@ -63,6 +63,19 @@ export default class UserRepo {
       : (JSON.parse(JSON.stringify(user)) as UserEntry);
   }
 
+  async updateUserStatus(id: number, isActive: boolean) {
+    await User.update(
+      {
+        isActive,
+      },
+      {
+        where: {
+          id,
+        },
+      }
+    );
+  }
+
   async addFriend(data: AddFriendMsg, socket: Socket) {
     try {
       // Check if the user exist
@@ -74,18 +87,29 @@ export default class UserRepo {
 
       if (!sender) throw new Error("User doesn't exist");
       if (!receiver) throw new Error("Receiver no longer exist");
+
+      const isSent = await notificationRepo.isFriendshipRequestAlreadySent(
+        sender.id,
+        receiver.id
+      );
+
+      if (isSent !== null) throw new Error("Notification already sent");
       // If the receiver active we should send him a notification!
       if (receiver.isActive) {
         // Should send a notification
       }
       // Store a copy of the request into the notifications table
       await notificationRepo.pushNotification({
-        content: JSON.stringify({
+        content: {
           userId: sender.id,
-        }),
+        },
         type: NotificationType.FRIENDSHIP_REQUEST,
         userId: receiver.id,
       });
+
+      // Update friends table to be pending
+
+      socket.emit(Event.ADD_FRIEND, { ok: true });
     } catch (error) {
       let msg;
       if (error instanceof JsonWebTokenError) {
@@ -98,12 +122,32 @@ export default class UserRepo {
     }
   }
 
-  decodeAuthToken(token: string): number {
+  decodeAuthToken(token: string | null): number {
     let secret = process.env.JWT_SECRET;
     if (!secret) throw new Error("JWT_SECRET is missing");
+    if (token === null) throw new Error("Missing auth token");
     let result = jwt.verify(token, secret);
 
     return (result as { id: number }).id as number;
+  }
+
+  async handleLogin(socket: Socket, token: string | null) {
+    try {
+      if (token === null) throw new Error("Missing auth token");
+      const userId = userRepo.decodeAuthToken(token);
+      await this.updateUserStatus(userId, true);
+      socket.emit(Event.LOGIN, { ok: true });
+    } catch (error) {
+      let msg = "Unexpected error";
+      if (error instanceof JsonWebTokenError) {
+        msg = "Invalid auth token";
+      } else if (error instanceof Error) {
+        msg = error.message;
+      } else if (typeof error === "string") {
+        msg = error;
+      }
+      socket.emit(Event.LOGIN, { error: msg });
+    }
   }
 }
 

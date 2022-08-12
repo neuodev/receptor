@@ -35,6 +35,7 @@ export default class UserRepo {
       where: {
         [Op.or]: match,
       },
+      attributes: { exclude: ["password"] },
     });
 
     return users.map((user) => user.get());
@@ -81,6 +82,8 @@ export default class UserRepo {
       // Check if the user exist
       let userId = this.decodeAuthToken(data.token);
       if (!data.friendId) throw new Error("Firend Id is missing");
+      if (userId === data.friendId)
+        throw new Error("User can't it himself as friend");
       const users = await this.getUsersByIds([userId, data.friendId]);
       const sender = users.find((user) => user.id === userId);
       const receiver = users.find((user) => user.id === data.friendId);
@@ -92,11 +95,19 @@ export default class UserRepo {
         sender.id,
         receiver.id
       );
-
-      if (isSent !== null) throw new Error("Notification already sent");
+      if (isSent != null) throw new Error("Notification already sent");
       // If the receiver active we should send him a notification!
       if (receiver.isActive) {
         // Should send a notification
+        // Every user has its own channel which we can ehco the message into
+        socket.to(receiver.id.toString()).emit(Event.NOTIFICATION, {
+          type: Event.ACCEPT_FRIEND,
+          from: sender,
+        });
+        // socket.broadcast.emit(Event.NOTIFICATION, {
+        //   type: Event.ACCEPT_FRIEND,
+        //   from: sender,
+        // });
       }
       // Store a copy of the request into the notifications table
       await notificationRepo.pushNotification({
@@ -137,6 +148,8 @@ export default class UserRepo {
       const userId = userRepo.decodeAuthToken(token);
       await this.updateUserStatus(userId, true);
       socket.emit(Event.LOGIN, { ok: true });
+      // Add user to a private room so we can send notifications and other stuff
+      socket.join(userId.toString());
     } catch (error) {
       let msg = "Unexpected error";
       if (error instanceof JsonWebTokenError) {

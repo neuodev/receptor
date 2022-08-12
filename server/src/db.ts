@@ -21,6 +21,25 @@ export const User = sequelize.define("User", {
   },
 });
 
+export const Notification = sequelize.define("Notification", {
+  content: {
+    type: DataTypes.JSON,
+    allowNull: false,
+  },
+  isSeen: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  },
+  type: {
+    type: DataTypes.ENUM("friendshipRequest", "-"),
+    allowNull: false,
+  },
+});
+// One (user) to Many(Notifications) releationship
+User.hasMany(Notification);
+Notification.belongsTo(User);
+
 // Check database connection
 (async () => {
   try {

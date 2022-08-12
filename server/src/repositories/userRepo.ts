@@ -77,7 +77,7 @@ export default class UserRepo {
       if (receiver.isActive) {
         // Should send a notification
       }
-      // Store a copy of the request into the notifcations table
+      // Store a copy of the request into the notifications table
     } catch (error) {
       let msg;
       if (error instanceof JsonWebTokenError) {

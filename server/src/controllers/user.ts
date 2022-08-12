@@ -5,6 +5,9 @@ import { UniqueConstraintError } from "sequelize";
 import { userRepo } from "../repositories/userRepo";
 import ResponseError from "../utils/error";
 
+// @api  POST /api/v1/user
+// @desc Register new user into the database
+// @access  public
 export const createUser = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const errors = validationResult(req);
@@ -24,5 +27,25 @@ export const createUser = asyncHandler(
 
       throw error;
     }
+  }
+);
+
+// @api  GET /api/v1/user
+// @desc Login + Should return the auth token
+// @access  public
+export const login = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      res.status(200).json({ errors: errors.array() });
+      return;
+    }
+
+    let user = await userRepo.getUser(req.body.username, req.body.password);
+    if (user === null)
+      return next(new ResponseError("Incorrect username or password", 400));
+    res.status(200).json({
+      user,
+    });
   }
 );

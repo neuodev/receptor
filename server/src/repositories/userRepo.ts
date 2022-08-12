@@ -19,6 +19,16 @@ export default class UserRepo {
   async flush() {
     await User.truncate();
   }
+
+  async getUser(username: string, password: string) {
+    return await User.findOne({
+      where: {
+        username,
+        password,
+      },
+      attributes: { exclude: ["password"] },
+    });
+  }
 }
 
 export const userRepo = new UserRepo();

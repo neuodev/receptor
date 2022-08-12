@@ -7,20 +7,17 @@ export const errorHandler = (
   res: Response,
   next: NextFunction
 ) => {
+  console.log(err);
   let statusCode = 500;
   let msg = "Unexpected error.";
-  if (err instanceof UniqueConstraintError) {
-    msg = `Entry already exist`;
-    statusCode = 404;
-  } else if (err instanceof Error) {
-    console.log("up");
-    msg = err.message;
-  } else if (err instanceof ResponseError) {
-    console.log("here!");
+  if (err instanceof ResponseError) {
     msg = err.message;
     statusCode = err.statusCode;
+  } else if (err instanceof UniqueConstraintError) {
+    statusCode = 404;
+  } else if (err instanceof Error) {
+    msg = err.message;
   } else if (err instanceof ValidationError) {
-    console.log("hereeee!");
     msg = err.message;
     statusCode = 400;
   }

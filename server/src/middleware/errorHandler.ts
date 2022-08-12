@@ -7,7 +7,8 @@ export const errorHandler = (
   res: Response,
   next: NextFunction
 ) => {
-  console.log(err);
+  if (process.env.NOD_ENV !== "production") console.log(err);
+
   let statusCode = 500;
   let msg = "Unexpected error.";
   if (err instanceof ResponseError) {

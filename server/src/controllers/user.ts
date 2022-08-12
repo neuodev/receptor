@@ -2,8 +2,9 @@ import { Request, Response, NextFunction } from "express";
 import asyncHandler from "express-async-handler";
 import { validationResult } from "express-validator";
 import { UniqueConstraintError } from "sequelize";
-import { userRepo } from "../repositories/userRepo";
+import { UserEntry, userRepo } from "../repositories/userRepo";
 import ResponseError from "../utils/error";
+import jwt, { Secret } from "jsonwebtoken";
 
 // @api  POST /api/v1/user
 // @desc Register new user into the database
@@ -44,8 +45,21 @@ export const login = asyncHandler(
     let user = await userRepo.getUser(req.body.username, req.body.password);
     if (user === null)
       return next(new ResponseError("Incorrect username or password", 400));
+
+    let secret = process.env.JWT_SECRET;
+    if (secret == undefined)
+      return next(new ResponseError("Unable to gen auth token", 500));
+
+    let token = jwt.sign(
+      { username: user.username },
+      process.env.JWT_SECRET as Secret,
+      { expiresIn: "7d" }
+    );
+
+    // Generate new JWT
     res.status(200).json({
       user,
+      token,
     });
   }
 );

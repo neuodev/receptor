@@ -4,7 +4,6 @@ import { Server } from "socket.io";
 import dotenv from "dotenv";
 import "colors";
 import { Event } from "./events";
-import { RegisterUserPramas } from "./repositories/userRepo";
 import { userRouter } from "./routes/user";
 import { errorHandler } from "./middleware/errorHandler";
 import "./seed";
@@ -17,7 +16,7 @@ const server = http.createServer(app);
 const io = new Server(server);
 
 io.on(Event.CONNECT, (socket) => {
-  socket.on(Event.REGISTER, async (data: RegisterUserPramas) => {});
+  socket.on(Event.REGISTER, async () => {});
 });
 
 app.use(express.json());

@@ -26,6 +26,8 @@ export const User = sequelize.define("User", {
   try {
     await sequelize.authenticate();
     await sequelize.sync({ force: false });
+
+    console.log("Connected to PostgreSQL".green.underline.bold);
   } catch (error) {
     if (error instanceof Error)
       console.log(

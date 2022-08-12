@@ -4,9 +4,10 @@ import { Server } from "socket.io";
 import dotenv from "dotenv";
 import "colors";
 import { Event } from "./events";
-import UserRepo, { RegisterUserPramas } from "./repositories/userRepo";
+import { RegisterUserPramas } from "./repositories/userRepo";
 import { userRouter } from "./routes/user";
 import { errorHandler } from "./middleware/errorHandler";
+import "./seed";
 
 dotenv.config();
 

@@ -4,7 +4,9 @@
   "description": "Websockets server for desktop app ",
   "main": "server.js",
   "scripts": {
-    "dev": "ts-node-dev --respawn src/index.ts"
+    "dev": "ts-node-dev --respawn src/index.ts",
+    "seed": "npm run dev seed",
+    "flush": "npm run dev flush"
   },
   "keywords": [
     "websockets"

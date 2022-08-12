@@ -7,6 +7,7 @@ import { Event } from "./events";
 import { userRouter } from "./routes/user";
 import { errorHandler } from "./middleware/errorHandler";
 import "./seed";
+import { AddFriendMsg, userRepo } from "./repositories/userRepo";
 
 dotenv.config();
 
@@ -16,7 +17,9 @@ const server = http.createServer(app);
 const io = new Server(server);
 
 io.on(Event.CONNECT, (socket) => {
-  socket.on(Event.REGISTER, async () => {});
+  socket.on(Event.ADD_FRIEND, async (msg: AddFriendMsg) => {
+    const res = await userRepo.addFriend(msg, socket);
+  });
 });
 
 app.use(express.json());

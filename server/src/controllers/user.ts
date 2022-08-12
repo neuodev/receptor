@@ -50,11 +50,9 @@ export const login = asyncHandler(
     if (secret == undefined)
       return next(new ResponseError("Unable to gen auth token", 500));
 
-    let token = jwt.sign(
-      { username: user.username },
-      process.env.JWT_SECRET as Secret,
-      { expiresIn: "7d" }
-    );
+    let token = jwt.sign({ id: user.id }, process.env.JWT_SECRET as Secret, {
+      expiresIn: "7d",
+    });
 
     // Generate new JWT
     res.status(200).json({

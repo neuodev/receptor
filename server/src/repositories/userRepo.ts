@@ -9,25 +9,12 @@ export type RegisterUserPramas = {
   password: string;
   isActive?: boolean;
 };
+
 export default class UserRepo {
-  socket: Socket;
-  constructor(socket: Socket) {
-    this.socket = socket;
-  }
-  async registerUser(data: RegisterUserPramas) {
-    try {
-      const user = await User.create(data);
-      this.socket.emit(Event.REGISTER, {
-        success: true,
-        id: user.getDataValue("id"),
-      });
-    } catch (error) {
-      sendErrorMsg(
-        error,
-        this.socket,
-        Event.REGISTER,
-        "Unabel to register new user"
-      );
-    }
+  async registerUser(data: RegisterUserPramas): Promise<string> {
+    const user = await User.create(data);
+    return user.getDataValue("id") as string;
   }
 }
+
+export const userRepo = new UserRepo();

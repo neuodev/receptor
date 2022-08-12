@@ -16,6 +16,7 @@ export const errorHandler = (
     statusCode = err.statusCode;
   } else if (err instanceof UniqueConstraintError) {
     statusCode = 404;
+    msg = "Entry already exist";
   } else if (err instanceof Error) {
     msg = err.message;
   } else if (err instanceof ValidationError) {

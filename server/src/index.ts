@@ -23,10 +23,13 @@ io.on(Event.CONNECT, (socket: Socket) => {
     authToken = data.token;
     await userRepo.handleLogin(socket, authToken);
   });
+
   socket.on(Event.ADD_FRIEND, async (msg: AddFriendMsg) => {
     // Prevent adding friends twice
     await userRepo.addFriend({ ...msg, token: authToken }, socket);
   });
+
+  socket.on(Event.ACCEPT_FRIEND, async (msg: string) => {});
 });
 
 app.use(express.json());

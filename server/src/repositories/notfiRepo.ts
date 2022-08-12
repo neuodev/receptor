@@ -1,7 +1,17 @@
 import { Op } from "sequelize";
+import { Socket } from "socket.io";
 import { Notification, NotificationType } from "../db";
+import BaseRepo from "./baseRepo";
+import { UserEntry, userRepo } from "./userRepo";
 
-class NotificationRepo {
+export type NotificationEntry = {
+  content: string;
+  type: NotificationType;
+  UserId: number | UserEntry;
+  isSeen: boolean;
+};
+
+class NotificationRepo extends BaseRepo {
   async pushNotification(n: {
     content: {
       userId: number;
@@ -29,6 +39,31 @@ class NotificationRepo {
     });
 
     return notif?.get();
+  }
+
+  async getNotifications(userId: number): Promise<NotificationEntry[]> {
+    let all = await Notification.findAll({
+      where: {
+        UserId: userId,
+      },
+    });
+
+    return all.map((n) => n.get());
+  }
+
+  async handleNotificationsEvent(
+    socket: Socket,
+    data: { token: string; firendId: number }
+  ) {
+    try {
+      const userId = this.decodeAuthToken(data.token);
+      const users = await userRepo.getUsersByIds([userId, data.firendId]);
+      const user = users.find((u) => u.id == userId);
+      const firend = users.find((u) => u.id == data.firendId);
+
+      if (!user) throw new Error("User not foudn");
+      if (!firend) throw new Error("Friend not found");
+    } catch (error) {}
   }
 }
 

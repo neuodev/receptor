@@ -4,6 +4,7 @@ import { Op } from "sequelize";
 import { Socket } from "socket.io";
 import { Event } from "../events";
 import { notificationRepo } from "./notfiRepo";
+import BaseRepo from "./baseRepo";
 
 export type UserEntry = {
   username: string;
@@ -15,7 +16,7 @@ export type AddFriendMsg = {
   token: string | null;
   friendId: number;
 };
-export default class UserRepo {
+export default class UserRepo extends BaseRepo {
   async registerUser(data: {
     username: string;
     password: string;
@@ -79,11 +80,12 @@ export default class UserRepo {
 
   async addFriend(data: AddFriendMsg, socket: Socket) {
     try {
-      // Check if the user exist
+      if (data.token === null) throw new Error("Missing auth token");
       let userId = this.decodeAuthToken(data.token);
       if (!data.friendId) throw new Error("Firend Id is missing");
       if (userId === data.friendId)
         throw new Error("User can't it himself as friend");
+      // Check if the user exist
       const users = await this.getUsersByIds([userId, data.friendId]);
       const sender = users.find((user) => user.id === userId);
       const receiver = users.find((user) => user.id === data.friendId);
@@ -133,14 +135,10 @@ export default class UserRepo {
     }
   }
 
-  decodeAuthToken(token: string | null): number {
-    let secret = process.env.JWT_SECRET;
-    if (!secret) throw new Error("JWT_SECRET is missing");
-    if (token === null) throw new Error("Missing auth token");
-    let result = jwt.verify(token, secret);
-
-    return (result as { id: number }).id as number;
-  }
+  async acceptFriend(
+    socket: Socket,
+    data: { token: string | null; userId: number }
+  ) {}
 
   async handleLogin(socket: Socket, token: string | null) {
     try {

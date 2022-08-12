@@ -1,8 +1,9 @@
-import { User } from "../db";
+import { NotificationType, User } from "../db";
 import jwt, { JsonWebTokenError } from "jsonwebtoken";
 import { Op } from "sequelize";
 import { Socket } from "socket.io";
 import { Event } from "../events";
+import { notificationRepo } from "./notfiRepo";
 
 export type UserEntry = {
   username: string;
@@ -78,6 +79,13 @@ export default class UserRepo {
         // Should send a notification
       }
       // Store a copy of the request into the notifications table
+      await notificationRepo.pushNotification({
+        content: JSON.stringify({
+          userId: sender.id,
+        }),
+        type: NotificationType.FRIENDSHIP_REQUEST,
+        userId: receiver.id,
+      });
     } catch (error) {
       let msg;
       if (error instanceof JsonWebTokenError) {

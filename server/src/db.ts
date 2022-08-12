@@ -21,6 +21,10 @@ export const User = sequelize.define("User", {
   },
 });
 
+export enum NotificationType {
+  FRIENDSHIP_REQUEST = "friendshipRequest",
+}
+
 export const Notification = sequelize.define("Notification", {
   content: {
     type: DataTypes.JSON,
@@ -32,7 +36,7 @@ export const Notification = sequelize.define("Notification", {
     defaultValue: false,
   },
   type: {
-    type: DataTypes.ENUM("friendshipRequest", "-"),
+    type: DataTypes.ENUM(NotificationType.FRIENDSHIP_REQUEST),
     allowNull: false,
   },
 });

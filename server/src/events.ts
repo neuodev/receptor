@@ -5,4 +5,5 @@ export enum Event {
   ADD_FRIEND = "addFriend",
   ACCEPT_FRIEND = "acceptFriend",
   NOTIFICATION = "notification",
+  LOGIN = "login",
 }

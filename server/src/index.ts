@@ -17,6 +17,9 @@ const server = http.createServer(app);
 const io = new Server(server);
 
 io.on(Event.CONNECT, (socket) => {
+  socket.on(Event.LOGIN, () => {
+    // Mark user as active
+  });
   socket.on(Event.ADD_FRIEND, async (msg: AddFriendMsg) => {
     const res = await userRepo.addFriend(msg, socket);
   });

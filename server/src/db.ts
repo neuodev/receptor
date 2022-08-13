@@ -44,6 +44,30 @@ export const Notification = sequelize.define("Notification", {
 User.hasMany(Notification);
 Notification.belongsTo(User);
 
+export enum FriendshipStatus {
+  PENDING = "pending",
+  FRIENDS = "friends",
+  BLOCKED = "blocked",
+}
+export const Friend = sequelize.define("Friend", {
+  status: {
+    type: DataTypes.ENUM(
+      FriendshipStatus.PENDING,
+      FriendshipStatus.BLOCKED,
+      FriendshipStatus.FRIENDS
+    ),
+    allowNull: false,
+  },
+});
+
+User.hasMany(Friend, {
+  foreignKey: "userId",
+});
+
+User.hasOne(Friend, {
+  foreignKey: "friendId",
+});
+
 // Check database connection
 (async () => {
   try {

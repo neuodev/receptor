@@ -47,14 +47,6 @@ class NotificationRepo extends BaseRepo {
       where: {
         UserId: userId,
       },
-      include: [
-        {
-          model: User,
-          attributes: {
-            exclude: ["password"],
-          },
-        },
-      ],
     });
 
     return all.map((n) => n.get());

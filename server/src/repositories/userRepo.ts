@@ -1,10 +1,11 @@
-import { NotificationType, User } from "../db";
+import { FriendshipStatus, NotificationType, User } from "../db";
 import jwt, { JsonWebTokenError } from "jsonwebtoken";
 import { Op } from "sequelize";
 import { Socket } from "socket.io";
 import { Event } from "../events";
 import { notificationRepo } from "./notfiRepo";
 import BaseRepo from "./baseRepo";
+import { friendRepo } from "./friendRepo";
 
 export type UserEntry = {
   username: string;
@@ -79,7 +80,7 @@ export default class UserRepo extends BaseRepo {
   }
 
   async addFriend(data: AddFriendMsg, socket: Socket) {
-    try {
+    const error = await this.errorHandler(async () => {
       if (data.token === null) throw new Error("Missing auth token");
       let userId = this.decodeAuthToken(data.token);
       if (!data.friendId) throw new Error("Firend Id is missing");
@@ -89,9 +90,28 @@ export default class UserRepo extends BaseRepo {
       const users = await this.getUsersByIds([userId, data.friendId]);
       const sender = users.find((user) => user.id === userId);
       const receiver = users.find((user) => user.id === data.friendId);
-
       if (!sender) throw new Error("User doesn't exist");
       if (!receiver) throw new Error("Receiver no longer exist");
+
+      const friendship = await friendRepo.getFriendshipRecord(
+        sender.id,
+        receiver.id
+      );
+
+      if (friendship)
+        throw new Error(
+          friendship.status === FriendshipStatus.PENDING
+            ? "Request already sent"
+            : friendship.status === FriendshipStatus.FRIENDS
+            ? "Already friends"
+            : `You got blocked by ${receiver.username}`
+        );
+
+      await friendRepo.addFriend(
+        sender.id,
+        receiver.id,
+        FriendshipStatus.PENDING
+      );
 
       const isSent = await notificationRepo.isFriendshipRequestAlreadySent(
         sender.id,
@@ -115,20 +135,11 @@ export default class UserRepo extends BaseRepo {
         type: NotificationType.FRIENDSHIP_REQUEST,
         userId: receiver.id,
       });
-
       // Update friends table to be pending
-
       socket.emit(Event.ADD_FRIEND, { ok: true });
-    } catch (error) {
-      let msg;
-      if (error instanceof JsonWebTokenError) {
-        msg = "Invalid auth token";
-      } else if (error instanceof Error) {
-        msg = error.message;
-      }
+    });
 
-      socket.emit(Event.ADD_FRIEND, { error: msg });
-    }
+    if (error?.error) socket.emit(Event.ADD_FRIEND, error);
   }
 
   async acceptFriend(

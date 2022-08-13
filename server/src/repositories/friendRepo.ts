@@ -1,5 +1,7 @@
-import { Op } from "sequelize";
+import { Op, ScopeOptions } from "sequelize";
+import { Socket } from "socket.io";
 import { Friend, FriendshipStatus, User } from "../db";
+import { Event } from "../events";
 import BaseRepo from "./baseRepo";
 
 class FriendRepo extends BaseRepo {
@@ -34,6 +36,30 @@ class FriendRepo extends BaseRepo {
     });
 
     return friends.map((f) => f.get());
+  }
+
+  async updateStatus(id: number, status: FriendshipStatus) {
+    await Friend.update(
+      { status },
+      {
+        where: {
+          id,
+        },
+      }
+    );
+  }
+
+  // Todo: Update this handler to be more generic to handle blocking / accepting frinedship
+  async handleAcceptFriendEvent(
+    socket: Socket,
+    data: { token: string | null; id: number }
+  ) {
+    const error = await this.errorHandler(async () => {
+      this.decodeAuthToken(data.token);
+      await this.updateStatus(data.id, FriendshipStatus.FRIENDS);
+
+      socket.emit(Event.ACCEPT_FRIEND, { ok: true });
+    });
   }
 }
 

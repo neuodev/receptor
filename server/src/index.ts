@@ -9,6 +9,7 @@ import { errorHandler } from "./middleware/errorHandler";
 import "./seed";
 import { AddFriendMsg, userRepo } from "./repositories/userRepo";
 import { notificationRepo } from "./repositories/notfiRepo";
+import { friendRepo } from "./repositories/friendRepo";
 
 dotenv.config();
 
@@ -30,7 +31,12 @@ io.on(Event.CONNECT, (socket: Socket) => {
     await userRepo.addFriend({ ...msg, token: authToken }, socket);
   });
 
-  socket.on(Event.ACCEPT_FRIEND, async (msg: string) => {});
+  socket.on(Event.ACCEPT_FRIEND, async (data: { id: number }) => {
+    await friendRepo.handleAcceptFriendEvent(socket, {
+      token: authToken,
+      id: data.id,
+    });
+  });
   socket.on(Event.NOTIFICATION, async (msg: any) => {
     notificationRepo.handleNotificationsEvent(socket, authToken);
   });

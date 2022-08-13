@@ -30,6 +30,7 @@ io.on(Event.CONNECT, (socket: Socket) => {
   });
 
   socket.on(Event.ACCEPT_FRIEND, async (msg: string) => {});
+  socket.on(Event.NOTIFICATION, async (msg: any) => {});
 });
 
 app.use(express.json());

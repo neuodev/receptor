@@ -1,4 +1,4 @@
-import { FriendshipStatus, NotificationType, User } from "../db";
+import { Friend, FriendshipStatus, NotificationType, User } from "../db";
 import jwt, { JsonWebTokenError } from "jsonwebtoken";
 import { Op } from "sequelize";
 import { Socket } from "socket.io";

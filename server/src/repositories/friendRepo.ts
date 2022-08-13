@@ -1,4 +1,5 @@
-import { Friend, FriendshipStatus } from "../db";
+import { Op } from "sequelize";
+import { Friend, FriendshipStatus, User } from "../db";
 import BaseRepo from "./baseRepo";
 
 class FriendRepo extends BaseRepo {
@@ -20,6 +21,19 @@ class FriendRepo extends BaseRepo {
       friendId,
       status,
     });
+  }
+
+  async getFriends(userId: number) {
+    let friends = await Friend.findAll({
+      where: {
+        [Op.or]: {
+          userId,
+          friendId: userId,
+        },
+      },
+    });
+
+    return friends.map((f) => f.get());
   }
 }
 

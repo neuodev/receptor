@@ -41,7 +41,9 @@ export const Notification = sequelize.define("Notification", {
   },
 });
 // One (user) to Many(Notifications) releationship
-User.hasMany(Notification);
+User.hasMany(Notification, {
+  foreignKey: "userId",
+});
 Notification.belongsTo(User);
 
 export enum FriendshipStatus {
@@ -61,11 +63,17 @@ export const Friend = sequelize.define("Friend", {
 });
 
 User.hasMany(Friend, {
-  foreignKey: "userId",
+  foreignKey: {
+    name: "userId",
+    allowNull: false,
+  },
 });
 
-User.hasOne(Friend, {
-  foreignKey: "friendId",
+Friend.belongsTo(User, {
+  foreignKey: {
+    name: "friendId",
+    allowNull: false,
+  },
 });
 
 // Check database connection

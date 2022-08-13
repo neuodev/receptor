@@ -1,11 +1,10 @@
-import { sequelize, User } from "./db";
+import { Friend, Notification, sequelize, User } from "./db";
 import { userRepo } from "./repositories/userRepo";
 import fs from "fs/promises";
 import "colors";
 
 export const seedDB = async () => {
   try {
-    await flush();
     const data = (await fs.readFile("./src/data/users.json")).toString();
     const users: Array<{
       id: number;
@@ -25,7 +24,8 @@ export const seedDB = async () => {
 export const flush = async () => {
   console.log("Delete all database tables".red.underline.bold);
   try {
-    await userRepo.flush();
+    sequelize.sync({ force: true }); // Reset all tables
+
     console.log(`Reset database`.cyan.underline.bold);
   } catch (error) {
     let msg;
@@ -33,7 +33,8 @@ export const flush = async () => {
     if (error instanceof Error) msg = error.message;
     else msg = error;
 
-    console.log(`Seed database failed: ${msg}`.red.underline.bold);
+    console.log(`flushing database failed: ${msg}`.red.underline.bold);
+    console.error(error);
   }
 };
 

@@ -5,6 +5,7 @@ import { UniqueConstraintError } from "sequelize";
 import { UserEntry, userRepo } from "../repositories/userRepo";
 import ResponseError from "../utils/error";
 import jwt, { Secret } from "jsonwebtoken";
+import { friendRepo } from "../repositories/friendRepo";
 
 // @api  POST /api/v1/user
 // @desc Register new user into the database
@@ -46,6 +47,17 @@ export const login = asyncHandler(
     if (user === null)
       return next(new ResponseError("Incorrect username or password", 400));
 
+    // Get user friends
+    let friends = await friendRepo.getFriends(user.id);
+    console.log(friends);
+    let friendsIds = new Set<number>();
+    friends.forEach((f) => {
+      friendsIds.add(f.userId);
+      friendsIds.add(f.friendId);
+    });
+
+    let firendsInfo = await userRepo.getUsersByIds(Array.from(friendsIds));
+
     let secret = process.env.JWT_SECRET;
     if (secret == undefined)
       return next(new ResponseError("Unable to gen auth token", 500));
@@ -57,6 +69,11 @@ export const login = asyncHandler(
     // Generate new JWT
     res.status(200).json({
       user,
+      friends: friends.map((f) => ({
+        ...f,
+        userId: firendsInfo.find((info) => info.id === f.userId),
+        friendId: firendsInfo.find((info) => info.id === f.friendId),
+      })),
       token,
     });
   }

@@ -1,6 +1,7 @@
 # Receptor
 
-## Events
+## Todo
 
-1. Register
-2. Login
+1. Get user notifications
+2. Create friends table
+3. Accept friend

@@ -6,7 +6,7 @@ import "colors";
 export const seedDB = async () => {
   try {
     await flush();
-    const data = (await fs.readFile("./data/users.json")).toString();
+    const data = (await fs.readFile("./src/data/users.json")).toString();
     const users: Array<{
       id: number;
       username: string;

@@ -106,10 +106,6 @@ export default class UserRepo extends BaseRepo {
           type: Event.ACCEPT_FRIEND,
           from: sender,
         });
-        // socket.broadcast.emit(Event.NOTIFICATION, {
-        //   type: Event.ACCEPT_FRIEND,
-        //   from: sender,
-        // });
       }
       // Store a copy of the request into the notifications table
       await notificationRepo.pushNotification({

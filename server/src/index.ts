@@ -8,6 +8,7 @@ import { userRouter } from "./routes/user";
 import { errorHandler } from "./middleware/errorHandler";
 import "./seed";
 import { AddFriendMsg, userRepo } from "./repositories/userRepo";
+import { notificationRepo } from "./repositories/notfiRepo";
 
 dotenv.config();
 
@@ -30,7 +31,9 @@ io.on(Event.CONNECT, (socket: Socket) => {
   });
 
   socket.on(Event.ACCEPT_FRIEND, async (msg: string) => {});
-  socket.on(Event.NOTIFICATION, async (msg: any) => {});
+  socket.on(Event.NOTIFICATION, async (msg: any) => {
+    notificationRepo.handleNotificationsEvent(socket, authToken);
+  });
 });
 
 app.use(express.json());

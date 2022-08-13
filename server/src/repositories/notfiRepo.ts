@@ -1,6 +1,7 @@
 import { Op } from "sequelize";
 import { Socket } from "socket.io";
-import { Notification, NotificationType } from "../db";
+import { Notification, NotificationType, User } from "../db";
+import { Event } from "../events";
 import BaseRepo from "./baseRepo";
 import { UserEntry, userRepo } from "./userRepo";
 
@@ -46,24 +47,28 @@ class NotificationRepo extends BaseRepo {
       where: {
         UserId: userId,
       },
+      include: [
+        {
+          model: User,
+          attributes: {
+            exclude: ["password"],
+          },
+        },
+      ],
     });
 
     return all.map((n) => n.get());
   }
 
-  async handleNotificationsEvent(
-    socket: Socket,
-    data: { token: string; firendId: number }
-  ) {
-    try {
-      const userId = this.decodeAuthToken(data.token);
-      const users = await userRepo.getUsersByIds([userId, data.firendId]);
-      const user = users.find((u) => u.id == userId);
-      const firend = users.find((u) => u.id == data.firendId);
-
+  async handleNotificationsEvent(socket: Socket, token: string | null) {
+    const result = await this.errorHandler(async () => {
+      const userId = this.decodeAuthToken(token);
+      const user = await userRepo.getUserById(userId);
       if (!user) throw new Error("User not foudn");
-      if (!firend) throw new Error("Friend not found");
-    } catch (error) {}
+      return this.getNotifications(user.id);
+    });
+
+    socket.emit(Event.NOTIFICATION, result);
   }
 }
 

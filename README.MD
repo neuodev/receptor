@@ -1,5 +1,8 @@
-# Receptor <img src="https://user-images.githubusercontent.com/72753578/184504831-cc928f04-9781-4cab-9a8f-a56c66f0beb5.png" alt="logo" title="Receptor"/>
+# Receptor 
 
+<p align="center"> 
+   <img src="https://user-images.githubusercontent.com/72753578/184505174-f7e48f25-6810-40d2-b7cb-8ae5ee151eb2.png" alt="Logo" title="Receptor"/>
+</p>
 
 ## Todo
 

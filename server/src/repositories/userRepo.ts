@@ -1,7 +1,7 @@
 import { NotificationType, User } from "../db";
-import jwt, { JsonWebTokenError } from "jsonwebtoken";
+import { JsonWebTokenError } from "jsonwebtoken";
 import { Op } from "sequelize";
-import { Socket } from "socket.io";
+
 import { Event } from "../events";
 import BaseRepo from "./baseRepo";
 import AppUOW from ".";
@@ -35,6 +35,7 @@ export default class UserRepo extends BaseRepo {
     });
 
     socket.on(Event.DISCONNECT, () => {
+      console.log("here!");
       this.handleDisconnect();
     });
   }

@@ -1,11 +1,13 @@
 import { Request, Response, NextFunction } from "express";
 import asyncHandler from "express-async-handler";
 import { validationResult } from "express-validator";
-import { UniqueConstraintError } from "sequelize";
+import { Op, UniqueConstraintError } from "sequelize";
 import { UserEntry } from "../repositories/userRepo";
 import ResponseError from "../utils/error";
 import jwt, { Secret } from "jsonwebtoken";
 import { User } from "../db";
+import { Participants } from "../models/Participants";
+import { Room } from "../models/Room";
 
 // @api  POST /api/v1/user
 // @desc Register new user into the database
@@ -69,10 +71,40 @@ export const login = asyncHandler(
     );
 
     // Get user friends
+    const participants = await Participants.findAll({
+      where: {
+        userId: userInfo.id,
+      },
+      attributes: ["roomId"],
+    });
+
+    const roomsId = participants.map((p) => p.getDataValue("roomId"));
+    const friends = await Participants.findAll({
+      where: {
+        roomId: {
+          [Op.or]: roomsId,
+        },
+        userId: {
+          [Op.not]: userInfo.id,
+        },
+      },
+      attributes: ["roomId"],
+      include: [
+        {
+          model: User,
+          foreignKey: "userId",
+          attributes: {
+            exclude: ["password"],
+          },
+        },
+      ],
+    });
 
     res.status(200).json({
       user,
       token,
+      roomsId,
+      friends: friends.map((f) => f.get()),
     });
   }
 );

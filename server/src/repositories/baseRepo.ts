@@ -1,5 +1,4 @@
 import jwt, { JsonWebTokenError } from "jsonwebtoken";
-import { Socket } from "socket.io";
 
 export default class BaseRepo {
   decodeAuthToken(token: string | null): number {
@@ -11,7 +10,7 @@ export default class BaseRepo {
     return (result as { id: number }).id as number;
   }
 
-  async errorHandler(func: Function) {
+  async errorHandler<T>(func: Function): Promise<T | Error> {
     try {
       return await func();
     } catch (error) {
@@ -24,7 +23,7 @@ export default class BaseRepo {
         msg = error;
       }
 
-      return { error: msg };
+      return new Error(msg);
     }
   }
 }

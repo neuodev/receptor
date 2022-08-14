@@ -139,7 +139,11 @@ export default class UserRepo extends BaseRepo {
       socket.emit(Event.ADD_FRIEND, { ok: true });
     });
 
-    if (error?.error) socket.emit(Event.ADD_FRIEND, error);
+    if (error instanceof Error) {
+      socket.emit(Event.ADD_FRIEND, {
+        error: error.message,
+      });
+    }
   }
 
   async acceptFriend(

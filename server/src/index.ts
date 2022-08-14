@@ -27,7 +27,6 @@ io.on(Event.CONNECT, (socket: Socket) => {
   });
 
   socket.on(Event.ADD_FRIEND, async (msg: AddFriendMsg) => {
-    // Prevent adding friends twice
     await userRepo.addFriend({ ...msg, token: authToken }, socket);
   });
 
@@ -37,8 +36,9 @@ io.on(Event.CONNECT, (socket: Socket) => {
       id: data.id,
     });
   });
+
   socket.on(Event.NOTIFICATION, async (msg: any) => {
-    notificationRepo.handleNotificationsEvent(socket, authToken);
+    await notificationRepo.handleNotificationsEvent(socket, authToken);
   });
 });
 

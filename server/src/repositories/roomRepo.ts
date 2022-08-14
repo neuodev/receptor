@@ -1,6 +1,7 @@
 import { Socket } from "socket.io";
 import AppUOW from ".";
 import { Event } from "../events";
+import { Room, RoomType } from "../models/Room";
 import BaseRepo from "./baseRepo";
 
 export default class RoomRepo extends BaseRepo {
@@ -52,6 +53,15 @@ export default class RoomRepo extends BaseRepo {
 
     socket.emit(Event.ROOM_MESSAGE, { ok: true });
   }
-}
 
-// export const roomRepo = new RoomRepo();
+  async newRoom(userIds: Array<number>, type: RoomType, name?: string) {
+    const room = await Room.create({
+      name,
+      type,
+    });
+
+    const roomId = room.getDataValue("id") as number;
+
+    await this.app.participants.newParticipants(userIds, roomId);
+  }
+}

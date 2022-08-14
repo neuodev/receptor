@@ -4,6 +4,7 @@ import AppUOW from ".";
 import { User } from "../db";
 import { Event } from "../events";
 import { Friend, FriendshipStatus } from "../models/Friend";
+import { RoomType } from "../models/Room";
 import BaseRepo from "./baseRepo";
 
 export type FriendEntry = {
@@ -80,11 +81,17 @@ export default class FriendRepo extends BaseRepo {
         ]);
         if (!user) throw new Error("User not found");
         if (!request) throw new Error("Request not found");
+        // Create new room with new participants
+        let info: FriendEntry = request.get();
+        await this.app.roomRepo.newRoom(
+          [info.userId, info.friendId],
+          RoomType.DM
+        );
+
         await this.updateStatus(id, FriendshipStatus.FRIENDS);
         socket.emit(Event.ACCEPT_FRIEND, { ok: true });
         // Should send notification to his friend
         // Todo: Check if the user is active or now before sending the notification
-        let info: FriendEntry = request.get();
         socket.to(info.userId.toString()).emit(Event.NOTIFICATION, {
           type: Event.ACCEPT_FRIEND,
           user: user[0],

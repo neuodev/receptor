@@ -8,10 +8,14 @@ User.hasMany(Participants, {
   foreignKey: "userId",
 });
 
-Participants.belongsTo(User);
+Participants.belongsTo(User, {
+  foreignKey: "userId",
+});
 
 Room.hasMany(Participants, {
   foreignKey: "roomId",
 });
 
-Participants.belongsTo(Room);
+Participants.belongsTo(Room, {
+  foreignKey: "roomId",
+});

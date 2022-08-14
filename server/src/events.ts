@@ -6,7 +6,7 @@ export enum Event {
   ACCEPT_FRIEND = "acceptFriend",
   NOTIFICATION = "notification",
   LOGIN = "login",
-  JOIN_ROOM = "joinRood",
+  JOIN_ROOM = "joinRoom",
   ROOM_MESSAGE = "roomMessage",
   LEAVE_ROOM = "leaveRoom",
 }

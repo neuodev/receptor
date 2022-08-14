@@ -1,17 +1,20 @@
 import { Socket } from "socket.io";
+import AppUOW from ".";
 import { Event } from "../events";
 import BaseRepo from "./baseRepo";
 
-class RoomRepo extends BaseRepo {
-  async joinRoom(
-    socket: Socket,
-    data: { rooms: Array<number>; token: string | null }
-  ) {
+export default class RoomRepo extends BaseRepo {
+  constructor(app: AppUOW) {
+    super(app);
+  }
+
+  async joinRoom(rooms: Array<number>) {
+    const { socket } = this.app;
     await this.errorHandler(
       async () => {
         //Todo: validate ownership of all rooms
-        this.decodeAuthToken(data.token);
-        data.rooms.forEach((room) => {
+        this.app.decodeAuthToken();
+        rooms.forEach((room) => {
           socket.join(room.toString());
         });
 
@@ -22,15 +25,13 @@ class RoomRepo extends BaseRepo {
     );
   }
 
-  async leaveRoom(
-    socket: Socket,
-    data: { rooms: Array<number>; token: string | null }
-  ) {
+  async leaveRoom(rooms: Array<number>) {
+    const { socket } = this.app;
     await this.errorHandler(
       async () => {
         //Todo: validate ownership of all rooms
-        this.decodeAuthToken(data.token);
-        data.rooms.forEach((room) => {
+        this.app.decodeAuthToken();
+        rooms.forEach((room) => {
           socket.leave(room.toString());
         });
 
@@ -53,4 +54,4 @@ class RoomRepo extends BaseRepo {
   }
 }
 
-export const roomRepo = new RoomRepo();
+// export const roomRepo = new RoomRepo();

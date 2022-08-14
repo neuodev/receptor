@@ -3,9 +3,8 @@ import jwt, { JsonWebTokenError } from "jsonwebtoken";
 import { Op } from "sequelize";
 import { Socket } from "socket.io";
 import { Event } from "../events";
-import { notificationRepo } from "./notfiRepo";
 import BaseRepo from "./baseRepo";
-import { friendRepo } from "./friendRepo";
+import AppUOW from ".";
 
 export type UserEntry = {
   username: string;
@@ -18,6 +17,10 @@ export type AddFriendMsg = {
   friendId: number;
 };
 export default class UserRepo extends BaseRepo {
+  constructor(app: AppUOW) {
+    super(app);
+  }
+
   async registerUser(data: {
     username: string;
     password: string;
@@ -79,22 +82,22 @@ export default class UserRepo extends BaseRepo {
     );
   }
 
-  async addFriend(data: AddFriendMsg, socket: Socket) {
+  async addFriend(friendId: number) {
+    const { socket } = this.app;
     await this.errorHandler(
       async () => {
-        if (data.token === null) throw new Error("Missing auth token");
-        let userId = this.decodeAuthToken(data.token);
-        if (!data.friendId) throw new Error("Firend Id is missing");
-        if (userId === data.friendId)
+        let userId = this.app.decodeAuthToken();
+        if (!friendId) throw new Error("Firend Id is missing");
+        if (userId === friendId)
           throw new Error("User can't it himself as friend");
         // Check if the user exist
-        const users = await this.getUsersByIds([userId, data.friendId]);
+        const users = await this.getUsersByIds([userId, friendId]);
         const sender = users.find((user) => user.id === userId);
-        const receiver = users.find((user) => user.id === data.friendId);
+        const receiver = users.find((user) => user.id === friendId);
         if (!sender) throw new Error("User doesn't exist");
         if (!receiver) throw new Error("Receiver no longer exist");
 
-        const friendship = await friendRepo.getFriendshipRecord(
+        const friendship = await this.app.friendRepo.getFriendshipRecord(
           sender.id,
           receiver.id
         );
@@ -108,16 +111,17 @@ export default class UserRepo extends BaseRepo {
               : `You got blocked by ${receiver.username}`
           );
 
-        await friendRepo.addFriend(
+        await this.app.friendRepo.addFriend(
           sender.id,
           receiver.id,
           FriendshipStatus.PENDING
         );
 
-        const isSent = await notificationRepo.isFriendshipRequestAlreadySent(
-          sender.id,
-          receiver.id
-        );
+        const isSent =
+          await this.app.notificationRepo.isFriendshipRequestAlreadySent(
+            sender.id,
+            receiver.id
+          );
         if (isSent != null) throw new Error("Notification already sent");
         // If the receiver active we should send him a notification!
         if (receiver.isActive) {
@@ -129,7 +133,7 @@ export default class UserRepo extends BaseRepo {
           });
         }
         // Store a copy of the request into the notifications table
-        await notificationRepo.pushNotification({
+        await this.app.notificationRepo.pushNotification({
           content: {
             userId: sender.id,
           },
@@ -144,10 +148,13 @@ export default class UserRepo extends BaseRepo {
     );
   }
 
-  async handleLogin(socket: Socket, token: string | null) {
+  async handleLogin() {
+    const socket = this.app.socket;
+
     try {
+      const token = this.app.getAuthToken();
       if (token === null) throw new Error("Missing auth token");
-      const userId = userRepo.decodeAuthToken(token);
+      const userId = this.app.userRepo.decodeAuthToken(token);
       await this.updateUserStatus(userId, true);
       socket.emit(Event.LOGIN, { ok: true });
       // Add user to a private room so we can send notifications and other stuff
@@ -165,5 +172,3 @@ export default class UserRepo extends BaseRepo {
     }
   }
 }
-
-export const userRepo = new UserRepo();

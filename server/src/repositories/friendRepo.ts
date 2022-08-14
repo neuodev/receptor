@@ -1,9 +1,9 @@
 import { Op, ScopeOptions } from "sequelize";
 import { Socket } from "socket.io";
+import AppUOW from ".";
 import { Friend, FriendshipStatus, User } from "../db";
 import { Event } from "../events";
 import BaseRepo from "./baseRepo";
-import { userRepo } from "./userRepo";
 
 export type FriendEntry = {
   id: number;
@@ -14,7 +14,11 @@ export type FriendEntry = {
   friendId: number;
 };
 
-class FriendRepo extends BaseRepo {
+export default class FriendRepo extends BaseRepo {
+  constructor(app: AppUOW) {
+    super(app);
+  }
+
   async getFriendshipRecord(userId: number, friendId: number) {
     const result = await Friend.findOne({
       where: {
@@ -60,15 +64,13 @@ class FriendRepo extends BaseRepo {
   }
 
   // Todo: Update this handler to be more generic to handle blocking / accepting frinedship
-  async handleAcceptFriendEvent(
-    socket: Socket,
-    data: { token: string | null; id: number }
-  ) {
+  async handleAcceptFriendEvent(id: number) {
+    const { socket } = this.app;
     await this.errorHandler(
       async () => {
-        let userId: number = this.decodeAuthToken(data.token);
+        let userId: number = this.app.decodeAuthToken();
         const [user, request] = await Promise.all([
-          userRepo.getUsersByIds([userId]),
+          this.app.userRepo.getUsersByIds([userId]),
           Friend.findOne({
             where: {
               friendId: userId,
@@ -77,7 +79,7 @@ class FriendRepo extends BaseRepo {
         ]);
         if (!user) throw new Error("User not found");
         if (!request) throw new Error("Request not found");
-        await this.updateStatus(data.id, FriendshipStatus.FRIENDS);
+        await this.updateStatus(id, FriendshipStatus.FRIENDS);
         socket.emit(Event.ACCEPT_FRIEND, { ok: true });
         // Should send notification to his friend
         // Todo: Check if the user is active or now before sending the notification
@@ -94,4 +96,4 @@ class FriendRepo extends BaseRepo {
   }
 }
 
-export const friendRepo = new FriendRepo();
+// export const friendRepo = new FriendRepo();

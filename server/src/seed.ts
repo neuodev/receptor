@@ -1,5 +1,4 @@
 import { Friend, Notification, sequelize, User } from "./db";
-import { userRepo } from "./repositories/userRepo";
 import fs from "fs/promises";
 import "colors";
 
@@ -12,7 +11,7 @@ export const seedDB = async () => {
       password: string;
     }> = JSON.parse(data);
 
-    await Promise.all(users.map((user) => userRepo.registerUser(user)));
+    // await Promise.all(users.map((user) => userRepo.registerUser(user)));
 
     console.log("Database seeded".bgRed.underline.bold);
   } catch (error) {

@@ -1,9 +1,10 @@
 import { Op } from "sequelize";
 import { Socket } from "socket.io";
+import AppUOW from ".";
 import { Notification, NotificationType, User } from "../db";
 import { Event } from "../events";
 import BaseRepo from "./baseRepo";
-import { UserEntry, userRepo } from "./userRepo";
+import { UserEntry } from "./userRepo";
 
 export type NotificationEntry = {
   content: string;
@@ -12,7 +13,10 @@ export type NotificationEntry = {
   isSeen: boolean;
 };
 
-class NotificationRepo extends BaseRepo {
+export default class NotificationRepo extends BaseRepo {
+  constructor(app: AppUOW) {
+    super(app);
+  }
   async pushNotification(n: {
     content: {
       userId: number;
@@ -52,11 +56,12 @@ class NotificationRepo extends BaseRepo {
     return all.map((n) => n.get());
   }
 
-  async handleNotificationsEvent(socket: Socket, token: string | null) {
-    const result = await this.errorHandler(
+  async handleNotificationsEvent() {
+    const { socket } = this.app;
+    await this.errorHandler(
       async () => {
-        const userId = this.decodeAuthToken(token);
-        const user = await userRepo.getUserById(userId);
+        const userId = this.app.decodeAuthToken();
+        const user = await this.app.userRepo.getUserById(userId);
         if (!user) throw new Error("User not foudn");
         let notifications = this.getNotifications(user.id);
 
@@ -68,4 +73,4 @@ class NotificationRepo extends BaseRepo {
   }
 }
 
-export const notificationRepo = new NotificationRepo();
+// export const notificationRepo = new NotificationRepo();

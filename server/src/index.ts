@@ -1,4 +1,4 @@
-import express, { NextFunction, Request, Response } from "express";
+import express from "express";
 import http from "http";
 import { Server, Socket } from "socket.io";
 import dotenv from "dotenv";
@@ -7,10 +7,7 @@ import { Event } from "./events";
 import { userRouter } from "./routes/user";
 import { errorHandler } from "./middleware/errorHandler";
 import "./seed";
-import { AddFriendMsg, userRepo } from "./repositories/userRepo";
-import { notificationRepo } from "./repositories/notfiRepo";
-import { friendRepo } from "./repositories/friendRepo";
-import { roomRepo } from "./repositories/roomRepo";
+import AppUOW from "./repositories";
 
 dotenv.config();
 
@@ -21,40 +18,28 @@ const io = new Server(server);
 
 io.on(Event.CONNECT, (socket: Socket) => {
   let authToken: null | string = null;
+  const appUOW = new AppUOW(socket);
 
   socket.on(Event.LOGIN, async (data: { token: string }) => {
     authToken = data.token;
-    await userRepo.handleLogin(socket, authToken);
+    appUOW.setAuthToken(data.token);
+    await appUOW.userRepo.handleLogin();
   });
 
-  socket.on(Event.ADD_FRIEND, async (msg: AddFriendMsg) => {
-    await userRepo.addFriend({ ...msg, token: authToken }, socket);
+  socket.on(Event.ADD_FRIEND, async (data: { friendId: number }) => {
+    await appUOW.userRepo.addFriend(data.friendId);
   });
 
   socket.on(Event.ACCEPT_FRIEND, async (data: { id: number }) => {
-    await friendRepo.handleAcceptFriendEvent(socket, {
-      token: authToken,
-      id: data.id,
-    });
+    await appUOW.friendRepo.handleAcceptFriendEvent(data.id);
   });
 
-  socket.on(Event.NOTIFICATION, async (msg: any) => {
-    await notificationRepo.handleNotificationsEvent(socket, authToken);
+  socket.on(Event.NOTIFICATION, async () => {
+    await appUOW.notificationRepo.handleNotificationsEvent();
   });
-
-  //* Chat
-  /**
-   * Three main events
-   * 1. Join Room
-   * 2. Message
-   *    - Broadcaste + Notif the user that message got sent successfly
-   * 3. Leave Room
-   */
 
   socket.on(Event.JOIN_ROOM, (data: { rooms: Array<number> }) => {
-    // Need room id which should crosspond to his friend id
-    // Todo: Validate room ids
-    roomRepo.joinRoom(socket, { token: authToken, rooms: data.rooms });
+    appUOW.roomRepo.joinRoom(data.rooms);
   });
 });
 

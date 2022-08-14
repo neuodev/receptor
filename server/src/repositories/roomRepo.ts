@@ -9,6 +9,7 @@ class RoomRepo extends BaseRepo {
   ) {
     await this.errorHandler(
       async () => {
+        this.decodeAuthToken(data.token);
         data.rooms.forEach((room) => {
           socket.join(room.toString());
         });
@@ -17,6 +18,24 @@ class RoomRepo extends BaseRepo {
       },
       socket,
       Event.JOIN_ROOM
+    );
+  }
+
+  async leaveRoom(
+    socket: Socket,
+    data: { rooms: Array<number>; token: string | null }
+  ) {
+    await this.errorHandler(
+      async () => {
+        this.decodeAuthToken(data.token);
+        data.rooms.forEach((room) => {
+          socket.leave(room.toString());
+        });
+
+        socket.emit(Event.LEAVE_ROOM, { ok: true });
+      },
+      socket,
+      Event.LEAVE_ROOM
     );
   }
 }

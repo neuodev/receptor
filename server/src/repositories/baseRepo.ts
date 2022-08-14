@@ -14,7 +14,7 @@ export default class BaseRepo {
 
   async errorHandler<T>(func: Function, socket: Socket, event: Event) {
     try {
-      return await func();
+      await func();
     } catch (error) {
       let msg = "Unexpected error";
       if (error instanceof JsonWebTokenError) {

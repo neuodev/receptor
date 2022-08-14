@@ -1,7 +1,10 @@
 import { Sequelize, DataTypes } from "sequelize";
+import { flush, seedDB } from "./seed";
 
+export const DB_NAME = process.env.DB_NAME || "receptor";
 const sequelize = new Sequelize(
-  process.env.PSQL_URI || "postgres://postgres:changeme@localhost:5432/receptor"
+  process.env.PSQL_URI ||
+    `postgres://postgres:changeme@localhost:5432/${DB_NAME}`
 );
 
 export const User = sequelize.define("User", {
@@ -80,7 +83,14 @@ Friend.belongsTo(User, {
 (async () => {
   try {
     await sequelize.authenticate();
-    await sequelize.sync({ force: false });
+
+    if (process.argv[2] === "seed") {
+      seedDB();
+    } else if (process.argv[2] === "flush") {
+      flush();
+    } else {
+      await sequelize.sync({ force: false });
+    }
 
     console.log("Connected to PostgreSQL".green.underline.bold);
   } catch (error) {

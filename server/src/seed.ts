@@ -1,6 +1,9 @@
 import sequelize, { Friend, Notification, User } from "./db";
 import fs from "fs/promises";
 import "colors";
+import { Room } from "./models/Room";
+import { Message } from "./models/message";
+import { Participants } from "./models/Participants";
 
 export const seedDB = async () => {
   try {
@@ -11,7 +14,7 @@ export const seedDB = async () => {
       password: string;
     }> = JSON.parse(data);
 
-    // await Promise.all(users.map((user) => userRepo.registerUser(user)));
+    await User.bulkCreate(users);
 
     console.log("Database seeded".bgRed.underline.bold);
   } catch (error) {
@@ -23,7 +26,7 @@ export const seedDB = async () => {
 export const flush = async () => {
   console.log("Delete all database tables".red.underline.bold);
   try {
-    sequelize.sync({ force: true }); // Reset all tables
+    await sequelize.sync({ force: true });
 
     console.log(`Reset database`.cyan.underline.bold);
     process.exit(0); // Server should restart
@@ -37,9 +40,3 @@ export const flush = async () => {
     console.error(error);
   }
 };
-
-if (process.argv[2] === "seed") {
-  seedDB();
-} else if (process.argv[2] === "flush") {
-  flush();
-}

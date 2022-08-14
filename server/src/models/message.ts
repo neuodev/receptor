@@ -1,5 +1,6 @@
 import { DataTypes } from "sequelize";
-import sequelize from "../db";
+import sequelize, { User } from "../db";
+import { Room } from "./Room";
 
 export enum MessageType {
   TEXT = "text",
@@ -27,5 +28,44 @@ export const Message = sequelize.define("message", {
     type: DataTypes.BOOLEAN,
     allowNull: false,
     defaultValue: false,
+  },
+});
+
+// Sender Associations
+User.hasMany(Message, {
+  foreignKey: {
+    name: "sender",
+  },
+});
+
+Message.belongsTo(User, {
+  foreignKey: {
+    name: "sender",
+  },
+});
+
+// Receiver Associations
+User.hasMany(Message, {
+  foreignKey: {
+    name: "receiver",
+  },
+});
+
+Message.belongsTo(User, {
+  foreignKey: {
+    name: "receiver",
+  },
+});
+
+// Room Associations
+Room.hasMany(Message, {
+  foreignKey: {
+    name: "roomId",
+  },
+});
+
+Message.belongsTo(Room, {
+  foreignKey: {
+    name: "roomId",
   },
 });

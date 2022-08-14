@@ -11,7 +11,6 @@ export const Room = sequelize.define("room", {
     type: DataTypes.TEXT,
     allowNull: true,
   },
-
   type: {
     type: DataTypes.ENUM(RoomType.DM, RoomType.GROUP),
   },

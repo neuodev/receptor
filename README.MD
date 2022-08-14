@@ -35,6 +35,10 @@
 3. `Event.ACCEPT_FRIEND`
 4. `Event.NOTIFICATION`
 
+## Database Schema
+
+![Schema](./schema.png)
+
 ## API
 
 <details>

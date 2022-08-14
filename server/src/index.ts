@@ -40,6 +40,20 @@ io.on(Event.CONNECT, (socket: Socket) => {
   socket.on(Event.NOTIFICATION, async (msg: any) => {
     await notificationRepo.handleNotificationsEvent(socket, authToken);
   });
+
+  //* Chat
+  /**
+   * Three main events
+   * 1. Join Room
+   * 2. Message
+   *    - Broadcaste + Notif the user that message got sent successfly
+   * 3. Leave Room
+   */
+
+  socket.on(Event.JOIN_ROOM, () => {
+    // Need room id which should crosspond to his friend id
+    // Todo: Validate room ids
+  });
 });
 
 app.use(express.json());

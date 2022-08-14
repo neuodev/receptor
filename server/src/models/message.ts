@@ -21,8 +21,9 @@ export const Message = sequelize.define("message", {
   body: {
     type: DataTypes.TEXT,
     allowNull: true,
+    defaultValue: null,
   },
-  reed: {
+  read: {
     type: DataTypes.BOOLEAN,
     allowNull: false,
     defaultValue: false,

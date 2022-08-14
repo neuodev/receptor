@@ -1,9 +1,8 @@
-# Receptor 
+# Receptor
 
 <p align="center"> 
    <img src="https://user-images.githubusercontent.com/72753578/184505323-7f76a321-28cc-480a-ac9a-ec72a3fd91de.gif" alt="Logo" title="Receptor"/>
 </p>
-
 
 ## Todo
 
@@ -28,3 +27,68 @@
     - Delete group by owner
     - Leave group
     - Update group name
+
+## Events
+
+1. `Event.LOGIN`
+2. `Event.ADD_FRIEND`
+3. `Event.ACCEPT_FRIEND`
+4. `Event.NOTIFICATION`
+
+## API
+
+<details>
+   <summary>
+      Create User - POST /api/v1/user
+   </summary>
+
+### Reqeust
+
+```json
+{
+  "username": "Karianne",
+  "password": "123456"
+}
+```
+
+### Response
+
+```json
+{
+  "userId": 4
+}
+```
+
+</details>
+
+<details>
+   <summary>
+      Login - GET /api/v1/user
+   </summary>
+
+### Reqeust
+
+```json
+{
+  "username": "Karianne",
+  "password": "123456"
+}
+```
+
+### Response
+
+```json
+{
+  "user": {
+    "id": 2,
+    "username": "Bret",
+    "isActive": false,
+    "createdAt": "2022-08-14T12:07:41.339Z",
+    "updatedAt": "2022-08-14T12:07:41.339Z"
+  },
+  "friends": [],
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiaWF0IjoxNjYwNDc5Mjk5LCJleHAiOjE2NjEwODQwOTl9.BCLBrV1dFNkRRvUBf5fweIrkuSu2yi2rAxCB6z3DnHI"
+}
+```
+
+</details>

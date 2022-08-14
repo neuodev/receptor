@@ -1,8 +1,9 @@
 import { Op, ScopeOptions } from "sequelize";
 import { Socket } from "socket.io";
 import AppUOW from ".";
-import { Friend, FriendshipStatus, User } from "../db";
+import { User } from "../db";
 import { Event } from "../events";
+import { Friend, FriendshipStatus } from "../models/Friend";
 import BaseRepo from "./baseRepo";
 
 export type FriendEntry = {

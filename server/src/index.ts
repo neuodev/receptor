@@ -41,6 +41,10 @@ io.on(Event.CONNECT, (socket: Socket) => {
   socket.on(Event.JOIN_ROOM, (data: { rooms: Array<number> }) => {
     appUOW.roomRepo.joinRoom(data.rooms);
   });
+
+  socket.on(Event.LEAVE_ROOM, (data: { rooms: Array<number> }) => {
+    appUOW.roomRepo.leaveRoom(data.rooms);
+  });
 });
 
 app.use(express.json());

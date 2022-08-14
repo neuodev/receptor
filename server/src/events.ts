@@ -1,6 +1,6 @@
 export enum Event {
   CONNECT = "connect",
-  DISCONNECT = "disconnection",
+  DISCONNECT = "diconnect",
   JOIN = "join",
   ADD_FRIEND = "addFriend",
   ACCEPT_FRIEND = "acceptFriend",

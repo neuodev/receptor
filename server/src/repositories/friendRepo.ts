@@ -64,35 +64,33 @@ class FriendRepo extends BaseRepo {
     socket: Socket,
     data: { token: string | null; id: number }
   ) {
-    const error = await this.errorHandler(async () => {
-      let userId: number = this.decodeAuthToken(data.token);
-      const [user, request] = await Promise.all([
-        userRepo.getUsersByIds([userId]),
-        Friend.findOne({
-          where: {
-            friendId: userId,
-          },
-        }),
-      ]);
-      if (!user) throw new Error("User not found");
-      if (!request) throw new Error("Request not found");
-      await this.updateStatus(data.id, FriendshipStatus.FRIENDS);
-      socket.emit(Event.ACCEPT_FRIEND, { ok: true });
-      // Should send notification to his friend
-      // Todo: Check if the user is active or now before sending the notification
-      let info: FriendEntry = request.get();
-      socket.to(info.userId.toString()).emit(Event.NOTIFICATION, {
-        type: Event.ACCEPT_FRIEND,
-        user: user[0],
-        request: info,
-      });
-    });
-
-    if (error instanceof Error) {
-      socket.emit(Event.ACCEPT_FRIEND, {
-        error: error.message,
-      });
-    }
+    await this.errorHandler(
+      async () => {
+        let userId: number = this.decodeAuthToken(data.token);
+        const [user, request] = await Promise.all([
+          userRepo.getUsersByIds([userId]),
+          Friend.findOne({
+            where: {
+              friendId: userId,
+            },
+          }),
+        ]);
+        if (!user) throw new Error("User not found");
+        if (!request) throw new Error("Request not found");
+        await this.updateStatus(data.id, FriendshipStatus.FRIENDS);
+        socket.emit(Event.ACCEPT_FRIEND, { ok: true });
+        // Should send notification to his friend
+        // Todo: Check if the user is active or now before sending the notification
+        let info: FriendEntry = request.get();
+        socket.to(info.userId.toString()).emit(Event.NOTIFICATION, {
+          type: Event.ACCEPT_FRIEND,
+          user: user[0],
+          request: info,
+        });
+      },
+      socket,
+      Event.ACCEPT_FRIEND
+    );
   }
 }
 

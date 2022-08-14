@@ -10,6 +10,7 @@ import "./seed";
 import { AddFriendMsg, userRepo } from "./repositories/userRepo";
 import { notificationRepo } from "./repositories/notfiRepo";
 import { friendRepo } from "./repositories/friendRepo";
+import { roomRepo } from "./repositories/roomRepo";
 
 dotenv.config();
 
@@ -50,9 +51,10 @@ io.on(Event.CONNECT, (socket: Socket) => {
    * 3. Leave Room
    */
 
-  socket.on(Event.JOIN_ROOM, () => {
+  socket.on(Event.JOIN_ROOM, (data: { rooms: Array<number> }) => {
     // Need room id which should crosspond to his friend id
     // Todo: Validate room ids
+    roomRepo.joinRoom(socket, { token: authToken, rooms: data.rooms });
   });
 });
 

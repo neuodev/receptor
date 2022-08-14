@@ -53,14 +53,18 @@ class NotificationRepo extends BaseRepo {
   }
 
   async handleNotificationsEvent(socket: Socket, token: string | null) {
-    const result = await this.errorHandler(async () => {
-      const userId = this.decodeAuthToken(token);
-      const user = await userRepo.getUserById(userId);
-      if (!user) throw new Error("User not foudn");
-      return this.getNotifications(user.id);
-    });
+    const result = await this.errorHandler(
+      async () => {
+        const userId = this.decodeAuthToken(token);
+        const user = await userRepo.getUserById(userId);
+        if (!user) throw new Error("User not foudn");
+        let notifications = this.getNotifications(user.id);
 
-    socket.emit(Event.NOTIFICATION, result);
+        socket.emit(Event.NOTIFICATION, notifications);
+      },
+      socket,
+      Event.NOTIFICATION
+    );
   }
 }
 

@@ -26,6 +26,7 @@ export const flush = async () => {
     sequelize.sync({ force: true }); // Reset all tables
 
     console.log(`Reset database`.cyan.underline.bold);
+    process.exit(0); // Server should restart
   } catch (error) {
     let msg;
 

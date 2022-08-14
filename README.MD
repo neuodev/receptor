@@ -30,10 +30,20 @@
 
 ## Events
 
-1. `Event.LOGIN`
-2. `Event.ADD_FRIEND`
-3. `Event.ACCEPT_FRIEND`
-4. `Event.NOTIFICATION`
+```ts
+enum Event {
+  CONNECT = "connect",
+  DISCONNECT = "disconnection",
+  JOIN = "join",
+  ADD_FRIEND = "addFriend",
+  ACCEPT_FRIEND = "acceptFriend",
+  NOTIFICATION = "notification",
+  LOGIN = "login",
+  JOIN_ROOM = "joinRoom",
+  ROOM_MESSAGE = "roomMessage",
+  LEAVE_ROOM = "leaveRoom",
+}
+```
 
 ## Database Schema
 

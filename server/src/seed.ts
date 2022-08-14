@@ -1,4 +1,4 @@
-import { Friend, Notification, sequelize, User } from "./db";
+import sequelize, { Friend, Notification, User } from "./db";
 import fs from "fs/promises";
 import "colors";
 

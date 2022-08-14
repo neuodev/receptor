@@ -1,6 +1,6 @@
 import { Sequelize, DataTypes } from "sequelize";
 
-export const sequelize = new Sequelize(
+const sequelize = new Sequelize(
   process.env.PSQL_URI || "postgres://postgres:changeme@localhost:5432/receptor"
 );
 
@@ -93,3 +93,5 @@ Friend.belongsTo(User, {
     process.exit(1);
   }
 })();
+
+export default sequelize;

@@ -9,6 +9,7 @@ class RoomRepo extends BaseRepo {
   ) {
     await this.errorHandler(
       async () => {
+        //Todo: validate ownership of all rooms
         this.decodeAuthToken(data.token);
         data.rooms.forEach((room) => {
           socket.join(room.toString());
@@ -27,6 +28,7 @@ class RoomRepo extends BaseRepo {
   ) {
     await this.errorHandler(
       async () => {
+        //Todo: validate ownership of all rooms
         this.decodeAuthToken(data.token);
         data.rooms.forEach((room) => {
           socket.leave(room.toString());
@@ -37,6 +39,17 @@ class RoomRepo extends BaseRepo {
       socket,
       Event.LEAVE_ROOM
     );
+  }
+
+  async sendMessage(
+    socket: Socket,
+    data: { rooms: Array<number>; token: string | null; message: any }
+  ) {
+    data.rooms.forEach((room) => {
+      socket.to(room.toString()).emit(Event.ROOM_MESSAGE, data.message);
+    });
+
+    socket.emit(Event.ROOM_MESSAGE, { ok: true });
   }
 }
 

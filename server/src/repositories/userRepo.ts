@@ -172,4 +172,16 @@ export default class UserRepo extends BaseRepo {
       socket.emit(Event.LOGIN, { error: msg });
     }
   }
+
+  async handleDisconnect() {
+    const { socket } = this.app;
+    this.errorHandler(
+      async () => {
+        const userId = this.app.decodeAuthToken();
+        await this.updateUserStatus(userId, false);
+      },
+      socket,
+      Event.DISCONNECT
+    );
+  }
 }

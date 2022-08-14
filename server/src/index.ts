@@ -17,11 +17,9 @@ const server = http.createServer(app);
 const io = new Server(server);
 
 io.on(Event.CONNECT, (socket: Socket) => {
-  let authToken: null | string = null;
   const appUOW = new AppUOW(socket);
 
   socket.on(Event.LOGIN, async (data: { token: string }) => {
-    authToken = data.token;
     appUOW.setAuthToken(data.token);
     await appUOW.userRepo.handleLogin();
   });

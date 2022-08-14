@@ -5,6 +5,7 @@ import { Socket } from "socket.io";
 import { Event } from "../events";
 import BaseRepo from "./baseRepo";
 import AppUOW from ".";
+import { FriendshipStatus } from "../models/Friend";
 
 export type UserEntry = {
   username: string;

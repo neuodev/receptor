@@ -26,9 +26,7 @@ export default class NotificationRepo extends BaseRepo {
   }) {
     // Check if notification exist
     await Notification.create({
-      content: n.content,
-      type: n.type,
-      UserId: n.userId,
+      ...n,
       isSeen: false,
     });
   }

@@ -10,7 +10,7 @@
 2. Friends table should have a unique compination of `userId` and `frinedId`
 3. Create chat rooms for friends
 
-   - `JoinRoom` evnet
+   - `JoinRoom` event
    - `RoomId` should be the id of the `frindiship` record
    - On joining the room latest messages should be sent back to all users with the current status of the users in the room
 

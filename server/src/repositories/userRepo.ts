@@ -20,6 +20,23 @@ export type AddFriendMsg = {
 export default class UserRepo extends BaseRepo {
   constructor(app: AppUOW) {
     super(app);
+    this.initListeners();
+  }
+
+  initListeners() {
+    const { socket } = this.app;
+    socket.on(Event.LOGIN, async (data: { token: string }) => {
+      this.app.setAuthToken(data.token);
+      this.handleLogin();
+    });
+
+    socket.on(Event.ADD_FRIEND, async (data: { friendId: number }) => {
+      this.addFriend(data.friendId);
+    });
+
+    socket.on(Event.DISCONNECT, () => {
+      this.handleDisconnect();
+    });
   }
 
   async registerUser(data: {
@@ -175,7 +192,7 @@ export default class UserRepo extends BaseRepo {
 
   async handleDisconnect() {
     const { socket } = this.app;
-    this.errorHandler(
+    await this.errorHandler(
       async () => {
         const userId = this.app.decodeAuthToken();
         await this.updateUserStatus(userId, false);

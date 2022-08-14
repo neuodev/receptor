@@ -19,15 +19,6 @@ const io = new Server(server);
 io.on(Event.CONNECT, (socket: Socket) => {
   const appUOW = new AppUOW(socket);
 
-  socket.on(Event.LOGIN, async (data: { token: string }) => {
-    appUOW.setAuthToken(data.token);
-    await appUOW.userRepo.handleLogin();
-  });
-
-  socket.on(Event.ADD_FRIEND, async (data: { friendId: number }) => {
-    await appUOW.userRepo.addFriend(data.friendId);
-  });
-
   socket.on(Event.ACCEPT_FRIEND, async (data: { id: number }) => {
     await appUOW.friendRepo.handleAcceptFriendEvent(data.id);
   });

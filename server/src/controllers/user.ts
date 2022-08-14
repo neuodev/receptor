@@ -32,7 +32,7 @@ export const createUser = asyncHandler(
   }
 );
 
-// @api  GET /api/v1/user
+// @api  GET /api/v1/login
 // @desc Login + Should return the auth token
 // @access  public
 export const login = asyncHandler(
@@ -67,6 +67,8 @@ export const login = asyncHandler(
         expiresIn: "7d",
       }
     );
+
+    // Get user friends
 
     res.status(200).json({
       user,

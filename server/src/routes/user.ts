@@ -10,7 +10,10 @@ userRouter
     body("username").isString(),
     body("password").isLength({ min: 6 }),
     createUser
-  )
+  );
+
+userRouter
+  .route("/login")
   .get(
     body("username").isString(),
     body("password").isLength({ min: 6 }),

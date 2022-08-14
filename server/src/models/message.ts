@@ -31,30 +31,18 @@ export const Message = sequelize.define("message", {
   },
 });
 
-// Sender Associations
-User.hasMany(Message, {
-  foreignKey: {
-    name: "sender",
-  },
-});
+// Sender and receiver associations
+const usersKeys = ["sender", "receiver"];
 
-Message.belongsTo(User, {
-  foreignKey: {
-    name: "sender",
-  },
-});
+usersKeys.forEach((name) => {
+  const options = {
+    foreignKey: {
+      name,
+    },
+  };
+  User.hasMany(Message, options);
 
-// Receiver Associations
-User.hasMany(Message, {
-  foreignKey: {
-    name: "receiver",
-  },
-});
-
-Message.belongsTo(User, {
-  foreignKey: {
-    name: "receiver",
-  },
+  Message.belongsTo(User, options);
 });
 
 // Room Associations

@@ -17,30 +17,15 @@ export const Friend = sequelize.define("Friend", {
   },
 });
 
-User.hasMany(Friend, {
-  foreignKey: {
-    name: "userId",
-    allowNull: false,
-  },
-});
+const foreignKeys = ["userId", "friendId"];
 
-Friend.belongsTo(User, {
-  foreignKey: {
-    name: "userId",
-    allowNull: false,
-  },
-});
-
-User.hasMany(Friend, {
-  foreignKey: {
-    name: "friendId",
-    allowNull: false,
-  },
-});
-
-Friend.belongsTo(User, {
-  foreignKey: {
-    name: "friendId",
-    allowNull: false,
-  },
+foreignKeys.forEach((name) => {
+  const options = {
+    foreignKey: {
+      name,
+      allowNull: false,
+    },
+  };
+  User.hasMany(Friend, options);
+  Friend.belongsTo(User, options);
 });

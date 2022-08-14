@@ -7,6 +7,26 @@ import BaseRepo from "./baseRepo";
 export default class RoomRepo extends BaseRepo {
   constructor(app: AppUOW) {
     super(app);
+
+    this.initListeners();
+  }
+
+  initListeners() {
+    const { socket } = this.app;
+    socket.on(Event.JOIN_ROOM, (data: { rooms: Array<number> }) => {
+      this.joinRoom(data.rooms);
+    });
+
+    socket.on(Event.LEAVE_ROOM, (data: { rooms: Array<number> }) => {
+      this.leaveRoom(data.rooms);
+    });
+
+    socket.on(
+      Event.ROOM_MESSAGE,
+      ({ rooms, message }: { rooms: Array<number>; message: string }) => {
+        this.sendMessage(rooms, message);
+      }
+    );
   }
 
   async joinRoom(rooms: Array<number>) {
@@ -43,12 +63,12 @@ export default class RoomRepo extends BaseRepo {
     );
   }
 
-  async sendMessage(
-    socket: Socket,
-    data: { rooms: Array<number>; token: string | null; message: any }
-  ) {
-    data.rooms.forEach((room) => {
-      socket.to(room.toString()).emit(Event.ROOM_MESSAGE, data.message);
+  async sendMessage(rooms: Array<number>, msg: any) {
+    const { socket } = this.app;
+    rooms.forEach((room) => {
+      // Broadcast incoming message to all users in the room
+      // Skip the sender of the message
+      socket.broadcast.to(room.toString()).emit(Event.ROOM_MESSAGE, msg);
     });
 
     socket.emit(Event.ROOM_MESSAGE, { ok: true });

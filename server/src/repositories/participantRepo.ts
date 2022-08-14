@@ -8,7 +8,7 @@ export default class ParticipantsRepo extends BaseRepo {
   }
 
   async newParticipants(ids: Array<number>, roomId: number) {
-    Participants.bulkCreate(
+    await Participants.bulkCreate(
       ids.map((id) => ({
         userId: id,
         roomId,

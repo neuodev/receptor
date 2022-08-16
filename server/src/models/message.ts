@@ -38,6 +38,7 @@ usersKeys.forEach((name) => {
   const options = {
     foreignKey: {
       name,
+      allowNull: false,
     },
   };
   User.hasMany(Message, options);

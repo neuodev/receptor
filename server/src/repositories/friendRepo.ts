@@ -17,10 +17,6 @@ export type FriendEntry = {
 };
 
 export default class FriendRepo extends BaseRepo {
-  constructor(app: AppUOW) {
-    super(app);
-  }
-
   async getFriendshipRecord(userId: number, friendId: number) {
     const result = await Friend.findOne({
       where: {

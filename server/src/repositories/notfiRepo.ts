@@ -14,9 +14,6 @@ export type NotificationEntry = {
 };
 
 export default class NotificationRepo extends BaseRepo {
-  constructor(app: AppUOW) {
-    super(app);
-  }
   async pushNotification(n: {
     content: {
       userId: number;

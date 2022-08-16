@@ -1,8 +1,15 @@
 import { Socket } from "socket.io";
 import AppUOW from ".";
 import { Event } from "../events";
+import { MessageType } from "../models/message";
 import { Room, RoomType } from "../models/Room";
 import BaseRepo from "./baseRepo";
+
+type SendMessageParams = {
+  type: MessageType;
+  body: string;
+  receiver: number;
+};
 
 export default class RoomRepo extends BaseRepo {
   constructor(app: AppUOW) {
@@ -23,7 +30,13 @@ export default class RoomRepo extends BaseRepo {
 
     socket.on(
       Event.ROOM_MESSAGE,
-      ({ rooms, message }: { rooms: Array<number>; message: string }) => {
+      ({
+        rooms,
+        message,
+      }: {
+        rooms: Array<number>;
+        message: SendMessageParams;
+      }) => {
         this.sendMessage(rooms, message);
       }
     );
@@ -63,15 +76,27 @@ export default class RoomRepo extends BaseRepo {
     );
   }
 
-  async sendMessage(rooms: Array<number>, msg: any) {
+  async sendMessage(rooms: Array<number>, msg: SendMessageParams) {
     const { socket } = this.app;
-    rooms.forEach((room) => {
-      // Broadcast incoming message to all users in the room
-      // Skip the sender of the message
-      socket.broadcast.to(room.toString()).emit(Event.ROOM_MESSAGE, msg);
-    });
+    await this.errorHandler(
+      async () => {
+        rooms.forEach(async (room) => {
+          await this.app.messageRepo.newMessage({
+            ...msg,
+            roomId: room,
+            sender: this.app.decodeAuthToken(),
+            read: false,
+          });
+          // Broadcast incoming message to all users in the room
+          // Skip the sender of the message
+          socket.broadcast.to(room.toString()).emit(Event.ROOM_MESSAGE, msg);
+        });
 
-    socket.emit(Event.ROOM_MESSAGE, { ok: true });
+        socket.emit(Event.ROOM_MESSAGE, { ok: true });
+      },
+      socket,
+      Event.ROOM_MESSAGE
+    );
   }
 
   async newRoom(userIds: Array<number>, type: RoomType, name?: string) {

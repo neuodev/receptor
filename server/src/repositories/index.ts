@@ -1,6 +1,7 @@
 import { Socket } from "socket.io";
 import BaseRepo from "./baseRepo";
 import FriendRepo from "./friendRepo";
+import MessageRepo from "./messageRepo";
 import NotificationRepo from "./notfiRepo";
 import ParticipantsRepo from "./participantRepo";
 import RoomRepo from "./roomRepo";
@@ -15,6 +16,8 @@ export default class AppUOW {
   roomRepo: RoomRepo;
   participants: ParticipantsRepo;
   notificationRepo: NotificationRepo;
+  messageRepo: MessageRepo;
+
   socket: Socket;
   private authToken: string | null;
 
@@ -27,6 +30,7 @@ export default class AppUOW {
     this.roomRepo = new RoomRepo(this);
     this.notificationRepo = new NotificationRepo(this);
     this.participants = new ParticipantsRepo(this);
+    this.messageRepo = new MessageRepo(this);
   }
 
   public async setAuthToken(token: string) {

@@ -51,7 +51,7 @@ enum Event {
 
 <details>
    <summary>
-      Create User - POST /api/v1/user
+      Create User - POST /api/v1/user/register
    </summary>
 
 ### Reqeust
@@ -75,7 +75,7 @@ enum Event {
 
 <details>
    <summary>
-      Login - GET /api/v1/login
+      Login - GET /api/v1/user/login
    </summary>
 
 ### Reqeust

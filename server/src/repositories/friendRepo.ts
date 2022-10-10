@@ -1,7 +1,4 @@
-import { Op, ScopeOptions } from "sequelize";
-import { Socket } from "socket.io";
-import AppUOW from ".";
-import { User } from "../db";
+import { Op } from "sequelize";
 import { Event } from "../events";
 import { Friend, FriendshipStatus } from "../models/Friend";
 import { RoomType } from "../models/Room";
@@ -85,17 +82,17 @@ export default class FriendRepo extends BaseRepo {
         );
 
         await this.updateStatus(id, FriendshipStatus.FRIENDS);
-        socket.emit(Event.ACCEPT_FRIEND, { ok: true });
+        socket.emit(Event.AcceptFriend, { ok: true });
         // Should send notification to his friend
         // Todo: Check if the user is active or now before sending the notification
-        socket.to(info.userId.toString()).emit(Event.NOTIFICATION, {
-          type: Event.ACCEPT_FRIEND,
+        socket.to(info.userId.toString()).emit(Event.Notification, {
+          type: Event.AcceptFriend,
           user: user[0],
           request: info,
         });
       },
       socket,
-      Event.ACCEPT_FRIEND
+      Event.AcceptFriend
     );
   }
 }

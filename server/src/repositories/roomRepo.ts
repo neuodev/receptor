@@ -19,16 +19,16 @@ export default class RoomRepo extends BaseRepo {
 
   initListeners() {
     const { socket } = this.app;
-    socket.on(Event.JOIN_ROOM, (data: { rooms: Array<number> }) => {
+    socket.on(Event.JoinRoom, (data: { rooms: Array<number> }) => {
       this.joinRoom(data.rooms);
     });
 
-    socket.on(Event.LEAVE_ROOM, (data: { rooms: Array<number> }) => {
+    socket.on(Event.LeaveRoom, (data: { rooms: Array<number> }) => {
       this.leaveRoom(data.rooms);
     });
 
     socket.on(
-      Event.ROOM_MESSAGE,
+      Event.RoomMessage,
       ({
         rooms,
         message,
@@ -51,10 +51,10 @@ export default class RoomRepo extends BaseRepo {
           socket.join(room.toString());
         });
 
-        socket.emit(Event.JOIN_ROOM, { ok: true });
+        socket.emit(Event.JoinRoom, { ok: true });
       },
       socket,
-      Event.JOIN_ROOM
+      Event.JoinRoom
     );
   }
 
@@ -68,10 +68,10 @@ export default class RoomRepo extends BaseRepo {
           socket.leave(room.toString());
         });
 
-        socket.emit(Event.LEAVE_ROOM, { ok: true });
+        socket.emit(Event.LeaveRoom, { ok: true });
       },
       socket,
-      Event.LEAVE_ROOM
+      Event.LeaveRoom
     );
   }
 
@@ -88,13 +88,13 @@ export default class RoomRepo extends BaseRepo {
           });
           // Broadcast incoming message to all users in the room
           // Skip the sender of the message
-          socket.broadcast.to(room.toString()).emit(Event.ROOM_MESSAGE, msg);
+          socket.broadcast.to(room.toString()).emit(Event.RoomMessage, msg);
         });
 
-        socket.emit(Event.ROOM_MESSAGE, { ok: true });
+        socket.emit(Event.RoomMessage, { ok: true });
       },
       socket,
-      Event.ROOM_MESSAGE
+      Event.RoomMessage
     );
   }
 

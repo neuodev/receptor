@@ -1,6 +1,4 @@
 import { Op } from "sequelize";
-import { Socket } from "socket.io";
-import AppUOW from ".";
 import { Notification, NotificationType, User } from "../db";
 import { Event } from "../events";
 import BaseRepo from "./baseRepo";
@@ -60,10 +58,10 @@ export default class NotificationRepo extends BaseRepo {
         if (!user) throw new Error("User not foudn");
         let notifications = this.getNotifications(user.id);
 
-        socket.emit(Event.NOTIFICATION, notifications);
+        socket.emit(Event.Notification, notifications);
       },
       socket,
-      Event.NOTIFICATION
+      Event.Notification
     );
   }
 }

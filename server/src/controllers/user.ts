@@ -9,8 +9,8 @@ import { User } from "../db";
 import { Participants } from "../models/Participants";
 import { Room } from "../models/Room";
 
-// @api  POST /api/v1/user
-// @desc Register new user into the database
+// @api  POST /api/v1/user/register
+// @desc Register new user
 // @access  public
 export const createUser = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -34,7 +34,7 @@ export const createUser = asyncHandler(
   }
 );
 
-// @api  GET /api/v1/login
+// @api  GET /api/v1/user/login
 // @desc Login + Should return the auth token
 // @access  public
 export const login = asyncHandler(
@@ -60,7 +60,7 @@ export const login = asyncHandler(
     const userInfo: UserEntry = user.get();
     let secret = process.env.JWT_SECRET;
     if (secret == undefined)
-      return next(new ResponseError("Unable to gen auth token", 500));
+      return next(new ResponseError("Missing `JWT_SECRET` env. variable", 500));
 
     let token = jwt.sign(
       { id: userInfo.id },

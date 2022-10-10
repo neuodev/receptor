@@ -15,20 +15,20 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
 
-io.on(Event.CONNECT, (socket: Socket) => {
+io.on(Event.Connect, (socket: Socket) => {
   const appUOW = new AppUOW(socket);
 
-  socket.on(Event.ACCEPT_FRIEND, async (data: { id: number }) => {
+  socket.on(Event.AcceptFriend, async (data: { id: number }) => {
     await appUOW.friendRepo.handleAcceptFriendEvent(data.id);
   });
 
-  socket.on(Event.NOTIFICATION, async () => {
+  socket.on(Event.Notification, async () => {
     await appUOW.notificationRepo.handleNotificationsEvent();
   });
 });
 
 app.use(express.json());
-app.use("/api/v1", userRouter);
+app.use("/api/v1/user", userRouter);
 app.use(errorHandler);
 
 const PORT = process.env.PORT || 8080;

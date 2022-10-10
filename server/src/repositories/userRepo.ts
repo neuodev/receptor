@@ -24,17 +24,16 @@ export default class UserRepo extends BaseRepo {
 
   initListeners() {
     const { socket } = this.app;
-    socket.on(Event.LOGIN, async (data: { token: string }) => {
+    socket.on(Event.Login, async (data: { token: string }) => {
       this.app.setAuthToken(data.token);
       this.handleLogin();
     });
 
-    socket.on(Event.ADD_FRIEND, async (data: { friendId: number }) => {
+    socket.on(Event.AddFriend, async (data: { friendId: number }) => {
       this.addFriend(data.friendId);
     });
 
-    socket.on(Event.DISCONNECT, () => {
-      console.log("here!");
+    socket.on(Event.Disconnect, () => {
       this.handleDisconnect();
     });
   }
@@ -145,8 +144,8 @@ export default class UserRepo extends BaseRepo {
         if (receiver.isActive) {
           // Should send a notification
           // Every user has its own channel which we can ehco the message into
-          socket.to(receiver.id.toString()).emit(Event.NOTIFICATION, {
-            type: Event.ACCEPT_FRIEND,
+          socket.to(receiver.id.toString()).emit(Event.Notification, {
+            type: Event.AcceptFriend,
             from: sender,
           });
         }
@@ -159,13 +158,14 @@ export default class UserRepo extends BaseRepo {
           userId: receiver.id,
         });
         // Update friends table to be pending
-        socket.emit(Event.ADD_FRIEND, { ok: true });
+        socket.emit(Event.AddFriend, { ok: true });
       },
       socket,
-      Event.ADD_FRIEND
+      Event.AddFriend
     );
   }
 
+  // Todo: Should be wrapped in the `errorHandler`
   async handleLogin() {
     const socket = this.app.socket;
 
@@ -174,7 +174,7 @@ export default class UserRepo extends BaseRepo {
       if (token === null) throw new Error("Missing auth token");
       const userId = this.app.userRepo.decodeAuthToken(token);
       await this.updateUserStatus(userId, true);
-      socket.emit(Event.LOGIN, { ok: true });
+      socket.emit(Event.Login, { ok: true });
       // Add user to a private room so we can send notifications and other stuff
       socket.join(userId.toString());
     } catch (error) {
@@ -186,7 +186,7 @@ export default class UserRepo extends BaseRepo {
       } else if (typeof error === "string") {
         msg = error;
       }
-      socket.emit(Event.LOGIN, { error: msg });
+      socket.emit(Event.Login, { error: msg });
     }
   }
 
@@ -198,7 +198,7 @@ export default class UserRepo extends BaseRepo {
         await this.updateUserStatus(userId, false);
       },
       socket,
-      Event.DISCONNECT
+      Event.Disconnect
     );
   }
 }

@@ -5,7 +5,7 @@ import { createUser, login } from "../controllers/user";
 export const userRouter = express.Router();
 
 userRouter
-  .route("/user")
+  .route("/register")
   .post(
     body("username").isString(),
     body("password").isLength({ min: 6 }),

@@ -65,7 +65,7 @@ export default class FriendRepo extends BaseRepo {
       async () => {
         let userId: number = this.app.decodeAuthToken();
         const [user, request] = await Promise.all([
-          this.app.userRepo.getUsersByIds([userId]),
+          this.app.userRepo.getUsersById([userId]),
           Friend.findOne({
             where: {
               friendId: userId,

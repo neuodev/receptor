@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import asyncHandler from "express-async-handler";
 import { validationResult } from "express-validator";
 import { Op, UniqueConstraintError } from "sequelize";
-import { UserEntry } from "../repositories/userRepo";
+import { IUser } from "../repositories/userRepo";
 import ResponseError from "../utils/error";
 import jwt, { Secret } from "jsonwebtoken";
 import { User } from "../db";
@@ -57,7 +57,7 @@ export const login = asyncHandler(
     if (!user)
       return next(new ResponseError("Incorrect username or password", 400));
 
-    const userInfo: UserEntry = user.get();
+    const userInfo: IUser = user.get();
     let secret = process.env.JWT_SECRET;
     if (secret == undefined)
       return next(new ResponseError("Missing `JWT_SECRET` env. variable", 500));

@@ -6,16 +6,18 @@ import BaseRepo from "./baseRepo";
 import AppUOW from ".";
 import { FriendshipStatus } from "../models/Friend";
 
-export type UserEntry = {
+export interface IUser {
   username: string;
   password: string;
   isActive: boolean;
   id: number;
-};
+}
+
 export type AddFriendMsg = {
   token: string | null;
   friendId: number;
 };
+
 export default class UserRepo extends BaseRepo {
   constructor(app: AppUOW) {
     super(app);
@@ -36,6 +38,8 @@ export default class UserRepo extends BaseRepo {
     socket.on(Event.Disconnect, () => {
       this.handleDisconnect();
     });
+
+    socket.on(Event.GetUser, this.handleGetUser);
   }
 
   async registerUser(data: {
@@ -51,7 +55,7 @@ export default class UserRepo extends BaseRepo {
     return await User.findAll({});
   }
 
-  async getUsersByIds(ids: Array<number>): Promise<Array<UserEntry>> {
+  async getUsersById(ids: Array<number>): Promise<Array<IUser>> {
     const match = ids.map((id) => ({ id }));
     const users = await User.findAll({
       where: {
@@ -67,12 +71,12 @@ export default class UserRepo extends BaseRepo {
     await User.truncate();
   }
 
-  async getUserById(id: number): Promise<UserEntry | null> {
+  async getUserById(id: number): Promise<IUser | null> {
     const user = await User.findByPk(id);
     return user?.get();
   }
 
-  async getUser(username: string, password: string): Promise<UserEntry | null> {
+  async getUser(username: string, password: string): Promise<IUser | null> {
     let user = await User.findOne({
       where: {
         username,
@@ -81,9 +85,7 @@ export default class UserRepo extends BaseRepo {
       attributes: { exclude: ["password"] },
     });
 
-    return user === null
-      ? null
-      : (JSON.parse(JSON.stringify(user)) as UserEntry);
+    return user === null ? null : (JSON.parse(JSON.stringify(user)) as IUser);
   }
 
   async updateUserStatus(id: number, isActive: boolean) {
@@ -108,7 +110,7 @@ export default class UserRepo extends BaseRepo {
         if (userId === friendId)
           throw new Error("User can't add himself as friend");
         // Check if the user exist
-        const users = await this.getUsersByIds([userId, friendId]);
+        const users = await this.getUsersById([userId, friendId]);
         const sender = users.find((user) => user.id === userId);
         const receiver = users.find((user) => user.id === friendId);
         if (!sender) throw new Error("User doesn't exist");
@@ -201,4 +203,17 @@ export default class UserRepo extends BaseRepo {
       Event.Disconnect
     );
   }
+
+  handleGetUser = async () => {
+    const { socket } = this.app;
+    await this.errorHandler(
+      async () => {
+        const userId = this.app.decodeAuthToken();
+        let user = await this.getUserById(userId);
+        socket.emit(Event.GetUser, user);
+      },
+      socket,
+      Event.GetUser
+    );
+  };
 }

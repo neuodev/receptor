@@ -1,14 +1,15 @@
 import { Op } from "sequelize";
-import AppUOW from ".";
 import { Notification, NotificationType } from "../db";
+import AppUOW from ".";
 import { Event } from "../events";
 import BaseRepo from "./baseRepo";
-import { UserEntry } from "./userRepo";
+import { IUser } from "./userRepo";
 
 export type INotification = {
   content: string;
   type: NotificationType;
-  UserId: number | UserEntry;
+  // Todo: User vs UserId
+  user: number | IUser;
   isSeen: boolean;
 };
 

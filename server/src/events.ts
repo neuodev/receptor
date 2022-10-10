@@ -5,6 +5,7 @@ export enum Event {
   AcceptFriend = "friend/accept",
   Notification = "notification",
   Login = "user/login",
+  GetUser = "user/get",
   JoinRoom = "room/join",
   LeaveRoom = "room/leave",
   RoomMessage = "room/msg",

@@ -2,17 +2,16 @@ import express from "express";
 import http from "http";
 import { Server, Socket } from "socket.io";
 import dotenv from "dotenv";
-import "colors";
 import { Event } from "./events";
 import { userRouter } from "./routes/user";
 import { errorHandler } from "./middleware/errorHandler";
-import "./seed";
 import AppUOW from "./repositories";
+import "./seed";
+import "colors";
 
 dotenv.config();
 
 const app = express();
-
 const server = http.createServer(app);
 const io = new Server(server);
 

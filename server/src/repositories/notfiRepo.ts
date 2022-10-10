@@ -67,5 +67,3 @@ export default class NotificationRepo extends BaseRepo {
     );
   }
 }
-
-// export const notificationRepo = new NotificationRepo();

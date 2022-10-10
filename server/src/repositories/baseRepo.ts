@@ -14,9 +14,8 @@ export default class BaseRepo {
     let secret = process.env.JWT_SECRET;
     if (!secret) throw new Error("JWT_SECRET is missing");
     if (!token) throw new Error("Missing auth token");
-    let result = jwt.verify(token, secret);
-
-    return (result as { id: number }).id as number;
+    let result = jwt.verify(token, secret) as { id: number };
+    return result.id;
   }
 
   async errorHandler<T>(func: Function, socket: Socket, event: Event) {

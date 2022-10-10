@@ -99,5 +99,3 @@ export default class FriendRepo extends BaseRepo {
     );
   }
 }
-
-// export const friendRepo = new FriendRepo();

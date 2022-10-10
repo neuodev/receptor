@@ -1,4 +1,3 @@
-import { Socket } from "socket.io";
 import AppUOW from ".";
 import { Event } from "../events";
 import { MessageType } from "../models/message";

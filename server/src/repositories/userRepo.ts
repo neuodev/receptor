@@ -1,7 +1,6 @@
 import { NotificationType, User } from "../db";
 import { JsonWebTokenError } from "jsonwebtoken";
 import { Op } from "sequelize";
-
 import { Event } from "../events";
 import BaseRepo from "./baseRepo";
 import AppUOW from ".";

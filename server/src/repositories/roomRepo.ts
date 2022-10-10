@@ -37,59 +37,47 @@ export default class RoomRepo extends BaseRepo {
 
   async joinRoom(rooms: Array<number>) {
     const { socket } = this.app;
-    await this.errorHandler(
-      async () => {
-        //Todo: validate ownership of all rooms
-        this.app.decodeAuthToken();
-        rooms.forEach((room) => {
-          socket.join(room.toString());
-        });
+    await this.errorHandler(async () => {
+      //Todo: validate ownership of all rooms
+      this.app.decodeAuthToken();
+      rooms.forEach((room) => {
+        socket.join(room.toString());
+      });
 
-        socket.emit(Event.JoinRoom, { ok: true });
-      },
-      socket,
-      Event.JoinRoom
-    );
+      socket.emit(Event.JoinRoom, { ok: true });
+    }, Event.JoinRoom);
   }
 
   async leaveRoom(rooms: Array<number>) {
     const { socket } = this.app;
-    await this.errorHandler(
-      async () => {
-        //Todo: validate ownership of all rooms
-        this.app.decodeAuthToken();
-        rooms.forEach((room) => {
-          socket.leave(room.toString());
-        });
+    await this.errorHandler(async () => {
+      //Todo: validate ownership of all rooms
+      this.app.decodeAuthToken();
+      rooms.forEach((room) => {
+        socket.leave(room.toString());
+      });
 
-        socket.emit(Event.LeaveRoom, { ok: true });
-      },
-      socket,
-      Event.LeaveRoom
-    );
+      socket.emit(Event.LeaveRoom, { ok: true });
+    }, Event.LeaveRoom);
   }
 
   async sendMessage(rooms: Array<number>, msg: RoomMessage) {
     const { socket } = this.app;
-    await this.errorHandler(
-      async () => {
-        rooms.forEach(async (room) => {
-          await this.app.messageRepo.newMessage({
-            ...msg,
-            roomId: room,
-            sender: this.app.decodeAuthToken(),
-            read: false,
-          });
-          // Broadcast incoming message to all users in the room
-          // Skip the sender of the message
-          socket.broadcast.to(room.toString()).emit(Event.RoomMessage, msg);
+    await this.errorHandler(async () => {
+      rooms.forEach(async (room) => {
+        await this.app.messageRepo.newMessage({
+          ...msg,
+          roomId: room,
+          sender: this.app.decodeAuthToken(),
+          read: false,
         });
+        // Broadcast incoming message to all users in the room
+        // Skip the sender of the message
+        socket.broadcast.to(room.toString()).emit(Event.RoomMessage, msg);
+      });
 
-        socket.emit(Event.RoomMessage, { ok: true });
-      },
-      socket,
-      Event.RoomMessage
-    );
+      socket.emit(Event.RoomMessage, { ok: true });
+    }, Event.RoomMessage);
   }
 
   async newRoom(userIds: Array<number>, type: RoomType, name?: string) {
@@ -97,9 +85,7 @@ export default class RoomRepo extends BaseRepo {
       name,
       type,
     });
-
     const roomId = room.getDataValue("id") as number;
-
     await this.app.participants.newParticipants(userIds, roomId);
   }
 }

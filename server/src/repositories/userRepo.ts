@@ -103,75 +103,69 @@ export default class UserRepo extends BaseRepo {
 
   async addFriend(friendId: number) {
     const { socket } = this.app;
-    await this.errorHandler(
-      async () => {
-        let userId = this.app.decodeAuthToken();
-        if (!friendId) throw new Error("Firend Id is missing");
-        if (userId === friendId)
-          throw new Error("User can't add himself as friend");
-        // Check if the user exist
-        const users = await this.getUsersById([userId, friendId]);
-        const sender = users.find((user) => user.id === userId);
-        const receiver = users.find((user) => user.id === friendId);
-        if (!sender) throw new Error("User doesn't exist");
-        if (!receiver) throw new Error("Receiver no longer exist");
+    await this.errorHandler(async () => {
+      let userId = this.app.decodeAuthToken();
+      if (!friendId) throw new Error("Firend Id is missing");
+      if (userId === friendId)
+        throw new Error("User can't add himself as friend");
+      // Check if the user exist
+      const users = await this.getUsersById([userId, friendId]);
+      const sender = users.find((user) => user.id === userId);
+      const receiver = users.find((user) => user.id === friendId);
+      if (!sender) throw new Error("User doesn't exist");
+      if (!receiver) throw new Error("Receiver no longer exist");
 
-        const friendship = await this.app.friendRepo.getFriendshipRecord(
+      const friendship = await this.app.friendRepo.getFriendshipRecord(
+        sender.id,
+        receiver.id
+      );
+
+      if (friendship)
+        throw new Error(
+          friendship.status === FriendshipStatus.PENDING
+            ? "Request already sent"
+            : friendship.status === FriendshipStatus.FRIENDS
+            ? "Already friends"
+            : `You got blocked by ${receiver.username}`
+        );
+
+      await this.app.friendRepo.addFriend(
+        sender.id,
+        receiver.id,
+        FriendshipStatus.PENDING
+      );
+
+      const isSent =
+        await this.app.notificationRepo.isFriendshipRequestAlreadySent(
           sender.id,
           receiver.id
         );
-
-        if (friendship)
-          throw new Error(
-            friendship.status === FriendshipStatus.PENDING
-              ? "Request already sent"
-              : friendship.status === FriendshipStatus.FRIENDS
-              ? "Already friends"
-              : `You got blocked by ${receiver.username}`
-          );
-
-        await this.app.friendRepo.addFriend(
-          sender.id,
-          receiver.id,
-          FriendshipStatus.PENDING
-        );
-
-        const isSent =
-          await this.app.notificationRepo.isFriendshipRequestAlreadySent(
-            sender.id,
-            receiver.id
-          );
-        if (isSent != null) throw new Error("Notification already sent");
-        // If the receiver active we should send him a notification!
-        if (receiver.isActive) {
-          // Should send a notification
-          // Every user has its own channel which we can ehco the message into
-          socket.to(receiver.id.toString()).emit(Event.Notification, {
-            type: Event.AcceptFriend,
-            from: sender,
-          });
-        }
-        // Store a copy of the request into the notifications table
-        await this.app.notificationRepo.pushNotification({
-          content: {
-            userId: sender.id,
-          },
-          type: NotificationType.FRIENDSHIP_REQUEST,
-          userId: receiver.id,
+      if (isSent != null) throw new Error("Notification already sent");
+      // If the receiver active we should send him a notification!
+      if (receiver.isActive) {
+        // Should send a notification
+        // Every user has its own channel which we can ehco the message into
+        socket.to(receiver.id.toString()).emit(Event.Notification, {
+          type: Event.AcceptFriend,
+          from: sender,
         });
-        // Update friends table to be pending
-        socket.emit(Event.AddFriend, { ok: true });
-      },
-      socket,
-      Event.AddFriend
-    );
+      }
+      // Store a copy of the request into the notifications table
+      await this.app.notificationRepo.pushNotification({
+        content: {
+          userId: sender.id,
+        },
+        type: NotificationType.FRIENDSHIP_REQUEST,
+        userId: receiver.id,
+      });
+      // Update friends table to be pending
+      socket.emit(Event.AddFriend, { ok: true });
+    }, Event.AddFriend);
   }
 
-  // Todo: Should be wrapped in the `errorHandler`
   async handleLogin() {
     const socket = this.app.socket;
-
-    try {
+    this.errorHandler(async () => {
       const token = this.app.getAuthToken();
       if (token === null) throw new Error("Missing auth token");
       const userId = this.app.userRepo.decodeAuthToken(token);
@@ -179,41 +173,22 @@ export default class UserRepo extends BaseRepo {
       socket.emit(Event.Login, { ok: true });
       // Add user to a private room so we can send notifications and other stuff
       socket.join(userId.toString());
-    } catch (error) {
-      let msg = "Unexpected error";
-      if (error instanceof JsonWebTokenError) {
-        msg = "Invalid auth token";
-      } else if (error instanceof Error) {
-        msg = error.message;
-      } else if (typeof error === "string") {
-        msg = error;
-      }
-      socket.emit(Event.Login, { error: msg });
-    }
+    }, Event.Login);
   }
 
   async handleDisconnect() {
-    const { socket } = this.app;
-    await this.errorHandler(
-      async () => {
-        const userId = this.app.decodeAuthToken();
-        await this.updateUserStatus(userId, false);
-      },
-      socket,
-      Event.Disconnect
-    );
+    await this.errorHandler(async () => {
+      const userId = this.app.decodeAuthToken();
+      await this.updateUserStatus(userId, false);
+    }, Event.Disconnect);
   }
 
   handleGetUser = async () => {
     const { socket } = this.app;
-    await this.errorHandler(
-      async () => {
-        const userId = this.app.decodeAuthToken();
-        let user = await this.getUserById(userId);
-        socket.emit(Event.GetUser, user);
-      },
-      socket,
-      Event.GetUser
-    );
+    await this.errorHandler(async () => {
+      const userId = this.app.decodeAuthToken();
+      let user = await this.getUserById(userId);
+      socket.emit(Event.GetUser, user);
+    }, Event.GetUser);
   };
 }

@@ -18,7 +18,7 @@ export default class BaseRepo {
     return result.id;
   }
 
-  async errorHandler<T>(func: Function, socket: Socket, event: Event) {
+  async errorHandler<T>(func: Function, event: Event) {
     try {
       await func();
     } catch (error) {
@@ -31,7 +31,7 @@ export default class BaseRepo {
         msg = error;
       }
 
-      socket.emit(event, {
+      this.app.socket.emit(event, {
         error: msg,
       });
     }

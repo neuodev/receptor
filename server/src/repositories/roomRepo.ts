@@ -4,7 +4,7 @@ import { MessageType } from "../models/message";
 import { Room, RoomType } from "../models/Room";
 import BaseRepo from "./baseRepo";
 
-type SendMessageParams = {
+type RoomMessage = {
   type: MessageType;
   body: string;
   receiver: number;
@@ -29,13 +29,7 @@ export default class RoomRepo extends BaseRepo {
 
     socket.on(
       Event.RoomMessage,
-      ({
-        rooms,
-        message,
-      }: {
-        rooms: Array<number>;
-        message: SendMessageParams;
-      }) => {
+      ({ rooms, message }: { rooms: Array<number>; message: RoomMessage }) => {
         this.sendMessage(rooms, message);
       }
     );
@@ -75,7 +69,7 @@ export default class RoomRepo extends BaseRepo {
     );
   }
 
-  async sendMessage(rooms: Array<number>, msg: SendMessageParams) {
+  async sendMessage(rooms: Array<number>, msg: RoomMessage) {
     const { socket } = this.app;
     await this.errorHandler(
       async () => {

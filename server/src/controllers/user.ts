@@ -78,11 +78,11 @@ export const login = asyncHandler(
       attributes: ["roomId"],
     });
 
-    const roomsId = participants.map((p) => p.getDataValue("roomId"));
+    const roomIds = participants.map((p) => p.getDataValue("roomId"));
     const friends = await Participants.findAll({
       where: {
         roomId: {
-          [Op.or]: roomsId,
+          [Op.or]: roomIds,
         },
         userId: {
           [Op.not]: userInfo.id,
@@ -103,7 +103,7 @@ export const login = asyncHandler(
     res.status(200).json({
       user,
       token,
-      roomsId,
+      roomIds,
       friends: friends.map((f) => f.get()),
     });
   }

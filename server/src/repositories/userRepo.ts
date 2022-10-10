@@ -106,7 +106,7 @@ export default class UserRepo extends BaseRepo {
         let userId = this.app.decodeAuthToken();
         if (!friendId) throw new Error("Firend Id is missing");
         if (userId === friendId)
-          throw new Error("User can't it himself as friend");
+          throw new Error("User can't add himself as friend");
         // Check if the user exist
         const users = await this.getUsersByIds([userId, friendId]);
         const sender = users.find((user) => user.id === userId);

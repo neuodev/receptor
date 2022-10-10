@@ -4,27 +4,6 @@
    <img src="https://user-images.githubusercontent.com/72753578/184505323-7f76a321-28cc-480a-ac9a-ec72a3fd91de.gif" alt="Logo" title="Receptor"/>
 </p>
 
-## Todo
-
-1. Accept freind request validation
-2. Friends table should have a unique compination of `userId` and `frinedId`
-
-3. Update user status on socket disconnection to be `isActive=false`
-4. Reduce request size for login
-   Should only include important data like the **username + id** only
-5. Update the notification events to be more robust
-6. Update the `Frinds` table
-7. Add groups tables
-8. Add `blockUser` event
-9. Add endpoint to create groups
-   - Create group with users
-   - Add group
-   - Delete group by owner
-   - Leave group
-   - Update group name
-10. **Stander message format**
-11. **Save messages into DB**
-
 ## Events
 
 ```ts

@@ -21,10 +21,6 @@ io.on(Event.Connect, (socket: Socket) => {
   socket.on(Event.AcceptFriend, async (data: { id: number }) => {
     await appUOW.friendRepo.handleAcceptFriendEvent(data.id);
   });
-
-  socket.on(Event.Notification, async () => {
-    await appUOW.notificationRepo.handleNotificationsEvent();
-  });
 });
 
 app.use(express.json());

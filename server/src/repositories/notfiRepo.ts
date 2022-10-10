@@ -1,10 +1,11 @@
 import { Op } from "sequelize";
-import { Notification, NotificationType, User } from "../db";
+import AppUOW from ".";
+import { Notification, NotificationType } from "../db";
 import { Event } from "../events";
 import BaseRepo from "./baseRepo";
 import { UserEntry } from "./userRepo";
 
-export type NotificationEntry = {
+export type INotification = {
   content: string;
   type: NotificationType;
   UserId: number | UserEntry;
@@ -12,6 +13,18 @@ export type NotificationEntry = {
 };
 
 export default class NotificationRepo extends BaseRepo {
+  constructor(app: AppUOW) {
+    super(app);
+    this.initListeners();
+  }
+
+  initListeners() {
+    const { socket } = this.app;
+    socket.on(Event.Notification, async () => {
+      this.handleNotificationsEvent();
+    });
+  }
+
   async pushNotification(n: {
     content: {
       userId: number;
@@ -39,7 +52,7 @@ export default class NotificationRepo extends BaseRepo {
     return notif?.get();
   }
 
-  async getNotifications(userId: number): Promise<NotificationEntry[]> {
+  async getNotifications(userId: number): Promise<INotification[]> {
     let all = await Notification.findAll({
       where: {
         UserId: userId,

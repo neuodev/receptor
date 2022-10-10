@@ -1,7 +1,8 @@
 import { Sequelize, DataTypes } from "sequelize";
 import { flush, seedDB } from "./seed";
 
-export const DB_NAME = process.env.DB_NAME || "receptor";
+const DB_NAME = process.env.DB_NAME || "receptor";
+
 const sequelize = new Sequelize(
   process.env.PSQL_URI ||
     `postgres://postgres:changeme@localhost:5432/${DB_NAME}`

@@ -1,5 +1,5 @@
 import React from "react";
-import { Stack, Box, Tooltip, Typography, IconButton } from "@mui/material";
+import { Stack, Tooltip, Typography, IconButton } from "@mui/material";
 import Link from "../common/Link";
 import { ROUTES } from "../../constants/routes";
 import DriveFileRenameOutlineIcon from "@mui/icons-material/DriveFileRenameOutline";
@@ -7,7 +7,8 @@ import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
 import PeopleOutlineIcon from "@mui/icons-material/PeopleOutline";
 import BackupTableIcon from "@mui/icons-material/BackupTable";
 import CableIcon from "@mui/icons-material/Cable";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
+import { useIsActive } from "../../hooks/ui/isActive";
 
 const TABS = [
   {
@@ -34,13 +35,15 @@ const TABS = [
 
 const Sidebar = () => {
   const navigate = useNavigate();
+  const isActive = useIsActive();
+
   return (
     <Stack sx={{ width: "100px", bgcolor: "common.white", height: "100%" }}>
-      <Box>
+      <Stack alignItems="center" mt="20px">
         <Link to={ROUTES.ROOT}>
-          <CableIcon />
+          <CableIcon fontSize="large" />
         </Link>
-      </Box>
+      </Stack>
 
       <Stack
         sx={{ height: "100%" }}
@@ -55,7 +58,10 @@ const Sidebar = () => {
             title={<Typography>{title}</Typography>}
           >
             <IconButton onClick={() => navigate(route)} sx={{ mb: "30px" }}>
-              <Icon fontSize="medium" color="action" />
+              <Icon
+                fontSize="medium"
+                color={isActive(route) ? "primary" : "action"}
+              />
             </IconButton>
           </Tooltip>
         ))}

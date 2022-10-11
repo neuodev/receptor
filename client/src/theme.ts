@@ -50,5 +50,16 @@ export const theme = createTheme({
         },
       },
     },
+
+    MuiTextField: {
+      styleOverrides: {
+        root: {
+          input: {
+            backgroundColor: "#ebf1f7",
+            borderRadius: "8px",
+          },
+        },
+      },
+    },
   },
 });

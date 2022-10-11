@@ -18,7 +18,7 @@ const SignInForm = () => {
       <Stack
         direction="column"
         sx={{
-          bgcolor: "white",
+          bgcolor: "common.white",
           boxShadow: 2,
           borderRadius: "0.6rem",
           padding: "1.5rem 1.5rem",

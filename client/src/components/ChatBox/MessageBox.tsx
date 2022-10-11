@@ -1,5 +1,5 @@
 import React from "react";
-import { Stack, Box, Typography, IconButton, Input } from "@mui/material";
+import { Stack, IconButton, Input } from "@mui/material";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
 import SendIcon from "@mui/icons-material/Send";
 import TagFacesIcon from "@mui/icons-material/TagFaces";

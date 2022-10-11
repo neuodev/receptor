@@ -2,6 +2,7 @@ import React from "react";
 import { Stack, Box } from "@mui/material";
 import Header from "./Header";
 import MessageBox from "./MessageBox";
+import Messages from "./Messages";
 
 const ChatBox = () => {
   return (
@@ -15,6 +16,7 @@ const ChatBox = () => {
         }}
       >
         <Header />
+        <Messages />
         <Box sx={{ mt: "auto" }}>
           <MessageBox />
         </Box>

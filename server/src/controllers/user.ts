@@ -34,8 +34,8 @@ export const createUser = asyncHandler(
   }
 );
 
-// @api  GET /api/v1/user/login
-// @desc Login + Should return the auth token
+// @api  POST /api/v1/user/login
+// @desc Login and return the auth token
 // @access  public
 export const login = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -104,7 +104,10 @@ export const login = asyncHandler(
       user,
       token,
       roomIds,
-      friends: friends.map((f) => f.get()),
+      friends: friends.map((f) => ({
+        roomId: f.getDataValue("roomId"),
+        user: f.getDataValue("User"),
+      })),
     });
   }
 );

@@ -14,7 +14,7 @@ userRouter
 
 userRouter
   .route("/login")
-  .get(
+  .post(
     body("username").isString(),
     body("password").isLength({ min: 6 }),
     login

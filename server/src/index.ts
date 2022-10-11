@@ -6,6 +6,7 @@ import { Event } from "./events";
 import { userRouter } from "./routes/user";
 import { errorHandler } from "./middleware/errorHandler";
 import AppUOW from "./repositories";
+import cors from "cors";
 import "./seed";
 import "colors";
 
@@ -23,6 +24,7 @@ io.on(Event.Connect, (socket: Socket) => {
   });
 });
 
+app.use(cors());
 app.use(express.json());
 app.use("/api/v1/user", userRouter);
 app.use(errorHandler);

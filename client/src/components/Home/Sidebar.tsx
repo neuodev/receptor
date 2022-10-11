@@ -1,46 +1,65 @@
 import React from "react";
-import { Stack, Box } from "@mui/material";
-import Logo from "../common/Logo";
-import { theme } from "../../theme";
+import { Stack, Box, Tooltip, Typography, IconButton } from "@mui/material";
 import Link from "../common/Link";
 import { ROUTES } from "../../constants/routes";
 import DriveFileRenameOutlineIcon from "@mui/icons-material/DriveFileRenameOutline";
 import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
 import PeopleOutlineIcon from "@mui/icons-material/PeopleOutline";
 import BackupTableIcon from "@mui/icons-material/BackupTable";
-import PersonAddIcon from "@mui/icons-material/PersonAdd";
+import CableIcon from "@mui/icons-material/Cable";
+import { useNavigate } from "react-router-dom";
 
 const TABS = [
   {
     title: "New group",
-    icon: <DriveFileRenameOutlineIcon />,
+    Icon: DriveFileRenameOutlineIcon,
     route: ROUTES.CREATE_GROUP,
   },
   {
     title: "Friends",
-    icon: <PeopleOutlineIcon />,
+    Icon: PeopleOutlineIcon,
     route: ROUTES.FRIENDS,
   },
   {
     title: "Chat",
-    icon: <ChatBubbleOutlineIcon />,
+    Icon: ChatBubbleOutlineIcon,
     route: ROUTES.CHATS_LIST,
   },
   {
     title: "Other pages",
-    icon: <BackupTableIcon />,
+    Icon: BackupTableIcon,
     route: ROUTES.PAGES,
   },
 ];
 
 const Sidebar = () => {
+  const navigate = useNavigate();
   return (
     <Stack sx={{ width: "100px", bgcolor: "common.white", height: "100%" }}>
       <Box>
         <Link to={ROUTES.ROOT}>
-          <Logo width="50px" height="50px" fill={theme.palette.primary.main} />
+          <CableIcon />
         </Link>
       </Box>
+
+      <Stack
+        sx={{ height: "100%" }}
+        alignItems="center"
+        justifyContent="center"
+      >
+        {TABS.map(({ Icon, title, route }) => (
+          <Tooltip
+            arrow
+            placement="right"
+            key={title}
+            title={<Typography>{title}</Typography>}
+          >
+            <IconButton onClick={() => navigate(route)} sx={{ mb: "30px" }}>
+              <Icon fontSize="medium" color="action" />
+            </IconButton>
+          </Tooltip>
+        ))}
+      </Stack>
     </Stack>
   );
 };

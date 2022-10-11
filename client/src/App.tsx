@@ -11,6 +11,7 @@ import HomePage from "./pages/HomePage";
 import ChatsList from "./components/Home/ChatsList";
 import CreateChat from "./components/Home/CreateChat";
 import Pages from "./components/Home/Pages";
+import Friends from "./components/Home/Friends";
 
 const router = createBrowserRouter([
   {
@@ -36,7 +37,7 @@ const router = createBrowserRouter([
           },
           {
             path: ROUTES.FRIENDS,
-            element: <Pages />,
+            element: <Friends />,
           },
         ],
       },

@@ -12,6 +12,8 @@ import ChatsList from "./components/Home/ChatsList";
 import CreateChat from "./components/Home/CreateChat";
 import Pages from "./components/Home/Pages";
 import Friends from "./components/Home/Friends";
+import { Provider } from "react-redux";
+import { store } from "./store";
 
 const router = createBrowserRouter([
   {
@@ -55,9 +57,11 @@ const router = createBrowserRouter([
 
 function App() {
   return (
-    <ThemeProvider theme={theme}>
-      <RouterProvider router={router} />
-    </ThemeProvider>
+    <Provider store={store}>
+      <ThemeProvider theme={theme}>
+        <RouterProvider router={router} />
+      </ThemeProvider>
+    </Provider>
   );
 }
 

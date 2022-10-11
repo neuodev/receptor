@@ -1,17 +1,51 @@
-import React from "react";
-import { Typography, TextField, Button, Stack } from "@mui/material";
+import React, { useState } from "react";
+import {
+  Typography,
+  TextField,
+  Button,
+  Stack,
+  FormControl,
+} from "@mui/material";
 import Link from "../common/Link";
 import { ROUTES } from "../../constants/routes";
+import { useUserHooks } from "../../state/user/hooks";
 
 const SignInForm = () => {
+  const { signIn } = useUserHooks();
+  const [state, setState] = useState<{
+    username: string;
+    password: string;
+  }>({
+    username: "",
+    password: "",
+  });
+
+  type FormField = keyof typeof state;
+
   const formFields = [
     {
       label: "Username",
+      name: "username",
     },
     {
       label: "Password",
+      name: "password",
     },
   ];
+
+  const updateState = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const field = e.target.name as FormField;
+    const value = e.target.value;
+    setState({ ...state, [field]: value });
+  };
+
+  const signInHandler = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const { username, password } = state;
+    console.log(state);
+    if (!username || !password) return;
+    signIn(username, password);
+  };
 
   return (
     <Stack direction="column" textAlign="center">
@@ -30,23 +64,29 @@ const SignInForm = () => {
           Login to your account
         </Typography>
 
-        <Stack direction="column">
-          {formFields.map((field) => (
-            <TextField
-              label={field.label}
-              key={field.label}
-              sx={{ mb: "20px" }}
-            />
-          ))}
-          <Button
-            variant="contained"
-            color="primary"
-            size="large"
-            sx={{ mb: "4px" }}
-          >
-            Sign In
-          </Button>
-        </Stack>
+        <form onSubmit={signInHandler}>
+          <Stack direction="column">
+            {formFields.map((field) => (
+              <TextField
+                label={field.label}
+                key={field.label}
+                sx={{ mb: "20px" }}
+                name={field.name}
+                onChange={updateState}
+              />
+            ))}
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              size="large"
+              sx={{ mb: "4px" }}
+              disabled={!state.username || !state.password}
+            >
+              Sign In
+            </Button>
+          </Stack>
+        </form>
       </Stack>
       <Typography color="grey.500" mt="20px">
         Don't have an account yet? <Link to={ROUTES.REGISTER}>Sign up</Link>

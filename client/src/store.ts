@@ -1,9 +1,12 @@
 import { configureStore } from "@reduxjs/toolkit";
 import thunk from "redux-thunk";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
+import { userReducer } from "./state/user/reducer";
 
 export const store = configureStore({
-  reducer: {},
+  reducer: {
+    user: userReducer,
+  },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(thunk),
   preloadedState: {},
   devTools: true,

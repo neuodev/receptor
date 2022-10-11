@@ -35,6 +35,12 @@ export const theme = createTheme({
   shape: {
     borderRadius: 9.6,
   },
+  typography: {
+    body1: {
+      fontSize: "0.9375rem",
+      lineHeight: 1.6,
+    },
+  },
   components: {
     MuiButton: {
       styleOverrides: {

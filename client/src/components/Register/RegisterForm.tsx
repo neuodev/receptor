@@ -1,15 +1,24 @@
 import React from "react";
 import { Typography, TextField, Button, Stack } from "@mui/material";
-import Link from "../common/Link";
 import { ROUTES } from "../../constants/routes";
+import Link from "../common/Link";
 
-const SignInForm = () => {
+const RegisterForm = () => {
   const formFields = [
     {
-      label: "Username",
+      label: "Name",
+      type: "text",
+      name: "name",
+    },
+    {
+      label: "Email",
+      type: "text",
+      name: "email",
     },
     {
       label: "Password",
+      type: "password",
+      name: "password",
     },
   ];
 
@@ -25,34 +34,37 @@ const SignInForm = () => {
           minWidth: "350px",
         }}
       >
-        <Typography variant="h6">Sign In</Typography>
-        <Typography variant="overline" color="grey.700" mb="8px">
-          Login to your account
+        <Typography variant="h6">Sign Up</Typography>
+        <Typography textTransform="none" variant="overline" color="grey.700">
+          Follow the easy steps
         </Typography>
 
-        <Stack direction="column">
+        <Stack direction="column" mt="16px">
           {formFields.map((field) => (
             <TextField
               label={field.label}
               key={field.label}
               sx={{ mb: "20px" }}
+              type={field.type}
+              name={field.name}
             />
           ))}
+
           <Button
             variant="contained"
             color="primary"
             size="large"
             sx={{ mb: "4px" }}
           >
-            Sign In
+            Register
           </Button>
         </Stack>
       </Stack>
       <Typography color="grey.500" mt="20px">
-        Don't have an account yet? <Link to={ROUTES.REGISTER}>Sign up</Link>
+        Already have an account? <Link to={ROUTES.SIGN_IN}>Sign in</Link>
       </Typography>
     </Stack>
   );
 };
 
-export default SignInForm;
+export default RegisterForm;

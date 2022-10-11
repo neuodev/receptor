@@ -6,6 +6,7 @@ import SignInPage from "./pages/SignInPage";
 import Root from "./components/Layout/Root";
 import { ThemeProvider } from "@mui/material";
 import { theme } from "./theme";
+import RegisterPage from "./pages/RegisterPage";
 
 const router = createBrowserRouter([
   {
@@ -16,6 +17,10 @@ const router = createBrowserRouter([
       {
         path: ROUTES.SIGN_IN,
         element: <SignInPage />,
+      },
+      {
+        path: ROUTES.REGISTER,
+        element: <RegisterPage />,
       },
     ],
   },

@@ -1,25 +1,31 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { ROUTES } from "./constants/routes";
+import ErrorPage from "./pages/ErrorPage";
+import SignInPage from "./pages/SignInPage";
+import Root from "./components/Layout/Root";
+import { ThemeProvider } from "@mui/material";
+import { theme } from "./theme";
+
+const router = createBrowserRouter([
+  {
+    path: ROUTES.ROOT,
+    element: <Root />,
+    errorElement: <ErrorPage />,
+    children: [
+      {
+        path: ROUTES.SIGN_IN,
+        element: <SignInPage />,
+      },
+    ],
+  },
+]);
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <ThemeProvider theme={theme}>
+      <RouterProvider router={router} />
+    </ThemeProvider>
   );
 }
 

@@ -10,7 +10,7 @@ const SignInForm = () => {
           bgcolor: "white",
           boxShadow: 2,
           borderRadius: "0.6rem",
-          padding: "1.25rem 1.5rem",
+          padding: "1.5rem 1.5rem",
           minWidth: "350px",
         }}
       >
@@ -26,7 +26,7 @@ const SignInForm = () => {
             variant="contained"
             color="primary"
             size="large"
-            sx={{ mt: "20px" }}
+            sx={{ mt: "20px", mb: "4px" }}
           >
             Sign In
           </Button>

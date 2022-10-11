@@ -2,7 +2,7 @@ import React from "react";
 import { Stack, Box } from "@mui/material";
 import Sidebar from "../components/Home/Sidebar";
 import { Outlet } from "react-router-dom";
-import ChatBox from "../components/Home/ChatBox";
+import ChatBox from "../components/ChatBox";
 
 const HomePage = () => {
   return (

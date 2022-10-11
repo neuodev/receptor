@@ -24,13 +24,13 @@ const Message: React.FC<{
       >
         <Typography
           sx={{
-            bgcolor: "primary.main",
+            bgcolor: fromUser ? "primary.main" : "grey.300",
             p: "16px 20px",
             borderRadius: "0.6rem",
             mb: "4px",
           }}
           variant="body1"
-          color="common.white"
+          color={fromUser ? "common.white" : "grey.600"}
         >
           {message.message}
         </Typography>

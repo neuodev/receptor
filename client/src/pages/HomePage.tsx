@@ -12,6 +12,7 @@ const HomePage = () => {
         sx={{
           width: "400px",
           boxShadow: "var(--shadow-inner)",
+          p: "28px 20px",
         }}
       >
         <Outlet />

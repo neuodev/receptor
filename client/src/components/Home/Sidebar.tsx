@@ -39,7 +39,7 @@ const Sidebar = () => {
 
   return (
     <Stack sx={{ width: "100px", bgcolor: "common.white", height: "100%" }}>
-      <Stack alignItems="center" mt="20px">
+      <Stack alignItems="center" mt="25px">
         <Link to={ROUTES.ROOT}>
           <CableIcon fontSize="large" />
         </Link>

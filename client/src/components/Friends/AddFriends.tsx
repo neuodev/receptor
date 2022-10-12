@@ -7,7 +7,7 @@ const AddFriends = () => {
   return (
     <Box>
       <Typography variant="h5" mb="16px">
-        Friends
+        Add Friend
       </Typography>
 
       <Input

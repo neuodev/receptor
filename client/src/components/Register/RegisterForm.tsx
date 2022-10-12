@@ -119,6 +119,13 @@ const RegisterForm = () => {
             >
               Register
             </Button>
+            <Typography
+              sx={{ height: "20px", mb: "-20px" }}
+              variant="caption"
+              color="error"
+            >
+              {error}
+            </Typography>
           </Stack>
         </form>
       </Stack>

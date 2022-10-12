@@ -1,6 +1,6 @@
 import express from "express";
 import { body } from "express-validator";
-import { createUser, login } from "../controllers/user";
+import { register, login, getUsers } from "../controllers/user";
 import { validateReq } from "../middleware/validate";
 
 export const userRouter = express.Router();
@@ -12,7 +12,7 @@ userRouter
     body("email").isEmail().withMessage("Invalid message"),
     body("password").isLength({ min: 6 }).withMessage("Invalid password"),
     validateReq,
-    createUser
+    register
   );
 
 userRouter
@@ -23,3 +23,5 @@ userRouter
     validateReq,
     login
   );
+
+userRouter.route("/").get(getUsers);

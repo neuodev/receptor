@@ -1,6 +1,7 @@
 import React from "react";
 import { Outlet } from "react-router-dom";
 import { Box } from "@mui/system";
+import AddFriendModal from "../Friends/AddFriendModal";
 
 const Root = () => {
   return (
@@ -11,6 +12,7 @@ const Root = () => {
       }}
     >
       <Outlet />
+      <AddFriendModal />
     </Box>
   );
 };

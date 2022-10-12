@@ -12,7 +12,7 @@ import { Room } from "../models/Room";
 // @api  POST /api/v1/user/register
 // @desc Register new user
 // @access  public
-export const createUser = asyncHandler(
+export const register = asyncHandler(
   async (
     req: Request<{}, {}, { username: string; password: string; email: string }>,
     res: Response,
@@ -116,6 +116,49 @@ export const login = asyncHandler(
         roomId: f.getDataValue("roomId"),
         user: f.getDataValue("User"),
       })),
+    });
+  }
+);
+
+// @api  GET /api/v1/user
+// @desc Get all users
+// @access  public
+export const getUsers = asyncHandler(
+  async (
+    req: Request<{}, {}, {}, { q?: string; limit?: number; page?: number }>,
+    res: Response,
+    next: NextFunction
+  ) => {
+    let keyword = `%${req.query.q || ""}%`;
+
+    const limit = req.query.limit || 10;
+    const page = req.query.page || 1;
+    const skip = (page - 1) * limit;
+
+    const [users, count] = await Promise.all([
+      User.findAll({
+        where: {
+          [Op.or]: {
+            username: {
+              [Op.like]: keyword,
+            },
+            email: {
+              [Op.like]: keyword,
+            },
+          },
+        },
+        attributes: {
+          exclude: ["password"],
+        },
+        offset: skip,
+        limit,
+      }),
+      User.count(),
+    ]);
+
+    await res.status(200).json({
+      users,
+      count,
     });
   }
 );

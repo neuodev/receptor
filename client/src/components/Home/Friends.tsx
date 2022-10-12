@@ -2,8 +2,11 @@ import React from "react";
 import { Box, Input, Typography, Button } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import PersonAddAltIcon from "@mui/icons-material/PersonAddAlt";
+import { useAppModal } from "../../state/app/hooks";
+import { AppModal } from "../../state/app/reducer";
 
 const Friends = () => {
+  const modal = useAppModal();
   return (
     <Box>
       <Typography variant="h5" mb="32px">
@@ -24,6 +27,7 @@ const Friends = () => {
       />
 
       <Button
+        onClick={() => modal.showModal(AppModal.AddFriend)}
         disableElevation
         endIcon={<PersonAddAltIcon />}
         variant="contained"

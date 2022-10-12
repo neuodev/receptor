@@ -2,8 +2,9 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { COMMON_HEADERS, getEndpoint } from "../../constants/api";
 import { ROUTES } from "../../constants/routes";
-import { useAppDispatch, useAppSelector } from "../../store";
+import { useAppDispatch } from "../../store";
 import { getErrMsg } from "../../utils/error";
+import { useAppScoket } from "../../wss/appSocket";
 import {
   authUserErr,
   authUserInfo,
@@ -14,7 +15,7 @@ import {
 export const useUserHooks = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const state = useAppSelector((state) => state.user);
+  const appSocket = useAppScoket();
 
   const login = async (data: { email: string; password: string }) => {
     try {
@@ -25,7 +26,7 @@ export const useUserHooks = () => {
       const { user, token, roomIds, friends } = res.data;
       dispatch(authUserInfo({ user, token }));
       dispatch(setUserFriends({ rooms: roomIds, friends }));
-      navigate(ROUTES.ROOT);
+      appSocket.login(token);
     } catch (error) {
       dispatch(authUserErr(getErrMsg(error)));
     }

@@ -3,11 +3,13 @@ import { Stack, Box, Avatar, Typography, Button } from "@mui/material";
 import { stringAvatar } from "../../utils/colors";
 import { IUser } from "../../state/user/reducer";
 import moment from "moment";
+import { useAddFriend } from "../../state/addFriend/hooks";
 
 const AddFriendCard: React.FC<{
   user: IUser;
 }> = ({ user }) => {
-  const { username, isActive, updatedAt } = user;
+  const { addFriend } = useAddFriend();
+  const { username, isActive, updatedAt, id } = user;
   return (
     <Stack direction="row" alignItems="center">
       <Avatar {...stringAvatar(username)} />
@@ -20,7 +22,7 @@ const AddFriendCard: React.FC<{
         </Typography>
       </Stack>
 
-      <Button variant="outlined" size="small">
+      <Button variant="outlined" size="small" onClick={() => addFriend(id)}>
         Send
       </Button>
     </Stack>

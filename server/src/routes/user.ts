@@ -9,13 +9,10 @@ userRouter
   .post(
     body("username").isString(),
     body("password").isLength({ min: 6 }),
+    body("email").isEmail(),
     createUser
   );
 
 userRouter
   .route("/login")
-  .post(
-    body("username").isString(),
-    body("password").isLength({ min: 6 }),
-    login
-  );
+  .post(body("email").isEmail(), body("password").isLength({ min: 6 }), login);

@@ -1,12 +1,12 @@
 import React from "react";
-import { Stack, IconButton, Box } from "@mui/material";
+import { Box } from "@mui/material";
 import Message from "./Message";
 
 const Messages = () => {
   return (
     <Box>
-      {messages.map((message) => (
-        <Message message={message} />
+      {messages.map((message, idx) => (
+        <Message message={message} key={idx} />
       ))}
     </Box>
   );

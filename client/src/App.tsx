@@ -6,7 +6,6 @@ import SignInPage from "./pages/SignInPage";
 import Root from "./components/Layout/Root";
 import { ThemeProvider } from "@mui/material";
 import { theme } from "./theme";
-import RegisterPage from "./pages/RegisterPage";
 import HomePage from "./pages/HomePage";
 import ChatsList from "./components/Home/ChatsList";
 import CreateChat from "./components/Home/CreateChat";
@@ -14,6 +13,7 @@ import Pages from "./components/Home/Pages";
 import Friends from "./components/Home/Friends";
 import { Provider } from "react-redux";
 import { store } from "./store";
+import SignUpPage from "./pages/SignUpPage";
 
 const router = createBrowserRouter([
   {
@@ -48,8 +48,8 @@ const router = createBrowserRouter([
         element: <SignInPage />,
       },
       {
-        path: ROUTES.REGISTER,
-        element: <RegisterPage />,
+        path: ROUTES.SIGN_UP,
+        element: <SignUpPage />,
       },
     ],
   },

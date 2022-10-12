@@ -5,5 +5,5 @@ export const ROUTES = {
   FRIENDS: "/friends",
   PAGES: "/pages",
   SIGN_IN: "/signin",
-  REGISTER: "/register",
+  SIGN_UP: "/register",
 };

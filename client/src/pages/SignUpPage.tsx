@@ -1,8 +1,8 @@
 import React from "react";
 import { Stack } from "@mui/material";
-import RegisterForm from "../components/Register/RegisterForm";
+import SignUpForm from "../components/SignUp/SignUpForm";
 
-const RegisterPage: React.FC<{}> = () => {
+const SignUpPage: React.FC<{}> = () => {
   return (
     <Stack
       alignItems="center"
@@ -11,9 +11,9 @@ const RegisterPage: React.FC<{}> = () => {
         height: "100%",
       }}
     >
-      <RegisterForm />
+      <SignUpForm />
     </Stack>
   );
 };
 
-export default RegisterPage;
+export default SignUpPage;

@@ -4,14 +4,20 @@ import {
   TextField,
   Button,
   Stack,
-  FormControl,
+  CircularProgress,
+  IconButton,
 } from "@mui/material";
 import Link from "../common/Link";
 import { ROUTES } from "../../constants/routes";
 import { useUserHooks } from "../../state/user/hooks";
+import { useAppSelector } from "../../store";
+import OpenedEye from "@mui/icons-material/RemoveRedEye";
+import ClosedEye from "@mui/icons-material/VisibilityOff";
 
 const SignInForm = () => {
+  const [showPass, setShowPass] = useState(false);
   const { signIn } = useUserHooks();
+  const { loading, error } = useAppSelector((state) => state.user);
   const [state, setState] = useState<{
     username: string;
     password: string;
@@ -26,10 +32,12 @@ const SignInForm = () => {
     {
       label: "Username",
       name: "username",
+      type: "text",
     },
     {
       label: "Password",
       name: "password",
+      type: showPass ? "text" : "password",
     },
   ];
 
@@ -42,7 +50,6 @@ const SignInForm = () => {
   const signInHandler = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const { username, password } = state;
-    console.log(state);
     if (!username || !password) return;
     signIn(username, password);
   };
@@ -55,7 +62,7 @@ const SignInForm = () => {
           bgcolor: "common.white",
           boxShadow: 2,
           borderRadius: "0.6rem",
-          padding: "1.5rem 1.5rem",
+          padding: "1.5rem 1.5rem 2.3rem 1.5rem",
           minWidth: "350px",
         }}
       >
@@ -73,23 +80,48 @@ const SignInForm = () => {
                 sx={{ mb: "20px" }}
                 name={field.name}
                 onChange={updateState}
+                type={field.type}
+                InputProps={{
+                  endAdornment:
+                    field.name !== "password" ? undefined : (
+                      <IconButton onClick={() => setShowPass(!showPass)}>
+                        {showPass ? <OpenedEye /> : <ClosedEye />}
+                      </IconButton>
+                    ),
+                }}
               />
             ))}
             <Button
+              startIcon={
+                loading && (
+                  <CircularProgress
+                    color="primary"
+                    size="20px"
+                    sx={{ ml: "-20px" }}
+                  />
+                )
+              }
               type="submit"
               variant="contained"
               color="primary"
               size="large"
               sx={{ mb: "4px" }}
-              disabled={!state.username || !state.password}
+              disabled={!state.username || !state.password || loading}
             >
               Sign In
             </Button>
+            <Typography
+              sx={{ height: "20px", mb: "-20px" }}
+              variant="caption"
+              color="error"
+            >
+              {error}
+            </Typography>
           </Stack>
         </form>
       </Stack>
       <Typography color="grey.500" mt="20px">
-        Don't have an account yet? <Link to={ROUTES.REGISTER}>Sign up</Link>
+        Don't have an account yet? <Link to={ROUTES.SIGN_UP}>Sign up</Link>
       </Typography>
     </Stack>
   );

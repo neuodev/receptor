@@ -18,7 +18,7 @@ const Pages = () => {
       title: "Sign Up",
       subtitle: "Register a new account",
       onClick: () => {
-        navigate(ROUTES.REGISTER);
+        navigate(ROUTES.SIGN_UP);
       },
     },
     {

@@ -3,7 +3,7 @@ import { Typography, TextField, Button, Stack } from "@mui/material";
 import { ROUTES } from "../../constants/routes";
 import Link from "../common/Link";
 
-const RegisterForm = () => {
+const SignUpForm = () => {
   const formFields = [
     {
       label: "Name",
@@ -67,4 +67,4 @@ const RegisterForm = () => {
   );
 };
 
-export default RegisterForm;
+export default SignUpForm;

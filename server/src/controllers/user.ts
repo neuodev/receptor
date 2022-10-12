@@ -13,7 +13,11 @@ import { Room } from "../models/Room";
 // @desc Register new user
 // @access  public
 export const createUser = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (
+    req: Request<{}, {}, { username: string; password: string; email: string }>,
+    res: Response,
+    next: NextFunction
+  ) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       res.status(200).json({ errors: errors.array() });
@@ -38,16 +42,20 @@ export const createUser = asyncHandler(
 // @desc Login and return the auth token
 // @access  public
 export const login = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (
+    req: Request<{}, {}, { email: string; password: string }>,
+    res: Response,
+    next: NextFunction
+  ) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       res.status(200).json({ errors: errors.array() });
       return;
     }
-    const { username, password } = req.body;
+    const { email, password } = req.body;
     let user = await User.findOne({
       where: {
-        username,
+        email,
         password,
       },
       attributes: {

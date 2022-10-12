@@ -55,7 +55,6 @@ export const theme = createTheme({
       styleOverrides: {
         root: {
           input: {
-            backgroundColor: "#ebf1f7",
             borderRadius: "8px",
           },
         },

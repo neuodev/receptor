@@ -1,8 +1,7 @@
-import React from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { ROUTES } from "./constants/routes";
 import ErrorPage from "./pages/ErrorPage";
-import SignInPage from "./pages/SignInPage";
+import LoginPage from "./pages/LoginPage";
 import Root from "./components/Layout/Root";
 import { ThemeProvider } from "@mui/material";
 import { theme } from "./theme";
@@ -13,7 +12,7 @@ import Pages from "./components/Home/Pages";
 import Friends from "./components/Home/Friends";
 import { Provider } from "react-redux";
 import { store } from "./store";
-import SignUpPage from "./pages/SignUpPage";
+import RegisterPage from "./pages/RegisterPage";
 
 const router = createBrowserRouter([
   {
@@ -44,12 +43,12 @@ const router = createBrowserRouter([
         ],
       },
       {
-        path: ROUTES.SIGN_IN,
-        element: <SignInPage />,
+        path: ROUTES.LOG_IN,
+        element: <LoginPage />,
       },
       {
-        path: ROUTES.SIGN_UP,
-        element: <SignUpPage />,
+        path: ROUTES.REGISTER,
+        element: <RegisterPage />,
       },
     ],
   },

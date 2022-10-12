@@ -20,7 +20,7 @@ export const createUser = asyncHandler(
   ) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      res.status(200).json({ errors: errors.array() });
+      res.status(400).json({ errors: errors.array() });
       return;
     }
     try {
@@ -49,7 +49,7 @@ export const login = asyncHandler(
   ) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      res.status(200).json({ errors: errors.array() });
+      res.status(400).json({ error: errors.array() });
       return;
     }
     const { email, password } = req.body;
@@ -63,7 +63,7 @@ export const login = asyncHandler(
       },
     });
     if (!user)
-      return next(new ResponseError("Incorrect username or password", 400));
+      return next(new ResponseError("Incorrect email or password", 400));
 
     const userInfo: IUser = user.get();
     let secret = process.env.JWT_SECRET;

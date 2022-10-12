@@ -14,15 +14,15 @@ import { useAppSelector } from "../../store";
 import OpenedEye from "@mui/icons-material/RemoveRedEye";
 import ClosedEye from "@mui/icons-material/VisibilityOff";
 
-const SignInForm = () => {
-  const [showPass, setShowPass] = useState(false);
-  const { signIn } = useUserHooks();
+const LoginForm = () => {
+  const { login } = useUserHooks();
   const { loading, error } = useAppSelector((state) => state.user);
+  const [showPass, setShowPass] = useState(false);
   const [state, setState] = useState<{
-    username: string;
+    email: string;
     password: string;
   }>({
-    username: "",
+    email: "",
     password: "",
   });
 
@@ -30,8 +30,8 @@ const SignInForm = () => {
 
   const formFields = [
     {
-      label: "Username",
-      name: "username",
+      label: "Email",
+      name: "email",
       type: "text",
     },
     {
@@ -49,9 +49,9 @@ const SignInForm = () => {
 
   const signInHandler = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const { username, password } = state;
-    if (!username || !password) return;
-    signIn(username, password);
+    const { email, password } = state;
+    if (!email || !password) return;
+    login(state);
   };
 
   return (
@@ -106,7 +106,7 @@ const SignInForm = () => {
               color="primary"
               size="large"
               sx={{ mb: "4px" }}
-              disabled={!state.username || !state.password || loading}
+              disabled={!state.email || !state.password || loading}
             >
               Sign In
             </Button>
@@ -121,10 +121,10 @@ const SignInForm = () => {
         </form>
       </Stack>
       <Typography color="grey.500" mt="20px">
-        Don't have an account yet? <Link to={ROUTES.SIGN_UP}>Sign up</Link>
+        Don't have an account yet? <Link to={ROUTES.REGISTER}>Register</Link>
       </Typography>
     </Stack>
   );
 };
 
-export default SignInForm;
+export default LoginForm;

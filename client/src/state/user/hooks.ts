@@ -14,17 +14,14 @@ import {
 export const useUserHooks = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const state = useAppSelector((state) => state.user);
 
-  const signIn = async (username: string, password: string) => {
+  const login = async (data: { email: string; password: string }) => {
     try {
       dispatch(authUserReq());
-      const res = await axios.post(
-        getEndpoint("login"),
-        { username, password },
-        {
-          headers: COMMON_HEADERS,
-        }
-      );
+      const res = await axios.post(getEndpoint("login"), data, {
+        headers: COMMON_HEADERS,
+      });
       const { user, token, roomIds, friends } = res.data;
       dispatch(authUserInfo({ user, token }));
       dispatch(setUserFriends({ rooms: roomIds, friends }));
@@ -34,5 +31,21 @@ export const useUserHooks = () => {
     }
   };
 
-  return { signIn };
+  const register = async (data: {
+    username: string;
+    email: string;
+    password: string;
+  }) => {
+    try {
+      dispatch(authUserReq());
+      await axios.post(getEndpoint("register"), data, {
+        headers: COMMON_HEADERS,
+      });
+      login({ email: data.email, password: data.password });
+    } catch (error) {
+      dispatch(authUserErr(getErrMsg(error)));
+    }
+  };
+
+  return { login, register };
 };

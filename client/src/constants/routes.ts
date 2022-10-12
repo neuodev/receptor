@@ -4,6 +4,6 @@ export const ROUTES = {
   CREATE_GROUP: "/create-group",
   FRIENDS: "/friends",
   PAGES: "/pages",
-  SIGN_IN: "/signin",
-  SIGN_UP: "/register",
+  LOG_IN: "/login",
+  REGISTER: "/register",
 };

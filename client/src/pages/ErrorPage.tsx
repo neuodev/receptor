@@ -7,7 +7,15 @@ const ErrorPage = () => {
   const navigate = useNavigate();
 
   return (
-    <Box className="">
+    <Box
+      sx={{
+        height: "100vh",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+      }}
+    >
       <Typography variant="h1" sx={{ mb: "20px" }}>
         Oops!
       </Typography>
@@ -19,10 +27,7 @@ const ErrorPage = () => {
       >
         Sorry, an unexpected error has occurred
       </Typography>
-      <Typography
-        variant="caption"
-        className="text-gray-500 max-w-screen-lg text-center"
-      >
+      <Typography variant="caption" color="grey.500">
         {error.statusText || error.message}
       </Typography>
 

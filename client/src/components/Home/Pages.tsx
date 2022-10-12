@@ -11,21 +11,21 @@ const Pages = () => {
       title: "Sign In",
       subtitle: "Sign in with another account",
       onClick: () => {
-        navigate(ROUTES.SIGN_IN);
+        navigate(ROUTES.LOG_IN);
       },
     },
     {
       title: "Sign Up",
       subtitle: "Register a new account",
       onClick: () => {
-        navigate(ROUTES.SIGN_UP);
+        navigate(ROUTES.REGISTER);
       },
     },
     {
-      title: "Sign out",
+      title: "Log out",
       subtitle: "Logout your current account",
       onClick: () => {
-        navigate(ROUTES.SIGN_IN);
+        navigate(ROUTES.LOG_IN);
       },
     },
   ];

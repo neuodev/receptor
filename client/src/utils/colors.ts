@@ -18,11 +18,21 @@ function stringToColor(string: string) {
   return color;
 }
 
+export function getAvatarLetters(name: string): string {
+  if (name.length === 0) throw new Error("Invalid name");
+  return name
+    .split(" ")
+    .map((part) => part[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
+}
+
 export function stringAvatar(name: string) {
   return {
     sx: {
       bgcolor: stringToColor(name),
     },
-    children: `${name.split(" ")[0][0]}${name.split(" ")[1][0]}`,
+    children: getAvatarLetters(name),
   };
 }

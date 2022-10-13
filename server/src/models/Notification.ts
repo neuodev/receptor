@@ -1,11 +1,25 @@
 import sequelize from "../db";
-import { DataTypes } from "sequelize";
+import { DataTypes, ModelDefined, Optional } from "sequelize";
+import { IUser } from "./User";
 
 export enum NotificationType {
   FriendshipRequest = "friendshipRequest",
 }
 
-export const Notification = sequelize.define("Notification", {
+export interface INotification {
+  id: number;
+  userId: number | IUser;
+  content: string;
+  isSeen: boolean;
+  type: NotificationType;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export const Notification: ModelDefined<
+  INotification,
+  Optional<INotification, "id" | "updatedAt" | "createdAt">
+> = sequelize.define("Notification", {
   content: {
     type: DataTypes.JSON,
     allowNull: false,

@@ -1,16 +1,13 @@
 import { Op } from "sequelize";
-import { Notification, NotificationType } from "../models/Notification";
+import {
+  INotification,
+  Notification,
+  NotificationType,
+} from "../models/Notification";
 import AppUOW from ".";
 import { Event } from "../events";
 import BaseRepo from "./baseRepo";
 import { IUser } from "../models/User";
-
-export type INotification = {
-  content: string;
-  type: NotificationType;
-  user: number | IUser;
-  isSeen: boolean;
-};
 
 export default class NotificationRepo extends BaseRepo {
   constructor(app: AppUOW) {
@@ -32,11 +29,11 @@ export default class NotificationRepo extends BaseRepo {
     type: NotificationType;
     userId: number;
   }) {
-    // Check if notification exist
-    await Notification.create({
-      ...n,
-      isSeen: false,
-    });
+    console.error("Not implemented yet".red.underline.bold);
+    // await Notification.create({
+    //   ...n,
+    //   isSeen: false,
+    // });
   }
 
   async isFriendshipRequestAlreadySent(sender: number, receiver: number) {
@@ -45,7 +42,7 @@ export default class NotificationRepo extends BaseRepo {
         "content.userId": {
           [Op.eq]: sender,
         },
-        UserId: receiver,
+        userId: receiver,
       },
     });
 
@@ -55,7 +52,7 @@ export default class NotificationRepo extends BaseRepo {
   async getNotifications(userId: number): Promise<INotification[]> {
     let all = await Notification.findAll({
       where: {
-        UserId: userId,
+        userId: userId,
       },
     });
 

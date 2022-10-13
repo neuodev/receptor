@@ -1,22 +1,32 @@
-import { DataTypes } from "sequelize";
+import { DataTypes, ModelDefined, Optional } from "sequelize";
 import sequelize from "../db";
 import { Room } from "./Room";
 import { User } from "./User";
 
 export enum MessageType {
-  TEXT = "text",
-  AUDIO = "audio",
-  VIDEO = "video",
-  IMAGE = "image",
+  Text = "text",
+  Audio = "audio",
+  Video = "video",
+  Image = "image",
 }
 
-export const Message = sequelize.define("message", {
+export interface IMessage {
+  id: number;
+  type: MessageType;
+  body: string;
+  read: boolean;
+}
+
+export const Message: ModelDefined<
+  IMessage,
+  Optional<IMessage, "id" | "read">
+> = sequelize.define("Message", {
   type: {
     type: DataTypes.ENUM(
-      MessageType.TEXT,
-      MessageType.AUDIO,
-      MessageType.VIDEO,
-      MessageType.IMAGE
+      MessageType.Text,
+      MessageType.Audio,
+      MessageType.Video,
+      MessageType.Image
     ),
     allowNull: false,
   },

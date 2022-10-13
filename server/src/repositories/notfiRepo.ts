@@ -3,12 +3,11 @@ import { Notification, NotificationType } from "../models/Notification";
 import AppUOW from ".";
 import { Event } from "../events";
 import BaseRepo from "./baseRepo";
-import { IUser } from "./userRepo";
+import { IUser } from "../models/User";
 
 export type INotification = {
   content: string;
   type: NotificationType;
-  // Todo: User vs UserId
   user: number | IUser;
   isSeen: boolean;
 };

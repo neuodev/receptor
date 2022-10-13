@@ -1,8 +1,21 @@
-import { DataTypes } from "sequelize";
+import { DataTypes, ModelDefined, Optional } from "sequelize";
 import { Notification } from "./Notification";
 import sequelize from "../db";
 
-export const User = sequelize.define("User", {
+export interface IUser {
+  id: number;
+  username: string;
+  email: string;
+  password: string;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export const User: ModelDefined<
+  IUser,
+  Optional<IUser, "id" | "isActive" | "createdAt" | "updatedAt">
+> = sequelize.define("User", {
   username: {
     type: DataTypes.STRING,
     allowNull: false,

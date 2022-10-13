@@ -1,19 +1,11 @@
-import fs from "fs/promises";
 import sequelize from "./db";
+import users from "./data/users.json";
 import { User } from "./models/User";
 import "colors";
 
 export const seedDB = async () => {
   try {
-    const data = (await fs.readFile("./src/data/users.json")).toString();
-    const users: Array<{
-      id: number;
-      username: string;
-      password: string;
-    }> = JSON.parse(data);
-
     await User.bulkCreate(users);
-
     console.log("Database seeded".bgRed.underline.bold);
   } catch (error) {
     if (error instanceof Error)
@@ -27,7 +19,7 @@ export const flush = async () => {
     await sequelize.sync({ force: true });
 
     console.log(`Reset database`.cyan.underline.bold);
-    process.exit(0); // Server should restart
+    process.exit(0);
   } catch (error) {
     let msg;
 

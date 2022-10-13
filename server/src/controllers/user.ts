@@ -2,7 +2,6 @@ import { Request, Response, NextFunction } from "express";
 import asyncHandler from "express-async-handler";
 import { validationResult } from "express-validator";
 import { Op, UniqueConstraintError } from "sequelize";
-import { IUser } from "../repositories/userRepo";
 import ResponseError from "../utils/error";
 import jwt, { Secret } from "jsonwebtoken";
 import { User } from "../models/User";
@@ -66,7 +65,7 @@ export const login = asyncHandler(
     if (!user)
       return next(new ResponseError("Incorrect email or password", 400));
 
-    const userInfo: IUser = user.get();
+    const userInfo = user.get();
     let secret = process.env.JWT_SECRET;
     if (secret == undefined)
       return next(new ResponseError("Missing `JWT_SECRET` env. variable", 500));

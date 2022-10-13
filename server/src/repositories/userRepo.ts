@@ -1,17 +1,10 @@
-import { User } from "../models/User";
+import { IUser, User } from "../models/User";
 import { Op } from "sequelize";
 import { Event } from "../events";
 import BaseRepo from "./baseRepo";
 import AppUOW from ".";
 import { FriendshipStatus } from "../models/Friend";
 import { NotificationType } from "../models/Notification";
-
-export interface IUser {
-  username: string;
-  password: string;
-  isActive: boolean;
-  id: number;
-}
 
 export type AddFriendMsg = {
   token: string | null;
@@ -45,10 +38,11 @@ export default class UserRepo extends BaseRepo {
   async registerUser(data: {
     username: string;
     password: string;
+    email: string;
     isActive?: boolean;
-  }): Promise<string> {
+  }): Promise<number> {
     const user = await User.create(data);
-    return user.getDataValue("id") as string;
+    return user.getDataValue("id");
   }
 
   async getUsers() {
@@ -67,13 +61,15 @@ export default class UserRepo extends BaseRepo {
     return users.map((user) => user.get());
   }
 
-  // async getById(id: number): Promise<IUser | null> {
-  //   const users = await User.findOne({
-  //     where: {
-  //       id,
-  //     },
-  //   });
-  // }
+  async getById(id: number): Promise<IUser | null> {
+    const user = await User.findOne({
+      where: {
+        id,
+      },
+    });
+
+    return user ? user.get() : null;
+  }
 
   async flush() {
     await User.truncate();
@@ -81,7 +77,7 @@ export default class UserRepo extends BaseRepo {
 
   async getUserById(id: number): Promise<IUser | null> {
     const user = await User.findByPk(id);
-    return user?.get();
+    return user ? user.get() : null;
   }
 
   async getUser(username: string, password: string): Promise<IUser | null> {

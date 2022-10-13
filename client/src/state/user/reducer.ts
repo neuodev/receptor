@@ -20,8 +20,6 @@ type UserState = {
   error: string | null;
   info: IUser | null;
   authToken: string | null;
-  roomIds: number[];
-  friends: Array<{ roomId: number; user: IUser }>;
 };
 
 export const userReducer = createReducer<UserState>(
@@ -30,8 +28,6 @@ export const userReducer = createReducer<UserState>(
     error: null,
     info: null,
     authToken: null,
-    roomIds: [],
-    friends: [],
   },
   (builder) => {
     builder
@@ -51,13 +47,6 @@ export const userReducer = createReducer<UserState>(
         error: null,
         info: payload.user,
         authToken: payload.token,
-      }))
-      .addCase(setUserFriends, (state, { payload }) => ({
-        ...state,
-        loading: false,
-        error: null,
-        friends: payload.friends,
-        roomIds: payload.rooms,
       }));
   }
 );

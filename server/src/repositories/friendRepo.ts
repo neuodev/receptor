@@ -88,7 +88,7 @@ export default class FriendRepo extends BaseRepo {
 
       console.log({ user, request });
       // Create new room with new participants
-      let info: FriendEntry = request.get();
+      let info = request.get();
       await this.app.roomRepo.newRoom(
         [info.userId, info.friendId],
         RoomType.DM

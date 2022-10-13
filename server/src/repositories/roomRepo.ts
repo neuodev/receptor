@@ -2,6 +2,7 @@ import AppUOW from ".";
 import { Event } from "../events";
 import { MessageType } from "../models/Message";
 import { Room, RoomType } from "../models/Room";
+import { IUser } from "../models/User";
 import BaseRepo from "./baseRepo";
 
 type RoomMessage = {
@@ -80,7 +81,7 @@ export default class RoomRepo extends BaseRepo {
     }, Event.RoomMessage);
   }
 
-  async newRoom(userIds: Array<number>, type: RoomType, name?: string) {
+  async newRoom(userIds: Array<number | IUser>, type: RoomType, name?: string) {
     const room = await Room.create({
       name,
       type,

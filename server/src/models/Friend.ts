@@ -1,13 +1,26 @@
-import { DataTypes } from "sequelize";
+import { DataTypes, ModelDefined, Optional } from "sequelize";
 import sequelize from "../db";
-import { User } from "./User";
+import { IUser, User } from "./User";
 
 export enum FriendshipStatus {
   PENDING = "pending",
   FRIENDS = "friends",
   BLOCKED = "blocked",
 }
-export const Friend = sequelize.define("Friend", {
+
+export interface IFriend {
+  id: number;
+  status: FriendshipStatus;
+  createdAt: string;
+  updatedAt: string;
+  userId: number | IUser;
+  friendId: number | IUser;
+}
+
+export const Friend: ModelDefined<
+  IFriend,
+  Optional<IFriend, "id" | "createdAt" | "updatedAt">
+> = sequelize.define("Friend", {
   status: {
     type: DataTypes.ENUM(
       FriendshipStatus.PENDING,

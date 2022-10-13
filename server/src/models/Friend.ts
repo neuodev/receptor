@@ -13,8 +13,8 @@ export interface IFriend {
   status: FriendshipStatus;
   createdAt: string;
   updatedAt: string;
-  userId: number | IUser;
-  friendId: number | IUser;
+  userId: number;
+  friendId: number;
 }
 
 export const Friend: ModelDefined<

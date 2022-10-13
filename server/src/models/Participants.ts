@@ -1,9 +1,24 @@
+import { DataTypes, ModelDefined, Optional } from "sequelize";
 import sequelize from "../db";
 import { User } from "../models/User";
 import { Room } from "./Room";
 
-// Fields: id, roomId, userId
-export const Participants = sequelize.define("participants", {});
+export interface IParticipants {
+  id: number;
+  userId: number;
+  roomId: number;
+}
+
+export const Participants: ModelDefined<
+  IParticipants,
+  Optional<IParticipants, "id">
+> = sequelize.define("participants", {
+  id: {
+    type: DataTypes.NUMBER,
+    allowNull: false,
+    primaryKey: true,
+  },
+});
 
 User.hasMany(Participants, {
   foreignKey: "userId",

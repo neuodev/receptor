@@ -5,8 +5,8 @@
   "main": "server.js",
   "scripts": {
     "dev": "ts-node-dev --respawn src/index.ts",
-    "seed": "npm run dev seed",
-    "flush": "npm run dev flush"
+    "seed": "ts-node src/seed.ts seed",
+    "flush": "ts-node src/seed.ts flush"
   },
   "keywords": [
     "websockets"

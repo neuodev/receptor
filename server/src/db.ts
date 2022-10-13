@@ -10,16 +10,10 @@ const sequelize = new Sequelize(
 // Check database connection
 (async () => {
   try {
-    await sequelize.authenticate();
-
-    if (process.argv[2] === "seed") {
-      seedDB();
-    } else if (process.argv[2] === "flush") {
-      flush();
-    } else {
-      await sequelize.sync({ force: false });
-    }
-
+    await Promise.all([
+      sequelize.authenticate(),
+      sequelize.sync({ force: false }),
+    ]);
     console.log("Connected to PostgreSQL".green.underline.bold);
   } catch (error) {
     if (error instanceof Error)

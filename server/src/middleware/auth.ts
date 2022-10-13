@@ -2,14 +2,6 @@ import jwt from "jsonwebtoken";
 import { Request, Response, NextFunction } from "express";
 import { IUser, User } from "../models/User";
 
-declare global {
-  namespace Express {
-    interface Request {
-      user: IUser;
-    }
-  }
-}
-
 export const auth = async (req: Request, res: Response, next: NextFunction) => {
   let authHeader = req.headers.authorization!;
   let err: string | null = null;

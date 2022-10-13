@@ -15,7 +15,7 @@ export interface IUser {
 export const User: ModelDefined<
   IUser,
   Optional<IUser, "id" | "isActive" | "createdAt" | "updatedAt">
-> = sequelize.define("User", {
+> = sequelize.define("user", {
   username: {
     type: DataTypes.STRING,
     allowNull: false,

@@ -30,3 +30,10 @@ export const flush = async () => {
     console.error(error);
   }
 };
+
+let arg = process.argv[2];
+if (arg === "seed") {
+  seedDB();
+} else if (arg === "flush") {
+  flush();
+}

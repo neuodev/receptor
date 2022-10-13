@@ -160,37 +160,34 @@ export const getUsers = asyncHandler(
 export const getFriends = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     let userId = req.user.id;
-    const friends = await Friend.findAll({});
-    // Get user friends
-    // const participants = await Participants.findAll({
-    //   where: {
-    //     userId,
-    //   },
-    //   // attributes: ["roomId"],
-    // });
+    const rooms = await Participants.findAll({
+      where: {
+        userId,
+      },
+      attributes: ["roomId"],
+    });
+    const roomIds = rooms.map((room) => room.getDataValue("roomId") as number);
+    const friends = await Participants.findAll({
+      where: {
+        roomId: {
+          [Op.or]: roomIds,
+        },
+        userId: {
+          [Op.not]: userId,
+        },
+      },
+      attributes: ["roomId"],
+      include: [
+        {
+          model: User,
+          foreignKey: "userId",
+          attributes: {
+            exclude: ["password"],
+          },
+        },
+      ],
+    });
 
     res.status(200).json(friends);
-
-    // const roomIds = participants.map((p) => p.getDataValue("roomId"));
-    // const friends = await Participants.findAll({
-    //   where: {
-    //     roomId: {
-    //       [Op.or]: roomIds,
-    //     },
-    //     userId: {
-    //       [Op.not]: userInfo.id,
-    //     },
-    //   },
-    //   attributes: ["roomId"],
-    //   include: [
-    //     {
-    //       model: User,
-    //       foreignKey: "userId",
-    //       attributes: {
-    //         exclude: ["password"],
-    //       },
-    //     },
-    //   ],
-    // });
   }
 );

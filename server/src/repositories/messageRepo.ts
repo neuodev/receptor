@@ -1,4 +1,4 @@
-import { Message, MessageType } from "../models/message";
+import { Message, MessageType } from "../models/Message";
 import BaseRepo from "./baseRepo";
 
 export type MessageEntry = {

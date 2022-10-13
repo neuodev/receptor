@@ -1,5 +1,5 @@
 import { Op } from "sequelize";
-import { Notification, NotificationType } from "../db";
+import { Notification, NotificationType } from "../models/Notification";
 import AppUOW from ".";
 import { Event } from "../events";
 import BaseRepo from "./baseRepo";

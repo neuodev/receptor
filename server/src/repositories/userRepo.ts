@@ -1,10 +1,10 @@
-import { NotificationType, User } from "../db";
-import { JsonWebTokenError } from "jsonwebtoken";
+import { User } from "../models/User";
 import { Op } from "sequelize";
 import { Event } from "../events";
 import BaseRepo from "./baseRepo";
 import AppUOW from ".";
 import { FriendshipStatus } from "../models/Friend";
+import { NotificationType } from "../models/Notification";
 
 export interface IUser {
   username: string;
@@ -67,6 +67,14 @@ export default class UserRepo extends BaseRepo {
     return users.map((user) => user.get());
   }
 
+  // async getById(id: number): Promise<IUser | null> {
+  //   const users = await User.findOne({
+  //     where: {
+  //       id,
+  //     },
+  //   });
+  // }
+
   async flush() {
     await User.truncate();
   }
@@ -107,7 +115,7 @@ export default class UserRepo extends BaseRepo {
       let userId = this.app.decodeAuthToken();
       if (!friendId) throw new Error("Firend Id is missing");
       if (userId === friendId)
-        throw new Error("User can't add himself as friend");
+        throw new Error("User can't add himself as a friend");
       // Check if the user exist
       const users = await this.getUsersById([userId, friendId]);
       const sender = users.find((user) => user.id === userId);
@@ -155,7 +163,7 @@ export default class UserRepo extends BaseRepo {
         content: {
           userId: sender.id,
         },
-        type: NotificationType.FRIENDSHIP_REQUEST,
+        type: NotificationType.FriendshipRequest,
         userId: receiver.id,
       });
       // Update friends table to be pending

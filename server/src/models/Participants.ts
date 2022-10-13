@@ -1,4 +1,5 @@
-import sequelize, { User } from "../db";
+import sequelize from "../db";
+import { User } from "../models/User";
 import { Room } from "./Room";
 
 // Fields: id, roomId, userId

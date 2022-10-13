@@ -1,6 +1,6 @@
 import AppUOW from ".";
 import { Event } from "../events";
-import { MessageType } from "../models/message";
+import { MessageType } from "../models/Message";
 import { Room, RoomType } from "../models/Room";
 import BaseRepo from "./baseRepo";
 

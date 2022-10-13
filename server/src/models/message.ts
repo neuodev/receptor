@@ -1,6 +1,7 @@
 import { DataTypes } from "sequelize";
-import sequelize, { User } from "../db";
+import sequelize from "../db";
 import { Room } from "./Room";
+import { User } from "./User";
 
 export enum MessageType {
   TEXT = "text",
@@ -42,7 +43,6 @@ usersKeys.forEach((name) => {
     },
   };
   User.hasMany(Message, options);
-
   Message.belongsTo(User, options);
 });
 

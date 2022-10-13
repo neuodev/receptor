@@ -5,7 +5,7 @@ import { Op, UniqueConstraintError } from "sequelize";
 import { IUser } from "../repositories/userRepo";
 import ResponseError from "../utils/error";
 import jwt, { Secret } from "jsonwebtoken";
-import { User } from "../db";
+import { User } from "../models/User";
 import { Participants } from "../models/Participants";
 import { Room } from "../models/Room";
 import { Friend, FriendshipStatus } from "../models/Friend";

@@ -1,9 +1,7 @@
-import sequelize, { User } from "./db";
 import fs from "fs/promises";
+import sequelize from "./db";
+import { User } from "./models/User";
 import "colors";
-import { Room } from "./models/Room";
-import { Message } from "./models/message";
-import { Participants } from "./models/Participants";
 
 export const seedDB = async () => {
   try {

@@ -1,4 +1,5 @@
 import { Op } from "sequelize";
+import AppUOW from ".";
 import { Event } from "../events";
 import { Friend, FriendshipStatus } from "../models/Friend";
 import { RoomType } from "../models/Room";
@@ -14,6 +15,16 @@ export type FriendEntry = {
 };
 
 export default class FriendRepo extends BaseRepo {
+  constructor(app: AppUOW) {
+    super(app);
+    this.initListeners();
+  }
+
+  initListeners() {
+    const { socket } = this.app;
+    socket.on(Event.AcceptFriend, this.acceptFriendHandler);
+  }
+
   async getFriendshipRecord(userId: number, friendId: number) {
     const result = await Friend.findOne({
       where: {
@@ -59,20 +70,23 @@ export default class FriendRepo extends BaseRepo {
   }
 
   // Todo: Update this handler to be more generic to handle blocking / accepting frinedship
-  async handleAcceptFriendEvent(id: number) {
+  acceptFriendHandler = async ({ friendId }: { friendId: number }) => {
     const { socket } = this.app;
     await this.errorHandler(async () => {
       let userId: number = this.app.decodeAuthToken();
+      if (!friendId) throw new Error("Missing friendId");
       const [user, request] = await Promise.all([
         this.app.userRepo.getUsersById([userId]),
         Friend.findOne({
           where: {
-            friendId: userId,
+            userId: friendId,
           },
         }),
       ]);
       if (!user) throw new Error("User not found");
       if (!request) throw new Error("Request not found");
+
+      console.log({ user, request });
       // Create new room with new participants
       let info: FriendEntry = request.get();
       await this.app.roomRepo.newRoom(
@@ -80,7 +94,10 @@ export default class FriendRepo extends BaseRepo {
         RoomType.DM
       );
 
-      await this.updateStatus(id, FriendshipStatus.FRIENDS);
+      await this.updateStatus(
+        request.get("id") as number,
+        FriendshipStatus.FRIENDS
+      );
       socket.emit(Event.AcceptFriend, { ok: true });
       // Should send notification to his friend
       // Todo: Check if the user is active or now before sending the notification
@@ -90,5 +107,5 @@ export default class FriendRepo extends BaseRepo {
         request: info,
       });
     }, Event.AcceptFriend);
-  }
+  };
 }

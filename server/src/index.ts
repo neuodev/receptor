@@ -13,15 +13,16 @@ import "colors";
 dotenv.config();
 
 const app = express();
+
 const server = http.createServer(app);
-const io = new Server(server);
+const io = new Server(server, {
+  cors: {
+    origin: "*",
+  },
+});
 
 io.on(Event.Connect, (socket: Socket) => {
-  const appUOW = new AppUOW(socket);
-
-  socket.on(Event.AcceptFriend, async (data: { id: number }) => {
-    await appUOW.friendRepo.handleAcceptFriendEvent(data.id);
-  });
+  new AppUOW(socket);
 });
 
 app.use(cors());

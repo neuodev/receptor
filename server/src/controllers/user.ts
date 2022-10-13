@@ -8,6 +8,7 @@ import jwt, { Secret } from "jsonwebtoken";
 import { User } from "../db";
 import { Participants } from "../models/Participants";
 import { Room } from "../models/Room";
+import { Friend, FriendshipStatus } from "../models/Friend";
 
 // @api  POST /api/v1/user/register
 // @desc Register new user
@@ -78,51 +79,16 @@ export const login = asyncHandler(
       }
     );
 
-    // Get user friends
-    const participants = await Participants.findAll({
-      where: {
-        userId: userInfo.id,
-      },
-      attributes: ["roomId"],
-    });
-
-    const roomIds = participants.map((p) => p.getDataValue("roomId"));
-    const friends = await Participants.findAll({
-      where: {
-        roomId: {
-          [Op.or]: roomIds,
-        },
-        userId: {
-          [Op.not]: userInfo.id,
-        },
-      },
-      attributes: ["roomId"],
-      include: [
-        {
-          model: User,
-          foreignKey: "userId",
-          attributes: {
-            exclude: ["password"],
-          },
-        },
-      ],
-    });
-
     res.status(200).json({
       user,
       token,
-      roomIds,
-      friends: friends.map((f) => ({
-        roomId: f.getDataValue("roomId"),
-        user: f.getDataValue("User"),
-      })),
     });
   }
 );
 
 // @api  GET /api/v1/user
 // @desc Get all users
-// @access  public
+// @access  Private/user
 export const getUsers = asyncHandler(
   async (
     req: Request<{}, {}, {}, { q?: string; limit?: number; page?: number }>,
@@ -130,12 +96,11 @@ export const getUsers = asyncHandler(
     next: NextFunction
   ) => {
     let keyword = `%${req.query.q || ""}%`;
-
     const limit = req.query.limit || 10;
     const page = req.query.page || 1;
     const skip = (page - 1) * limit;
 
-    const [users, count] = await Promise.all([
+    const [users, count, friends, friendshipReq] = await Promise.all([
       User.findAll({
         where: {
           [Op.or]: {
@@ -154,11 +119,79 @@ export const getUsers = asyncHandler(
         limit,
       }),
       User.count(),
+      Friend.findAll({
+        where: {
+          userId: req.user.id,
+        },
+        attributes: ["friendId", "status"],
+      }),
+      Friend.findAll({
+        where: {
+          friendId: req.user.id,
+        },
+        attributes: ["userId", "status"],
+      }),
     ]);
 
+    let mapped = users.map((user) => {
+      let friend =
+        friends.find((f) => f.get("friendId") == user.get("id")) || null;
+      let request =
+        friendshipReq.find((f) => f.get("userId") == user.get("id")) || null;
+      return {
+        ...user.get(),
+        status: friend
+          ? { type: "send", status: friend?.get("status") }
+          : request
+          ? {
+              type: "receive",
+              status: request?.get("status"),
+            }
+          : null,
+      };
+    });
+
     await res.status(200).json({
-      users,
+      users: mapped,
       count,
     });
+  }
+);
+
+export const getFriends = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    let userId = req.user.id;
+    const friends = await Friend.findAll({});
+    // Get user friends
+    // const participants = await Participants.findAll({
+    //   where: {
+    //     userId,
+    //   },
+    //   // attributes: ["roomId"],
+    // });
+
+    res.status(200).json(friends);
+
+    // const roomIds = participants.map((p) => p.getDataValue("roomId"));
+    // const friends = await Participants.findAll({
+    //   where: {
+    //     roomId: {
+    //       [Op.or]: roomIds,
+    //     },
+    //     userId: {
+    //       [Op.not]: userInfo.id,
+    //     },
+    //   },
+    //   attributes: ["roomId"],
+    //   include: [
+    //     {
+    //       model: User,
+    //       foreignKey: "userId",
+    //       attributes: {
+    //         exclude: ["password"],
+    //       },
+    //     },
+    //   ],
+    // });
   }
 );

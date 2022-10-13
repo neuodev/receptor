@@ -3,6 +3,7 @@ import { Stack, Typography, Input, Box, CircularProgress } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import { useAppSelector } from "../../store";
 import Center from "../common/Center";
+import ChatListItem from "../Chat/ChatListItem";
 
 const ChatsList = () => {
   const friends = useAppSelector((state) => state.friends);
@@ -36,7 +37,11 @@ const ChatsList = () => {
             <Typography color="error">{friends.error}</Typography>
           </Center>
         ) : (
-          <Box>{}</Box>
+          <Box>
+            {friends.list.map((friend) => (
+              <ChatListItem friend={friend} />
+            ))}
+          </Box>
         )}
       </Box>
     </Stack>

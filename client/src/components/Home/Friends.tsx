@@ -1,15 +1,25 @@
 import React from "react";
-import { Box, Input, Typography, Button } from "@mui/material";
+import {
+  Box,
+  Input,
+  Typography,
+  Button,
+  CircularProgress,
+  Stack,
+} from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import PersonAddAltIcon from "@mui/icons-material/PersonAddAlt";
 import { useAppModal } from "../../state/app/hooks";
 import { AppModal } from "../../state/app/reducer";
+import { useAppSelector } from "../../store";
+import Center from "../common/Center";
 
 const Friends: React.FC<{}> = () => {
   const modal = useAppModal();
+  const friends = useAppSelector((state) => state.friends);
 
   return (
-    <Box>
+    <Stack sx={{ height: "100%" }}>
       <Typography variant="h5" mb="32px">
         Friends
       </Typography>
@@ -43,7 +53,21 @@ const Friends: React.FC<{}> = () => {
       >
         <Typography>Find Friends</Typography>
       </Button>
-    </Box>
+
+      <Box sx={{ flexGrow: 1 }}>
+        {friends.loading ? (
+          <Center>
+            <CircularProgress />
+          </Center>
+        ) : friends.error ? (
+          <Center>
+            <Typography color="error">{friends.error}</Typography>
+          </Center>
+        ) : (
+          <Box>{}</Box>
+        )}
+      </Box>
+    </Stack>
   );
 };
 

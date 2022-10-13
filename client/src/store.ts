@@ -5,12 +5,14 @@ import { userReducer } from "./state/user/reducer";
 import { appReducer } from "./state/app/reducer";
 import { addFriendReducer } from "./state/addFriend/reducer";
 import { save, load } from "redux-localstorage-simple";
+import { friendsReducer } from "./state/friends/reducer";
 
 export const store = configureStore({
   reducer: {
     user: userReducer,
     app: appReducer,
     addFriend: addFriendReducer,
+    friends: friendsReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat([thunk, save()]),

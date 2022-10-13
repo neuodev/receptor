@@ -1,8 +1,6 @@
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
 import { COMMON_HEADERS, getEndpoint } from "../../constants/api";
-import { ROUTES } from "../../constants/routes";
-import { useAppDispatch } from "../../store";
+import { useAppDispatch, useAppSelector } from "../../store";
 import { getErrMsg } from "../../utils/error";
 import { useAppScoket } from "../../wss/appSocket";
 import {
@@ -14,7 +12,6 @@ import {
 
 export const useUserHooks = () => {
   const dispatch = useAppDispatch();
-  const navigate = useNavigate();
   const appSocket = useAppScoket();
 
   const login = async (data: { email: string; password: string }) => {
@@ -49,4 +46,13 @@ export const useUserHooks = () => {
   };
 
   return { login, register };
+};
+
+export const useAuthHeaders = () => {
+  const token = useAppSelector((state) => state.user.authToken);
+
+  return {
+    ...COMMON_HEADERS,
+    authorization: `Bearer ${token}`,
+  };
 };

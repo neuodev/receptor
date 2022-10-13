@@ -5,8 +5,9 @@ import PersonAddAltIcon from "@mui/icons-material/PersonAddAlt";
 import { useAppModal } from "../../state/app/hooks";
 import { AppModal } from "../../state/app/reducer";
 
-const Friends = () => {
+const Friends: React.FC<{}> = () => {
   const modal = useAppModal();
+
   return (
     <Box>
       <Typography variant="h5" mb="32px">
@@ -27,7 +28,7 @@ const Friends = () => {
       />
 
       <Button
-        onClick={() => modal.showModal(AppModal.AddFriend)}
+        onClick={() => modal.show(AppModal.AddFriend)}
         disableElevation
         endIcon={<PersonAddAltIcon />}
         variant="contained"

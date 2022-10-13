@@ -16,6 +16,7 @@ import { useAppSelector } from "../../store";
 const AddFriends = () => {
   const [search, setSearch] = useState<string>("");
   const { getUsersList } = useAddFriend();
+  const currUser = useAppSelector((state) => state.user.info);
   const { users, loading, error } = useAppSelector(
     (state) => state.addFriend.usersList
   );
@@ -54,7 +55,9 @@ const AddFriends = () => {
             {error}
           </Alert>
         ) : (
-          users.map((user) => <AddFriendCard key={user.id} user={user} />)
+          users
+            .filter((u) => u.id !== currUser?.id)
+            .map((user) => <AddFriendCard key={user.id} user={user} />)
         )}
       </Stack>
     </Box>

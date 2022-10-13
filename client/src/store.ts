@@ -4,6 +4,7 @@ import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 import { userReducer } from "./state/user/reducer";
 import { appReducer } from "./state/app/reducer";
 import { addFriendReducer } from "./state/addFriend/reducer";
+import { save, load } from "redux-localstorage-simple";
 
 export const store = configureStore({
   reducer: {
@@ -11,8 +12,9 @@ export const store = configureStore({
     app: appReducer,
     addFriend: addFriendReducer,
   },
-  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(thunk),
-  preloadedState: {},
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware().concat([thunk, save()]),
+  preloadedState: load(),
   devTools: true,
 });
 

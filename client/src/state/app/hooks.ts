@@ -10,17 +10,17 @@ export const useAppModal = () => {
     return state.modal === modal;
   }
 
-  function showModal(modal: AppModal) {
+  function show(modal: AppModal) {
     dispatch(showAppModal(modal));
   }
 
-  function hideModal() {
+  function hide() {
     dispatch(hideAppModal());
   }
 
   return {
     isShown,
-    showModal,
-    hideModal,
+    show,
+    hide,
   };
 };

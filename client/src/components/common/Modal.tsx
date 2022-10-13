@@ -1,5 +1,6 @@
 import React from "react";
 import { Box, Modal as MuiModal } from "@mui/material";
+import { useAppModal } from "../../state/app/hooks";
 
 const style = {
   position: "absolute",
@@ -14,14 +15,16 @@ const style = {
 
 const Modal: React.FC<{
   open: boolean;
-  onClose(): void;
+  onClose?: () => void;
   children: React.ReactNode;
 }> = ({ open, onClose, children }) => {
+  const modal = useAppModal();
+
   return (
     <Box>
       <MuiModal
         open={open}
-        onClose={onClose}
+        onClose={onClose ? onClose : modal.hide}
         disableEnforceFocus
         disableAutoFocus
       >

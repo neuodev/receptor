@@ -50,7 +50,7 @@ const AddFriends = () => {
         {loading ? (
           <CircularProgress />
         ) : error ? (
-          <Alert>
+          <Alert severity="error">
             <AlertTitle>Error</AlertTitle>
             {error}
           </Alert>

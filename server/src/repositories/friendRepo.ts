@@ -86,7 +86,6 @@ export default class FriendRepo extends BaseRepo {
       if (!user) throw new Error("User not found");
       if (!request) throw new Error("Request not found");
 
-      console.log({ user, request });
       // Create new room with new participants
       let info = request.get();
       await this.app.roomRepo.newRoom(
@@ -94,10 +93,7 @@ export default class FriendRepo extends BaseRepo {
         RoomType.DM
       );
 
-      await this.updateStatus(
-        request.get("id") as number,
-        FriendshipStatus.FRIENDS
-      );
+      await this.updateStatus(info.id, FriendshipStatus.FRIENDS);
       socket.emit(Event.AcceptFriend, { ok: true });
       // Should send notification to his friend
       // Todo: Check if the user is active or now before sending the notification

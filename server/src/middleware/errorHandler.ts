@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import ResponseError from "../utils/error";
 import { UniqueConstraintError, ValidationError } from "sequelize";
+
 export const errorHandler = (
   err: any,
   req: Request,

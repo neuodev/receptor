@@ -1,24 +1,31 @@
 import sequelize from "./db";
 import users from "./data/users.json";
 import { User } from "./models/User";
+import { Message } from "./models/Message";
+import { Notification } from "./models/Notification";
+import { Room } from "./models/Room";
+import { Participants } from "./models/Participants";
+import { Friend } from "./models/Friend";
 import "colors";
 
 export const seedDB = async () => {
   try {
+    await sequelize.sync({ force: false });
     await User.bulkCreate(users);
-    console.log("Database seeded".bgRed.underline.bold);
+    console.log("Database seeded".bgGreen.underline.bold);
   } catch (error) {
     if (error instanceof Error)
       console.log(`Seed database failed: ${error.message}`.red.underline.bold);
+
+    console.error(error);
   }
 };
 
 export const flush = async () => {
   console.log("Delete all database tables".red.underline.bold);
   try {
-    await sequelize.sync({ force: true });
-
-    console.log(`Reset database`.cyan.underline.bold);
+    const models = [User, Room, Notification, Participants, Friend, Message];
+    await Promise.all(models.map((model) => model.drop({ cascade: true })));
     process.exit(0);
   } catch (error) {
     let msg;

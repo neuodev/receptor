@@ -20,7 +20,7 @@ export interface IFriend {
 export const Friend: ModelDefined<
   IFriend,
   Optional<IFriend, "id" | "createdAt" | "updatedAt">
-> = sequelize.define("Friend", {
+> = sequelize.define("friend", {
   status: {
     type: DataTypes.ENUM(
       FriendshipStatus.PENDING,

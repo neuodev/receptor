@@ -15,12 +15,14 @@ export interface IMessage {
   type: MessageType;
   body: string;
   read: boolean;
+  userId: number;
+  roomId: number;
 }
 
 export const Message: ModelDefined<
   IMessage,
   Optional<IMessage, "id" | "read">
-> = sequelize.define("Message", {
+> = sequelize.define("message", {
   type: {
     type: DataTypes.ENUM(
       MessageType.Text,
@@ -42,19 +44,16 @@ export const Message: ModelDefined<
   },
 });
 
-// Sender and receiver associations
-const usersKeys = ["sender", "receiver"];
+// Sender associations
+const options = {
+  foreignKey: {
+    name: "userId",
+    allowNull: false,
+  },
+};
 
-usersKeys.forEach((name) => {
-  const options = {
-    foreignKey: {
-      name,
-      allowNull: false,
-    },
-  };
-  User.hasMany(Message, options);
-  Message.belongsTo(User, options);
-});
+User.hasMany(Message, options);
+Message.belongsTo(User, options);
 
 // Room Associations
 Room.hasMany(Message, {

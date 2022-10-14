@@ -65,18 +65,24 @@ export default class RoomRepo extends BaseRepo {
   async sendMessage(rooms: Array<number>, msg: RoomMessage) {
     const { socket } = this.app;
     await this.errorHandler(async () => {
+      const userId = this.app.decodeAuthToken();
+      console.log({ rooms });
+      await Promise.all(
+        rooms.map((room) =>
+          this.app.messageRepo.newMessage({
+            ...msg,
+            roomId: room,
+            userId,
+            read: false,
+          })
+        )
+      );
+
       rooms.forEach(async (room) => {
-        await this.app.messageRepo.newMessage({
-          ...msg,
-          roomId: room,
-          sender: this.app.decodeAuthToken(),
-          read: false,
-        });
         // Broadcast incoming message to all users in the room
         // Skip the sender of the message
         socket.broadcast.to(room.toString()).emit(Event.RoomMessage, msg);
       });
-
       socket.emit(Event.RoomMessage, { ok: true });
     }, Event.RoomMessage);
   }

@@ -14,9 +14,10 @@ export const Participants: ModelDefined<
   Optional<IParticipants, "id">
 > = sequelize.define("participants", {
   id: {
-    type: DataTypes.NUMBER,
+    type: DataTypes.INTEGER,
     allowNull: false,
     primaryKey: true,
+    autoIncrement: true,
   },
 });
 

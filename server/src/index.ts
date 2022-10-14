@@ -9,6 +9,7 @@ import AppUOW from "./repositories";
 import cors from "cors";
 import "./seed";
 import "colors";
+import { roomRouter } from "./routes/room";
 
 dotenv.config();
 
@@ -28,6 +29,7 @@ io.on(Event.Connect, (socket: Socket) => {
 app.use(cors());
 app.use(express.json());
 app.use("/api/v1/user", userRouter);
+app.use("/api/v1/room", roomRouter);
 app.use(errorHandler);
 
 const PORT = process.env.PORT || 8080;

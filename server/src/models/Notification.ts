@@ -8,7 +8,7 @@ export enum NotificationType {
 
 export interface INotification {
   id: number;
-  userId: number | IUser;
+  userId: number;
   content: string;
   isSeen: boolean;
   type: NotificationType;
@@ -19,7 +19,7 @@ export interface INotification {
 export const Notification: ModelDefined<
   INotification,
   Optional<INotification, "id" | "updatedAt" | "createdAt">
-> = sequelize.define("Notification", {
+> = sequelize.define("notification", {
   content: {
     type: DataTypes.JSON,
     allowNull: false,

@@ -39,7 +39,7 @@ const ChatsList = () => {
         ) : (
           <Box>
             {friends.list.map((friend) => (
-              <ChatListItem friend={friend} />
+              <ChatListItem friend={friend} key={friend.user.id} />
             ))}
           </Box>
         )}

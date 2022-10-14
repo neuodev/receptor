@@ -157,6 +157,9 @@ export const getUsers = asyncHandler(
   }
 );
 
+// @api  GET /api/v1/user/friends
+// @desc Get user friends
+// @access  Private/user
 export const getFriends = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     let userId = req.user.id;

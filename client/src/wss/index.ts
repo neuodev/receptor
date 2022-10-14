@@ -18,11 +18,13 @@ type OkOrErr = { ok?: boolean; error?: string };
 interface ServerToClientEvents {
   [Event.Login]: (data: OkOrErr) => void;
   [Event.AddFriend]: (data: OkOrErr) => void;
+  [Event.JoinRoom]: (data: OkOrErr) => void;
 }
 
 interface ClientToServerEvents {
   [Event.Login]: (data: { token: string }) => void;
   [Event.AddFriend]: (data: { friendId: number }) => void;
+  [Event.JoinRoom]: (data: { rooms: number[] }) => void;
 }
 
 export const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io(

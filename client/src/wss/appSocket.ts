@@ -3,14 +3,14 @@ import { useNavigate } from "react-router-dom";
 import { Event, socket } from ".";
 import { ROUTES } from "../constants/routes";
 import { addFriendErr, addFriendRes } from "../state/addFriend/actions";
-import { useAppDispatch } from "../store";
+import { useAppDispatch, useAppSelector } from "../store";
 
 export const useServerEvents = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
   useEffect(() => {
-    socket.on(Event.Login, (res) => {
+    socket.on(Event.Login, () => {
       navigate(ROUTES.ROOT);
     });
 
@@ -21,10 +21,17 @@ export const useServerEvents = () => {
         dispatch(addFriendRes());
       }
     });
+
+    socket.on(Event.JoinRoom, (res) => {
+      console.log({ event: Event.JoinRoom, res });
+    });
   }, []);
+
+  useEffect(() => {}, []);
 };
 
 export const useAppScoket = () => {
+  const authToken = useAppSelector((state) => state.user.authToken);
   function addFriend(id: number) {
     socket.emit(Event.AddFriend, { friendId: id });
   }
@@ -32,5 +39,14 @@ export const useAppScoket = () => {
   function login(token: string) {
     socket.emit(Event.Login, { token });
   }
-  return { addFriend, login };
+
+  function joinRooms(rooms: number[]) {
+    socket.emit(Event.JoinRoom, { rooms });
+  }
+
+  useEffect(() => {
+    if (authToken) login(authToken);
+  }, [authToken]);
+
+  return { addFriend, login, joinRooms };
 };

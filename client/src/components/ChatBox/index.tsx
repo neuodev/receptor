@@ -27,7 +27,7 @@ const ChatBox = () => {
           }}
         >
           <Header />
-          <Messages />
+          <Messages messages={messages.messages[messages.currRoom]} />
           <Box sx={{ mt: "auto" }}>
             <MessageBox />
           </Box>

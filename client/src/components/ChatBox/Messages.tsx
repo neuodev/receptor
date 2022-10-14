@@ -1,33 +1,16 @@
 import React from "react";
 import { Box } from "@mui/material";
 import Message from "./Message";
+import { IMessage } from "../../state/messages/reducer";
 
-const Messages = () => {
+const Messages: React.FC<{ messages: IMessage[] }> = ({ messages }) => {
   return (
     <Box>
-      {messages.map((message, idx) => (
-        <Message message={message} key={idx} />
+      {messages.map((message) => (
+        <Message message={message} key={message.id} />
       ))}
     </Box>
   );
 };
 
 export default Messages;
-
-const messages = [
-  {
-    user: "Jone Doe",
-    message:
-      "Hey, Marshall! How are you? Can you please change the color theme of the website to pink and purple?",
-  },
-  {
-    user: "Jane Doe",
-    message:
-      "Hey, Marshall! How are you? Can you please change the color theme of the website to pink and purple?",
-  },
-  {
-    user: "Jone Doe",
-    message:
-      "Hey, Marshall! How are you? Can you please change the color theme of the website to pink and purple?",
-  },
-];

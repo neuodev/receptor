@@ -1,14 +1,16 @@
 import React from "react";
 import { Stack, IconButton, Box, Avatar, Typography } from "@mui/material";
 import { stringAvatar } from "../../utils/colors";
+import { IMessage } from "../../state/messages/reducer";
+import { useAppSelector } from "../../store";
+import moment from "moment";
 
 const Message: React.FC<{
-  message: {
-    user: string;
-    message: string;
-  };
+  message: IMessage;
 }> = ({ message }) => {
-  const fromUser = message.user.startsWith("Jone");
+  const user = useAppSelector((state) => state.user.info);
+  const fromUser = message.userId === user?.id;
+
   return (
     <Stack
       direction={fromUser ? "row-reverse" : "row"}
@@ -16,7 +18,7 @@ const Message: React.FC<{
       sx={{ maxWidth: "50%", ml: fromUser ? "auto" : "0px", mt: "24px" }}
     >
       <Box>
-        <Avatar {...stringAvatar(message.user)}>JS</Avatar>
+        <Avatar {...stringAvatar("message.user")} />
       </Box>
       <Stack
         alignItems={fromUser ? "flex-end" : "flex-start"}
@@ -27,15 +29,17 @@ const Message: React.FC<{
             bgcolor: fromUser ? "primary.main" : "grey.300",
             p: "16px 20px",
             borderRadius: "0.6rem",
+            borderBottomRightRadius: fromUser ? "0rem" : "0.6rem",
+            borderBottomLeftRadius: fromUser ? "0.6rem" : "0rem",
             mb: "4px",
           }}
           variant="body1"
           color={fromUser ? "common.white" : "grey.600"}
         >
-          {message.message}
+          {message.body}
         </Typography>
         <Typography variant="caption" color="grey.500">
-          5min ago
+          {moment(message.createdAt).fromNow()}
         </Typography>
       </Stack>
     </Stack>

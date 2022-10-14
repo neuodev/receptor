@@ -3,18 +3,27 @@ import { useNavigate } from "react-router-dom";
 import { Event, socket } from ".";
 import { ROUTES } from "../constants/routes";
 import { addFriendErr, addFriendRes } from "../state/addFriend/actions";
+import { MessageType, RoomId } from "../state/messages/reducer";
 import { useAppDispatch, useAppSelector } from "../store";
+
+export type SendRoomMsg = {
+  rooms: RoomId[];
+  message: {
+    type: MessageType;
+    body: string;
+  };
+};
 
 export const useServerEvents = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
   useEffect(() => {
-    socket.on(Event.Login, () => {
+    socket.once(Event.Login, () => {
       navigate(ROUTES.ROOT);
     });
 
-    socket.on(Event.AddFriend, (res) => {
+    socket.once(Event.AddFriend, (res) => {
       if (res.error) {
         dispatch(addFriendErr(res.error));
       } else {
@@ -22,12 +31,14 @@ export const useServerEvents = () => {
       }
     });
 
-    socket.on(Event.JoinRoom, (res) => {
+    socket.once(Event.JoinRoom, (res) => {
       console.log({ event: Event.JoinRoom, res });
     });
-  }, []);
 
-  useEffect(() => {}, []);
+    socket.once(Event.RoomMessage, (res) => {
+      console.log({ res, event: Event.RoomMessage });
+    });
+  }, []);
 };
 
 export const useAppScoket = () => {
@@ -44,9 +55,13 @@ export const useAppScoket = () => {
     socket.emit(Event.JoinRoom, { rooms });
   }
 
+  function sendRoomMsg(msg: SendRoomMsg) {
+    socket.emit(Event.RoomMessage, msg);
+  }
+
   useEffect(() => {
     if (authToken) login(authToken);
   }, [authToken]);
 
-  return { addFriend, login, joinRooms };
+  return { addFriend, login, joinRooms, sendRoomMsg };
 };

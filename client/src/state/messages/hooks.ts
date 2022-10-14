@@ -11,11 +11,13 @@ import {
   setCrrRoom,
 } from "./actions";
 import { IMessage, RoomId } from "./reducer";
+import { SendRoomMsg, useAppScoket } from "../../wss/appSocket";
 
 export const useRoom = () => {
   const dispatch = useAppDispatch();
   const headers = useAuthHeaders();
   const currRoom = useAppSelector((state) => state.messages.currRoom);
+  const socket = useAppScoket();
 
   async function getRoomMessages(roomId: RoomId) {
     try {

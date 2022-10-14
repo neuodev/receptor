@@ -41,6 +41,7 @@ const Header = () => {
         <AvatarGroup sx={{ ml: "auto" }}>
           {avatarGroup.map((avatar) => (
             <Tooltip
+              key={avatar}
               arrow
               followCursor
               title={<Typography>{avatar}</Typography>}

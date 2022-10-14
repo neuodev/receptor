@@ -9,4 +9,6 @@ export const getRoomMessagesErr = createAction<{
 export const getRoomMessagesRes = createAction<{
   roomId: RoomId;
   messages: IMessage[];
-}>("room-messages/req");
+}>("room-messages/res");
+
+export const setCrrRoom = createAction<RoomId | null>("room/set-current");

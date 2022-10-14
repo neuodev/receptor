@@ -4,6 +4,7 @@ import {
   getRoomMessagesErr,
   getRoomMessagesReq,
   getRoomMessagesRes,
+  setCrrRoom,
 } from "./actions";
 
 export type RoomId = number;
@@ -27,6 +28,7 @@ export interface IMessage {
 }
 
 type State = {
+  currRoom: RoomId | null;
   // IDs of the current loading room messages
   loading: {
     [roomId: RoomId]: boolean;
@@ -41,7 +43,8 @@ type State = {
 
 export const messagesReducer = createReducer<State>(
   {
-    loading: [],
+    currRoom: null,
+    loading: {},
     error: {},
     messages: {},
   },
@@ -63,6 +66,11 @@ export const messagesReducer = createReducer<State>(
           draftState.loading[roomId] = false;
           draftState.error[roomId] = null;
           draftState.messages[roomId] = messages;
+        })
+      )
+      .addCase(setCrrRoom, (state, { payload }) =>
+        produce(state, (draftState) => {
+          draftState.currRoom = payload;
         })
       );
   }

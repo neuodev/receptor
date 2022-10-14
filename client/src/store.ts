@@ -6,6 +6,7 @@ import { appReducer } from "./state/app/reducer";
 import { addFriendReducer } from "./state/addFriend/reducer";
 import { save, load } from "redux-localstorage-simple";
 import { friendsReducer } from "./state/friends/reducer";
+import { messagesReducer } from "./state/messages/reducer";
 
 export const store = configureStore({
   reducer: {
@@ -13,6 +14,7 @@ export const store = configureStore({
     app: appReducer,
     addFriend: addFriendReducer,
     friends: friendsReducer,
+    messages: messagesReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat([thunk, save()]),

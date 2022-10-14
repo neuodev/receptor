@@ -1,36 +1,25 @@
 import { useEffect } from "react";
-import axios from "axios";
-import { getEndpoint } from "../../constants/api";
 import { useAppDispatch, useAppSelector } from "../../store";
 import { getErrMsg } from "../../utils/error";
-import { useAuthHeaders } from "../user/hooks";
 import {
   getRoomMessagesErr,
   getRoomMessagesReq,
   getRoomMessagesRes,
   setCrrRoom,
 } from "./actions";
-import { IMessage, RoomId } from "./reducer";
-import { SendRoomMsg, useAppScoket } from "../../wss/appSocket";
+import { RoomId } from "./reducer";
+import { useRoomApi } from "../../hooks/api/room";
 
 export const useRoom = () => {
   const dispatch = useAppDispatch();
-  const headers = useAuthHeaders();
   const currRoom = useAppSelector((state) => state.messages.currRoom);
-  const socket = useAppScoket();
+  const roomApi = useRoomApi();
 
   async function getRoomMessages(roomId: RoomId) {
     try {
       dispatch(getRoomMessagesReq(roomId));
-
-      const { data } = await axios.get<IMessage[]>(
-        getEndpoint("getRoomMessages", roomId.toString()),
-        {
-          headers,
-        }
-      );
-
-      dispatch(getRoomMessagesRes({ roomId, messages: data }));
+      const messages = await roomApi.getRoomMessages(roomId);
+      dispatch(getRoomMessagesRes({ roomId, messages }));
     } catch (error) {
       dispatch(getRoomMessagesErr({ roomId, error: getErrMsg(error) }));
     }

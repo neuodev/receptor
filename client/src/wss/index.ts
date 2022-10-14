@@ -21,7 +21,7 @@ interface ServerToClientEvents {
   [Event.Login]: (data: OkOrErr) => void;
   [Event.AddFriend]: (data: OkOrErr) => void;
   [Event.JoinRoom]: (data: OkOrErr) => void;
-  [Event.RoomMessage]: (data: { rooms: RoomId[] }) => void;
+  [Event.RoomMessage]: (data: { rooms: RoomId[] } | { error: string }) => void;
 }
 
 interface ClientToServerEvents {

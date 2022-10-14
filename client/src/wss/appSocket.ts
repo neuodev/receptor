@@ -2,9 +2,15 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Event, socket } from ".";
 import { ROUTES } from "../constants/routes";
+import { useRoomApi } from "../hooks/api/room";
 import { addFriendErr, addFriendRes } from "../state/addFriend/actions";
+import {
+  getRoomMessagesErr,
+  getRoomMessagesRes,
+} from "../state/messages/actions";
 import { MessageType, RoomId } from "../state/messages/reducer";
 import { useAppDispatch, useAppSelector } from "../store";
+import { getErrMsg } from "../utils/error";
 
 export type SendRoomMsg = {
   rooms: RoomId[];
@@ -17,13 +23,14 @@ export type SendRoomMsg = {
 export const useServerEvents = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const roomApi = useRoomApi();
 
   useEffect(() => {
-    socket.once(Event.Login, () => {
+    socket.on(Event.Login, () => {
       navigate(ROUTES.ROOT);
     });
 
-    socket.once(Event.AddFriend, (res) => {
+    socket.on(Event.AddFriend, (res) => {
       if (res.error) {
         dispatch(addFriendErr(res.error));
       } else {
@@ -31,12 +38,24 @@ export const useServerEvents = () => {
       }
     });
 
-    socket.once(Event.JoinRoom, (res) => {
+    socket.on(Event.JoinRoom, (res) => {
       console.log({ event: Event.JoinRoom, res });
     });
 
-    socket.once(Event.RoomMessage, (res) => {
-      console.log({ res, event: Event.RoomMessage });
+    socket.on(Event.RoomMessage, async (res) => {
+      if ("error" in res) {
+        console.error({ e: Event.RoomMessage, res });
+        return;
+      }
+
+      res.rooms.forEach(async (roomId) => {
+        try {
+          const messages = await roomApi.getRoomMessages(roomId);
+          dispatch(getRoomMessagesRes({ roomId, messages }));
+        } catch (error) {
+          dispatch(getRoomMessagesErr({ roomId, error: getErrMsg(error) }));
+        }
+      });
     });
   }, []);
 };

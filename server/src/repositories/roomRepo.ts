@@ -66,7 +66,6 @@ export default class RoomRepo extends BaseRepo {
     const { socket } = this.app;
     await this.errorHandler(async () => {
       const userId = this.app.decodeAuthToken();
-      console.log({ rooms });
       await Promise.all(
         rooms.map((room) =>
           this.app.messageRepo.newMessage({

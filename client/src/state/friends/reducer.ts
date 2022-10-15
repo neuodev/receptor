@@ -1,6 +1,12 @@
 import { createReducer } from "@reduxjs/toolkit";
+import produce from "immer";
 import { IUser } from "../user/reducer";
-import { getFriendsErr, getFriendsReq, getFriendsRes } from "./actions";
+import {
+  getFriendsErr,
+  getFriendsReq,
+  getFriendsRes,
+  updateUser,
+} from "./actions";
 
 type State = {
   loading: boolean;
@@ -16,20 +22,31 @@ export const friendsReducer = createReducer<State>(
   },
   (builder) => {
     builder
-      .addCase(getFriendsReq, (state) => ({
-        ...state,
-        loading: true,
-        error: null,
-      }))
-      .addCase(getFriendsErr, (state, { payload }) => ({
-        ...state,
-        loading: false,
-        error: payload,
-      }))
-      .addCase(getFriendsRes, (state, { payload }) => ({
-        loading: false,
-        error: null,
-        list: payload,
-      }));
+      .addCase(getFriendsReq, (state) =>
+        produce(state, (draft) => {
+          draft.loading = true;
+          draft.error = null;
+        })
+      )
+      .addCase(getFriendsErr, (state, { payload }) =>
+        produce(state, (draft) => {
+          draft.loading = false;
+          draft.error = payload;
+        })
+      )
+      .addCase(getFriendsRes, (state, { payload }) =>
+        produce(state, (draft) => {
+          draft.loading = false;
+          draft.error = null;
+          draft.list = payload;
+        })
+      )
+      .addCase(updateUser, (state, { payload: newUser }) =>
+        produce(state, (draftState) => {
+          draftState.list.forEach((friend) => {
+            friend.user = friend.user.id === newUser.id ? newUser : friend.user;
+          });
+        })
+      );
   }
 );

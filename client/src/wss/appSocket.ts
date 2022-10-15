@@ -2,16 +2,11 @@ import { useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Event, socket } from ".";
 import { ROUTES } from "../constants/routes";
-import { useRoomApi } from "../hooks/api/room";
 import { addFriendErr, addFriendRes } from "../state/addFriend/actions";
-import {
-  addNewMsg,
-  getRoomMessagesErr,
-  getRoomMessagesRes,
-} from "../state/messages/actions";
+import { updateUser } from "../state/friends/actions";
+import { addNewMsg } from "../state/messages/actions";
 import { MessageType, RoomId } from "../state/messages/reducer";
 import { useAppDispatch, useAppSelector } from "../store";
-import { getErrMsg } from "../utils/error";
 
 export type SendRoomMsg = {
   rooms: RoomId[];
@@ -27,7 +22,6 @@ export const useServerEvents = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const loc = useLocation();
-  const roomApi = useRoomApi();
 
   useEffect(() => {
     socket.on(Event.Login, () => {
@@ -56,6 +50,11 @@ export const useServerEvents = () => {
       } else {
         dispatch(addNewMsg(res));
       }
+    });
+
+    socket.on(Event.UpdateUser, (user) => {
+      console.count("UpdateUser");
+      dispatch(updateUser(user));
     });
   }, []);
 

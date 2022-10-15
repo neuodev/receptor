@@ -1,5 +1,6 @@
 import { io, Socket } from "socket.io-client";
 import { IMessage, RoomId } from "../state/messages/reducer";
+import { IUser } from "../state/user/reducer";
 import { SendRoomMsg } from "./appSocket";
 
 export enum Event {
@@ -13,6 +14,7 @@ export enum Event {
   JoinRoom = "joinRoom",
   LeaveRoom = "leaveRoom",
   RoomMessage = "sendRoomMsg",
+  UpdateUser = "updateUser",
 }
 
 type OkOrErr = { ok?: boolean; error?: string };
@@ -22,6 +24,7 @@ interface ServerToClientEvents {
   [Event.AddFriend]: (data: OkOrErr) => void;
   [Event.JoinRoom]: (data: OkOrErr) => void;
   [Event.RoomMessage]: (data: { error: string } | IMessage) => void;
+  [Event.UpdateUser]: (user: IUser) => void;
 }
 
 interface ClientToServerEvents {

@@ -63,7 +63,7 @@ export default class NotificationRepo extends BaseRepo {
     const { socket } = this.app;
     await this.errorHandler(async () => {
       const userId = this.app.decodeAuthToken();
-      const user = await this.app.userRepo.getUserById(userId);
+      const user = await this.app.userRepo.getById(userId);
       if (!user) throw new Error("User not foudn");
       let notifications = this.getNotifications(user.id);
 

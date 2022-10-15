@@ -24,7 +24,7 @@ const ChatsList = () => {
           borderRadius: "0.6rem",
           mb: "15px",
         }}
-        startAdornment={<SearchIcon sx={{ mr: "4px" }} />}
+        startAdornment={<SearchIcon sx={{ mr: "4px", color: "grey.500" }} />}
       />
 
       <Box sx={{ flexGrow: 1 }}>

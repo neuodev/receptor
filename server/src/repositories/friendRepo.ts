@@ -1,18 +1,9 @@
 import { Op } from "sequelize";
 import AppUOW from ".";
 import { Event } from "../events";
-import { Friend, FriendshipStatus } from "../models/Friend";
+import { Friend, FriendshipStatus, IFriend } from "../models/Friend";
 import { RoomType } from "../models/Room";
 import BaseRepo from "./baseRepo";
-
-export type FriendEntry = {
-  id: number;
-  status: FriendshipStatus;
-  createAt: string;
-  updatedAt: string;
-  userId: number;
-  friendId: number;
-};
 
 export default class FriendRepo extends BaseRepo {
   constructor(app: AppUOW) {
@@ -45,7 +36,7 @@ export default class FriendRepo extends BaseRepo {
     });
   }
 
-  async getFriends(userId: number) {
+  async getFriends(userId: number): Promise<IFriend[]> {
     let friends = await Friend.findAll({
       where: {
         [Op.or]: {

@@ -75,11 +75,6 @@ export default class UserRepo extends BaseRepo {
     await User.truncate();
   }
 
-  async getUserById(id: number): Promise<IUser | null> {
-    const user = await User.findByPk(id);
-    return user ? user.get() : null;
-  }
-
   async getUser(username: string, password: string): Promise<IUser | null> {
     let user = await User.findOne({
       where: {
@@ -191,7 +186,7 @@ export default class UserRepo extends BaseRepo {
     const { socket } = this.app;
     await this.errorHandler(async () => {
       const userId = this.app.decodeAuthToken();
-      let user = await this.getUserById(userId);
+      let user = await this.getById(userId);
       socket.emit(Event.GetUser, user);
     }, Event.GetUser);
   };

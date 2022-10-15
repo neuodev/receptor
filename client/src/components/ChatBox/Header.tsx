@@ -35,7 +35,7 @@ const Header = () => {
             Ahmed Ibrhaim
           </Typography>
           <Typography variant="caption" color="grey.600">
-            Is typing...
+            {friend?.user.isActive ? "Online" : "Offline"}
           </Typography>
         </Box>
         <AvatarGroup sx={{ ml: "auto" }}>

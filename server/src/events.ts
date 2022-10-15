@@ -9,4 +9,5 @@ export enum Event {
   JoinRoom = "joinRoom",
   LeaveRoom = "leaveRoom",
   RoomMessage = "sendRoomMsg",
+  FriendStatus = "friendStatus",
 }

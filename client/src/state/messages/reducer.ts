@@ -18,7 +18,7 @@ export enum MessageType {
 }
 
 export interface IMessage {
-  id: RoomId;
+  id: number;
   type: MessageType;
   body: string;
   read: boolean;
@@ -30,7 +30,7 @@ export interface IMessage {
     email: string;
     isActive: boolean;
   };
-  roomId: number;
+  roomId: RoomId;
 }
 
 type State = {

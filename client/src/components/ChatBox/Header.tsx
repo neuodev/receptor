@@ -5,17 +5,20 @@ import {
   Typography,
   AvatarGroup,
   Tooltip,
+  IconButton,
 } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
 import { stringAvatar } from "../../utils/colors";
 import { theme } from "../../theme";
 import { useAppSelector } from "../../store";
+import { useRoom } from "../../state/messages/hooks";
 
 const Header = () => {
+  const { setCurrentRoom } = useRoom();
   const currRoom = useAppSelector((state) => state.messages.currRoom);
   const friends = useAppSelector((state) => state.friends.list);
   const user = useAppSelector((state) => state.user.info);
   const friend = friends.find((f) => f.roomId === currRoom);
-
   const avatarGroup = [friend?.user.username, user?.username];
 
   return (
@@ -32,7 +35,7 @@ const Header = () => {
         </Box>
         <Box sx={{ ml: "12px" }}>
           <Typography variant="body1" mb="-4px">
-            Ahmed Ibrhaim
+            {friend?.user.username}
           </Typography>
           <Typography variant="caption" color="grey.600">
             {friend?.user.isActive ? "Online" : "Offline"}
@@ -50,6 +53,13 @@ const Header = () => {
             </Tooltip>
           ))}
         </AvatarGroup>
+
+        <IconButton
+          onClick={() => setCurrentRoom(null)}
+          sx={{ width: "44px", height: "44px", ml: "8px" }}
+        >
+          <CloseIcon />
+        </IconButton>
       </Stack>
     </Box>
   );

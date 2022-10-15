@@ -9,11 +9,14 @@ const ChatListItem: React.FC<{
   friend: { roomId: number; user: IUser };
 }> = ({ friend }) => {
   const { user, roomId } = friend;
-  const { setCurrentRoom } = useRoom();
+  const { setCurrentRoom, getRoomMessages } = useRoom();
 
   return (
     <Button
-      onClick={() => setCurrentRoom(roomId)}
+      onClick={() => {
+        setCurrentRoom(roomId);
+        getRoomMessages(roomId);
+      }}
       variant="text"
       color="secondary"
       sx={{

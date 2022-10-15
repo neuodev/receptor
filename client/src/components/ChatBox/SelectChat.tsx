@@ -8,7 +8,12 @@ const SelectChat = () => {
         sx={{ color: "grey.500", mb: "20px" }}
         fontSize="medium"
       />
-      <Typography color="grey.500" sx={{ maxWidth: "200px" }} fontSize="15px">
+      <Typography
+        color="grey.500"
+        sx={{ maxWidth: "200px" }}
+        fontSize="15px"
+        textAlign="center"
+      >
         Pick a person from left menu, and start your conversation.
       </Typography>
     </Stack>

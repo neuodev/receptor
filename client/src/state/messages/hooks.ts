@@ -12,7 +12,6 @@ import { useRoomApi } from "../../hooks/api/room";
 
 export const useRoom = () => {
   const dispatch = useAppDispatch();
-  const currRoom = useAppSelector((state) => state.messages.currRoom);
   const roomApi = useRoomApi();
 
   async function getRoomMessages(roomId: RoomId) {
@@ -28,10 +27,6 @@ export const useRoom = () => {
   async function setCurrentRoom(roomId: RoomId | null) {
     dispatch(setCrrRoom(roomId));
   }
-
-  useEffect(() => {
-    if (currRoom) getRoomMessages(currRoom);
-  }, [currRoom]);
 
   return { getRoomMessages, setCurrentRoom };
 };

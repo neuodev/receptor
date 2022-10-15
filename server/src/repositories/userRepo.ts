@@ -203,7 +203,14 @@ export default class UserRepo extends BaseRepo {
       if (!user) throw new Error("User not found");
       const friends = await this.app.friendRepo.getFriends(user.id);
       socket.broadcast
-        .to(friends.map((f) => getUserPrivateRoom(f.id)))
+        .to(
+          friends
+            .map((f) => [
+              getUserPrivateRoom(f.userId),
+              getUserPrivateRoom(f.friendId),
+            ])
+            .reduce((acc, curr) => acc.concat(curr), [])
+        )
         .emit(Event.UpdateUser, user);
     }, Event.UpdateUser);
   }

@@ -10,6 +10,7 @@ export enum Event {
   AcceptFriend = "AcceptFriend",
   Notification = "notification",
   Login = "login",
+  Logout = "logout",
   GetUser = "getUser",
   JoinRoom = "joinRoom",
   LeaveRoom = "leaveRoom",
@@ -29,6 +30,7 @@ interface ServerToClientEvents {
 
 interface ClientToServerEvents {
   [Event.Login]: (data: { token: string }) => void;
+  [Event.Logout]: () => void;
   [Event.AddFriend]: (data: { friendId: number }) => void;
   [Event.JoinRoom]: (data: { rooms: number[] }) => void;
   [Event.RoomMessage]: (data: SendRoomMsg) => void;

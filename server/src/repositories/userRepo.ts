@@ -29,10 +29,8 @@ export default class UserRepo extends BaseRepo {
       this.addFriend(data.friendId);
     });
 
-    socket.on(Event.Disconnect, () => {
-      this.handleDisconnect();
-    });
-
+    socket.on(Event.Disconnect, this.handleLogout.bind(this));
+    socket.on(Event.Logout, this.handleLogout.bind(this));
     socket.on(Event.GetUser, this.handleGetUser);
   }
 
@@ -178,7 +176,7 @@ export default class UserRepo extends BaseRepo {
     }, Event.Login);
   }
 
-  async handleDisconnect() {
+  async handleLogout() {
     await this.errorHandler(async () => {
       const userId = this.app.decodeAuthToken();
       await this.updateUserStatus(userId, false);

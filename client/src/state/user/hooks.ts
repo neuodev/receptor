@@ -3,6 +3,8 @@ import { COMMON_HEADERS, getEndpoint } from "../../constants/api";
 import { useAppDispatch, useAppSelector } from "../../store";
 import { getErrMsg } from "../../utils/error";
 import { useAppScoket } from "../../wss/appSocket";
+import { resetFriends } from "../friends/actions";
+import { resetMessages } from "../messages/actions";
 import { authUserErr, authUserInfo, authUserReq, userLogout } from "./actions";
 
 export const useUserHooks = () => {
@@ -41,7 +43,10 @@ export const useUserHooks = () => {
   };
 
   const logout = () => {
+    appSocket.logout();
     dispatch(userLogout());
+    dispatch(resetFriends());
+    dispatch(resetMessages());
   };
 
   return { login, register, logout };

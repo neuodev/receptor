@@ -72,6 +72,10 @@ export const useAppScoket = () => {
     socket.emit(Event.Login, { token });
   }
 
+  function logout() {
+    socket.emit(Event.Logout);
+  }
+
   function joinRooms(rooms: number[]) {
     socket.emit(Event.JoinRoom, { rooms });
   }
@@ -80,5 +84,5 @@ export const useAppScoket = () => {
     socket.emit(Event.RoomMessage, msg);
   }
 
-  return { addFriend, login, joinRooms, sendRoomMsg };
+  return { addFriend, login, logout, joinRooms, sendRoomMsg };
 };

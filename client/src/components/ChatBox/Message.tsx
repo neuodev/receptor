@@ -20,7 +20,9 @@ const Message: React.FC<{
     >
       <Box>
         <Tooltip arrow title={<Typography>{message.user.email}</Typography>}>
-          <Avatar {...avatarProps(message.user as IUser)} />
+          <span>
+            <Avatar {...avatarProps(message.user as IUser)} />
+          </span>
         </Tooltip>
       </Box>
       <Stack

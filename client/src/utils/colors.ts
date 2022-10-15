@@ -18,8 +18,7 @@ function stringToColor(string: string) {
   return color;
 }
 
-export function getAvatarLetters(name: string): string {
-  if (name.length === 0) throw new Error("Invalid name");
+export function getAvatarLetters(name: string = ""): string {
   return name
     .split(" ")
     .map((part) => part[0])

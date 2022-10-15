@@ -8,9 +8,9 @@ import { useFriends } from "../../state/friends/hooks";
 const Root = () => {
   // Init all event listeners
   useServerEvents();
-  // Fetch all friends
+  // Todo: Should be moved
+  // Get user frineds
   useFriends();
-
   return (
     <Box
       sx={{

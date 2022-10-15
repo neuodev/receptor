@@ -3,12 +3,7 @@ import { COMMON_HEADERS, getEndpoint } from "../../constants/api";
 import { useAppDispatch, useAppSelector } from "../../store";
 import { getErrMsg } from "../../utils/error";
 import { useAppScoket } from "../../wss/appSocket";
-import {
-  authUserErr,
-  authUserInfo,
-  authUserReq,
-  setUserFriends,
-} from "./actions";
+import { authUserErr, authUserInfo, authUserReq, userLogout } from "./actions";
 
 export const useUserHooks = () => {
   const dispatch = useAppDispatch();
@@ -20,9 +15,8 @@ export const useUserHooks = () => {
       const res = await axios.post(getEndpoint("login"), data, {
         headers: COMMON_HEADERS,
       });
-      const { user, token, roomIds, friends } = res.data;
+      const { user, token } = res.data;
       dispatch(authUserInfo({ user, token }));
-      dispatch(setUserFriends({ rooms: roomIds, friends }));
       appSocket.login(token);
     } catch (error) {
       dispatch(authUserErr(getErrMsg(error)));
@@ -41,11 +35,16 @@ export const useUserHooks = () => {
       });
       login({ email: data.email, password: data.password });
     } catch (error) {
+      console.log(error);
       dispatch(authUserErr(getErrMsg(error)));
     }
   };
 
-  return { login, register };
+  const logout = () => {
+    dispatch(userLogout());
+  };
+
+  return { login, register, logout };
 };
 
 export const useAuthHeaders = () => {

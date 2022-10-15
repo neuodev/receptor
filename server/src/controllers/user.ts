@@ -170,6 +170,11 @@ export const getFriends = asyncHandler(
       attributes: ["roomId"],
     });
     const roomIds = rooms.map((room) => room.getDataValue("roomId") as number);
+    if (roomIds.length === 0) {
+      res.status(200).json([]);
+      return;
+    }
+
     const friends = await Participants.findAll({
       where: {
         roomId: {

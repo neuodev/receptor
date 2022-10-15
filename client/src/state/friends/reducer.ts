@@ -5,6 +5,7 @@ import {
   getFriendsErr,
   getFriendsReq,
   getFriendsRes,
+  resetFriends,
   updateUser,
 } from "./actions";
 
@@ -14,12 +15,14 @@ type State = {
   list: Array<{ roomId: number; user: IUser }>;
 };
 
+const initalState: State = {
+  loading: false,
+  error: null,
+  list: [],
+};
+
 export const friendsReducer = createReducer<State>(
-  {
-    loading: false,
-    error: null,
-    list: [],
-  },
+  produce(initalState, () => {}),
   (builder) => {
     builder
       .addCase(getFriendsReq, (state) =>
@@ -47,6 +50,7 @@ export const friendsReducer = createReducer<State>(
             friend.user = friend.user.id === newUser.id ? newUser : friend.user;
           });
         })
-      );
+      )
+      .addCase(resetFriends, () => produce(initalState, () => {}));
   }
 );

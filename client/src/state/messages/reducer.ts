@@ -5,6 +5,7 @@ import {
   getRoomMessagesErr,
   getRoomMessagesReq,
   getRoomMessagesRes,
+  resetMessages,
   setCrrRoom,
 } from "./actions";
 
@@ -47,13 +48,15 @@ type State = {
   };
 };
 
+const initalState: State = {
+  currRoom: null,
+  loading: {},
+  error: {},
+  messages: {},
+};
+
 export const messagesReducer = createReducer<State>(
-  {
-    currRoom: null,
-    loading: {},
-    error: {},
-    messages: {},
-  },
+  produce(initalState, () => {}),
   (builder) => {
     builder
       .addCase(getRoomMessagesReq, (state, { payload }) =>
@@ -87,6 +90,7 @@ export const messagesReducer = createReducer<State>(
           if (isExist) return;
           room.push(msg);
         })
-      );
+      )
+      .addCase(resetMessages, () => produce(initalState, () => {}));
   }
 );

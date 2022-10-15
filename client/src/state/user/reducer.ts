@@ -1,12 +1,6 @@
 import { createReducer } from "@reduxjs/toolkit";
 import produce from "immer";
-import {
-  authUserErr,
-  authUserInfo,
-  authUserReq,
-  setUserFriends,
-  userLogout,
-} from "./actions";
+import { authUserErr, authUserInfo, authUserReq, userLogout } from "./actions";
 
 export interface IUser {
   id: number;

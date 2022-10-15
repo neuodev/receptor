@@ -1,7 +1,6 @@
 import React from "react";
 import { Stack, Box, Typography, Button } from "@mui/material";
 import { IUser } from "../../state/user/reducer";
-import { stringAvatar } from "../../utils/colors";
 import moment from "moment";
 import { useRoom } from "../../state/messages/hooks";
 import Avatar, { avatarProps } from "../common/Avatar";

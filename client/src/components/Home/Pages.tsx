@@ -3,8 +3,10 @@ import { Typography, Button, IconButton } from "@mui/material";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import { useNavigate } from "react-router-dom";
 import { ROUTES } from "../../constants/routes";
+import { useUserHooks } from "../../state/user/hooks";
 
 const Pages = () => {
+  const { logout } = useUserHooks();
   const navigate = useNavigate();
   const PAGES = [
     {
@@ -25,6 +27,7 @@ const Pages = () => {
       title: "Log out",
       subtitle: "Logout your current account",
       onClick: () => {
+        logout();
         navigate(ROUTES.LOG_IN);
       },
     },

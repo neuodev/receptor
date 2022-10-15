@@ -1,10 +1,19 @@
-import React from "react";
+import { useEffect } from "react";
 import { Stack, Box } from "@mui/material";
 import Sidebar from "../components/Home/Sidebar";
-import { Outlet } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import ChatBox from "../components/ChatBox";
+import { useAppSelector } from "../store";
+import { ROUTES } from "../constants/routes";
 
 const HomePage = () => {
+  const user = useAppSelector((state) => state.user);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (user.authToken === null) navigate(ROUTES.LOG_IN);
+  }, [user]);
+
   return (
     <Stack direction="row" sx={{ height: "100%", flexShrink: 1 }}>
       <Sidebar />

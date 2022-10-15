@@ -2,7 +2,12 @@ import { IMessage, MessageType, RoomId } from "../state/messages/reducer";
 
 export type GroupedMessage = {
   roomId: RoomId;
-  content: Array<{ type: MessageType; body: string }>;
+  content: Array<{
+    id: number;
+    type: MessageType;
+    body: string;
+    createdAt: string;
+  }>;
   user: {
     id: number;
     username: string;
@@ -17,7 +22,9 @@ export function groupUserMessages(messages: IMessage[]): GroupedMessage[] {
   const asGrouped: (msg: IMessage) => GroupedMessage = (msg) => ({
     roomId: msg.roomId,
     user: msg.user,
-    content: [{ type: msg.type, body: msg.body }],
+    content: [
+      { id: msg.id, type: msg.type, body: msg.body, createdAt: msg.createdAt },
+    ],
     createdAt: msg.createdAt,
     updatedAt: msg.updatedAt,
   });
@@ -31,11 +38,18 @@ export function groupUserMessages(messages: IMessage[]): GroupedMessage[] {
       groupedMessages.push(prevMsg);
       prevMsg = asGrouped(msg);
     } else {
-      prevMsg.content.push({ type: msg.type, body: msg.body });
+      prevMsg.content.push({
+        id: msg.id,
+        type: msg.type,
+        body: msg.body,
+        createdAt: msg.createdAt,
+      });
       prevMsg.createdAt = msg.createdAt;
       prevMsg.updatedAt = msg.updatedAt;
     }
   });
+
+  if (prevMsg != null) groupedMessages.push(prevMsg);
 
   return groupedMessages;
 }

@@ -1,12 +1,12 @@
 import React from "react";
 import { Stack, Tooltip, Box, Avatar, Typography } from "@mui/material";
 import { stringAvatar } from "../../utils/colors";
-import { IMessage } from "../../state/messages/reducer";
 import { useAppSelector } from "../../store";
 import moment from "moment";
+import { GroupedMessage } from "../../utils/messages";
 
 const Message: React.FC<{
-  message: IMessage;
+  message: GroupedMessage;
 }> = ({ message }) => {
   const user = useAppSelector((state) => state.user.info);
   const fromUser = message.user.id === user?.id;
@@ -26,20 +26,22 @@ const Message: React.FC<{
         alignItems={fromUser ? "flex-end" : "flex-start"}
         sx={{ px: "16px" }}
       >
-        <Typography
-          sx={{
-            bgcolor: fromUser ? "primary.main" : "grey.300",
-            p: "16px 20px",
-            borderRadius: "0.6rem",
-            borderBottomRightRadius: fromUser ? "0rem" : "0.6rem",
-            borderBottomLeftRadius: fromUser ? "0.6rem" : "0rem",
-            mb: "4px",
-          }}
-          variant="body1"
-          color={fromUser ? "common.white" : "grey.600"}
-        >
-          {message.body}
-        </Typography>
+        {message.content.map((msg) => (
+          <Typography
+            sx={{
+              bgcolor: fromUser ? "primary.main" : "grey.300",
+              p: "16px 20px",
+              borderRadius: "0.6rem",
+              borderBottomRightRadius: fromUser ? "0rem" : "0.6rem",
+              borderBottomLeftRadius: fromUser ? "0.6rem" : "0rem",
+              mb: "4px",
+            }}
+            variant="body1"
+            color={fromUser ? "common.white" : "grey.600"}
+          >
+            {msg.body}
+          </Typography>
+        ))}
         <Typography variant="caption" color="grey.500">
           {moment(message.createdAt).fromNow()}
         </Typography>

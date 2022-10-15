@@ -2,6 +2,7 @@ import React, { useRef, useEffect } from "react";
 import { Box } from "@mui/material";
 import Message from "./Message";
 import { IMessage } from "../../state/messages/reducer";
+import { groupUserMessages } from "../../utils/messages";
 
 const Messages: React.FC<{ messages: IMessage[] }> = ({ messages }) => {
   const ref = useRef<HTMLDivElement>(null);
@@ -12,6 +13,8 @@ const Messages: React.FC<{ messages: IMessage[] }> = ({ messages }) => {
       el.scrollTop = el.scrollHeight;
     }
   }, [messages]);
+
+  const groupedMessages = groupUserMessages(messages);
   return (
     <Box
       ref={ref}
@@ -25,8 +28,8 @@ const Messages: React.FC<{ messages: IMessage[] }> = ({ messages }) => {
         scrollBehavior: "smooth",
       }}
     >
-      {messages.map((message) => (
-        <Message message={message} key={message.id} />
+      {groupedMessages.map((message, idx) => (
+        <Message message={message} key={idx} />
       ))}
     </Box>
   );

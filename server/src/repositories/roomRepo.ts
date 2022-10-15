@@ -2,7 +2,6 @@ import AppUOW from ".";
 import { Event } from "../events";
 import { MessageType } from "../models/Message";
 import { Room, RoomType } from "../models/Room";
-import { IUser } from "../models/User";
 import BaseRepo from "./baseRepo";
 
 type RoomMessage = {
@@ -66,7 +65,10 @@ export default class RoomRepo extends BaseRepo {
     const { socket } = this.app;
     await this.errorHandler(async () => {
       const userId = this.app.decodeAuthToken();
-      await Promise.all(
+      const user = await this.app.userRepo.getById(userId);
+      if (!user) throw new Error("User not found");
+
+      const messages = await Promise.all(
         rooms.map((room) =>
           this.app.messageRepo.newMessage({
             ...msg,
@@ -77,12 +79,24 @@ export default class RoomRepo extends BaseRepo {
         )
       );
 
-      rooms.forEach(async (room) => {
+      rooms.forEach(async (room, idx) => {
         // Broadcast incoming message to all users in the room
         // Skip the sender of the message
+        // Todo: Add response types
+        const msg = {
+          ...messages[idx],
+          userId: undefined, // Should be removed
+          user: {
+            id: user.id,
+            email: user.email,
+            username: user.username,
+            isActive: user.isActive,
+          },
+        };
+
         socket.broadcast.to(room.toString()).emit(Event.RoomMessage, msg);
+        socket.emit(Event.RoomMessage, msg);
       });
-      socket.emit(Event.RoomMessage, { ok: true });
     }, Event.RoomMessage);
   }
 

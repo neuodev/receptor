@@ -5,6 +5,7 @@ import { ROUTES } from "../constants/routes";
 import { useRoomApi } from "../hooks/api/room";
 import { addFriendErr, addFriendRes } from "../state/addFriend/actions";
 import {
+  addNewMsg,
   getRoomMessagesErr,
   getRoomMessagesRes,
 } from "../state/messages/actions";
@@ -52,17 +53,9 @@ export const useServerEvents = () => {
       console.count("RoomMessage");
       if ("error" in res) {
         console.error({ e: Event.RoomMessage, res });
-        return;
+      } else {
+        dispatch(addNewMsg(res));
       }
-
-      res.rooms.forEach(async (roomId) => {
-        try {
-          const messages = await roomApi.getRoomMessages(roomId);
-          dispatch(getRoomMessagesRes({ roomId, messages }));
-        } catch (error) {
-          dispatch(getRoomMessagesErr({ roomId, error: getErrMsg(error) }));
-        }
-      });
     });
   }, []);
 

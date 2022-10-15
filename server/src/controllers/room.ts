@@ -3,6 +3,7 @@ import { Request, Response, NextFunction } from "express";
 import { Message } from "../models/Message";
 import { Participants } from "../models/Participants";
 import ResponseError from "../utils/error";
+import { User } from "../models/User";
 
 // @api  GET /api/v1/room/:id
 // @desc Get user friends
@@ -20,6 +21,18 @@ export const getRoomMessages = asyncHandler(
     const messages = await Message.findAll({
       where: {
         roomId,
+      },
+      include: [
+        {
+          model: User,
+          foreignKey: "userId",
+          attributes: {
+            exclude: ["password", "createdAt", "updatedAt"],
+          },
+        },
+      ],
+      attributes: {
+        exclude: ["userId"],
       },
     });
     res.status(200).json(messages);

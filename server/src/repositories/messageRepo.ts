@@ -1,4 +1,4 @@
-import { Message, MessageType } from "../models/Message";
+import { IMessage, Message, MessageType } from "../models/Message";
 import BaseRepo from "./baseRepo";
 
 export default class MessageRepo extends BaseRepo {
@@ -8,7 +8,7 @@ export default class MessageRepo extends BaseRepo {
     read: boolean;
     userId: number;
     roomId: number;
-  }) {
-    await Message.create(msg);
+  }): Promise<IMessage> {
+    return (await Message.create(msg)).get();
   }
 }

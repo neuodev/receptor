@@ -12,3 +12,4 @@ export const getRoomMessagesRes = createAction<{
 }>("room-messages/res");
 
 export const setCrrRoom = createAction<RoomId | null>("room/set-current");
+export const addNewMsg = createAction<IMessage>("room/new-msg");

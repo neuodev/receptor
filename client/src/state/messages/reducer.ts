@@ -1,6 +1,7 @@
 import produce from "immer";
 import { createReducer } from "@reduxjs/toolkit";
 import {
+  addNewMsg,
   getRoomMessagesErr,
   getRoomMessagesReq,
   getRoomMessagesRes,
@@ -76,6 +77,15 @@ export const messagesReducer = createReducer<State>(
       .addCase(setCrrRoom, (state, { payload }) =>
         produce(state, (draftState) => {
           draftState.currRoom = payload;
+        })
+      )
+      .addCase(addNewMsg, (state, { payload: msg }) =>
+        produce(state, (draftState) => {
+          let room = draftState.messages[msg.roomId];
+          if (!room) return;
+          let isExist = room.some((message) => message.id === msg.id);
+          if (isExist) return;
+          room.push(msg);
         })
       );
   }

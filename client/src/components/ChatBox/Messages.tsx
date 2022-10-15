@@ -17,7 +17,8 @@ const Messages: React.FC<{ messages: IMessage[] }> = ({ messages }) => {
       ref={ref}
       sx={{
         overflowY: "auto",
-        my: "2px",
+        mt: "2px",
+        mb: "12px",
         "::-webkit-scrollbar": {
           display: "none",
         },

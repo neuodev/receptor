@@ -1,6 +1,6 @@
 import { DataTypes, ModelDefined, Optional } from "sequelize";
 import sequelize from "../db";
-import { IUser, User } from "./User";
+import { User } from "./User";
 
 export enum FriendshipStatus {
   PENDING = "pending",

@@ -5,6 +5,7 @@ import BaseRepo from "./baseRepo";
 import AppUOW from ".";
 import { FriendshipStatus } from "../models/Friend";
 import { NotificationType } from "../models/Notification";
+import { getUserPrivateRoom } from "../utils/user";
 
 export type AddFriendMsg = {
   token: string | null;
@@ -88,7 +89,7 @@ export default class UserRepo extends BaseRepo {
   }
 
   async updateUserStatus(id: number, isActive: boolean) {
-    await User.update(
+    const user = await User.update(
       {
         isActive,
       },
@@ -171,7 +172,9 @@ export default class UserRepo extends BaseRepo {
       await this.updateUserStatus(userId, true);
       socket.emit(Event.Login, { ok: true });
       // Add user to a private room so we can send notifications and other stuff
-      socket.join(userId.toString());
+      socket.join(getUserPrivateRoom(userId));
+      // Notify all friends that the user is active
+      this.notifyFriends(userId);
     }, Event.Login);
   }
 
@@ -179,6 +182,8 @@ export default class UserRepo extends BaseRepo {
     await this.errorHandler(async () => {
       const userId = this.app.decodeAuthToken();
       await this.updateUserStatus(userId, false);
+      // Notify all friends that the user is offline
+      await this.notifyFriends(userId);
     }, Event.Disconnect);
   }
 
@@ -190,4 +195,16 @@ export default class UserRepo extends BaseRepo {
       socket.emit(Event.GetUser, user);
     }, Event.GetUser);
   };
+
+  async notifyFriends(userId: number) {
+    const { socket } = this.app;
+    await this.errorHandler(async () => {
+      const user = await this.app.userRepo.getById(userId);
+      if (!user) throw new Error("User not found");
+      const friends = await this.app.friendRepo.getFriends(user.id);
+      socket.broadcast
+        .to(friends.map((f) => getUserPrivateRoom(f.id)))
+        .emit(Event.UpdateUser, user);
+    }, Event.UpdateUser);
+  }
 }

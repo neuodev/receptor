@@ -7,7 +7,7 @@ import {
 import AppUOW from ".";
 import { Event } from "../events";
 import BaseRepo from "./baseRepo";
-import { IUser } from "../models/User";
+import "colors";
 
 export default class NotificationRepo extends BaseRepo {
   constructor(app: AppUOW) {

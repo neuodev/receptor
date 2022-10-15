@@ -23,7 +23,12 @@ export interface IMessage {
   read: boolean;
   createdAt: string;
   updatedAt: string;
-  userId: number;
+  user: {
+    id: number;
+    username: string;
+    email: string;
+    isActive: boolean;
+  };
   roomId: number;
 }
 

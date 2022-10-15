@@ -1,5 +1,5 @@
 import React from "react";
-import { Stack, IconButton, Box, Avatar, Typography } from "@mui/material";
+import { Stack, Tooltip, Box, Avatar, Typography } from "@mui/material";
 import { stringAvatar } from "../../utils/colors";
 import { IMessage } from "../../state/messages/reducer";
 import { useAppSelector } from "../../store";
@@ -9,7 +9,7 @@ const Message: React.FC<{
   message: IMessage;
 }> = ({ message }) => {
   const user = useAppSelector((state) => state.user.info);
-  const fromUser = message.userId === user?.id;
+  const fromUser = message.user.id === user?.id;
 
   return (
     <Stack
@@ -18,7 +18,9 @@ const Message: React.FC<{
       sx={{ maxWidth: "50%", ml: fromUser ? "auto" : "0px", mt: "24px" }}
     >
       <Box>
-        <Avatar {...stringAvatar("message.user")} />
+        <Tooltip arrow title={<Typography>{message.user.email}</Typography>}>
+          <Avatar {...stringAvatar(message.user.username)} />
+        </Tooltip>
       </Box>
       <Stack
         alignItems={fromUser ? "flex-end" : "flex-start"}

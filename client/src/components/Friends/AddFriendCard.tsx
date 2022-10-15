@@ -9,7 +9,6 @@ import { UsersRelation } from "../../state/addFriend/reducer";
 const AddFriendCard: React.FC<{
   user: IUser & { relation: UsersRelation };
 }> = ({ user }) => {
-  const { addFriend } = useAddFriend();
   const { username, isActive, updatedAt, id, email, relation } = user;
   return (
     <Stack direction="row" alignItems="center">
@@ -33,22 +32,34 @@ const CardAction: React.FC<{ relation: UsersRelation; id: number }> = ({
   relation,
   id,
 }) => {
+  const { addFriend, acceptFriend, removeFriend } = useAddFriend();
   switch (relation) {
     case UsersRelation.Friends:
       return (
-        <Button variant="outlined" color="error" size="small">
+        <Button
+          onClick={() => {
+            removeFriend(id);
+          }}
+          variant="outlined"
+          color="error"
+          size="small"
+        >
           Remove
         </Button>
       );
     case UsersRelation.NotFriends:
       return (
-        <Button variant="outlined" size="small">
+        <Button onClick={() => addFriend(id)} variant="outlined" size="small">
           Add
         </Button>
       );
     case UsersRelation.PendingRequest:
       return (
-        <Button variant="outlined" size="small">
+        <Button
+          onClick={() => acceptFriend(id)}
+          variant="outlined"
+          size="small"
+        >
           Accept
         </Button>
       );

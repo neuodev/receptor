@@ -98,7 +98,6 @@ export default class UserRepo extends BaseRepo {
   }
 
   async addFriend(friendId: number) {
-    console.log({ friendId });
     const { socket } = this.app;
     await this.errorHandler(async () => {
       let userId = this.app.decodeAuthToken();

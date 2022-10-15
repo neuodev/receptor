@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Box,
   Typography,
@@ -16,14 +16,14 @@ import Center from "../common/Center";
 
 const AddFriends = () => {
   const [search, setSearch] = useState<string>("");
-  const { getUsersList } = useAddFriend();
+  const { getUsersHandler } = useAddFriend();
   const currUser = useAppSelector((state) => state.user.info);
   const { users, loading, error } = useAppSelector(
     (state) => state.addFriend.usersList
   );
 
   useEffect(() => {
-    getUsersList(search);
+    getUsersHandler(search);
   }, [search]);
 
   return (

@@ -1,10 +1,11 @@
 import { useEffect } from "react";
 import { Event, socket } from ".";
-import { addFriendErr, addFriendRes } from "../state/addFriend/actions";
+import { useAddFriend } from "../state/addFriend/hooks";
 import { updateUser } from "../state/friends/actions";
 import { addNewMsg } from "../state/messages/actions";
 import { MessageType, RoomId } from "../state/messages/reducer";
 import { useAppDispatch, useAppSelector } from "../store";
+import { logGroup } from "../utils/log";
 
 export type SendRoomMsg = {
   rooms: RoomId[];
@@ -17,6 +18,7 @@ export type SendRoomMsg = {
 export const useServerEvents = () => {
   const authToken = useAppSelector((state) => state.user.authToken);
   const { login } = useAppSocket();
+  const { getUsers } = useAddFriend();
   const dispatch = useAppDispatch();
 
   useEffect(() => {
@@ -25,15 +27,8 @@ export const useServerEvents = () => {
     });
 
     socket.on(Event.AddFriend, (res) => {
-      console.group("AddFriend");
-      console.count("addFriend");
-      console.log(res);
-      console.groupEnd();
-      if (res.error) {
-        dispatch(addFriendErr(res.error));
-      } else {
-        dispatch(addFriendRes());
-      }
+      logGroup(Event.AddFriend, res);
+      getUsers();
     });
 
     socket.on(Event.JoinRoom, () => {
@@ -41,7 +36,7 @@ export const useServerEvents = () => {
     });
 
     socket.on(Event.RoomMessage, async (res) => {
-      console.count("RoomMessage");
+      logGroup(Event.RoomMessage, res);
       if ("error" in res) {
         console.error({ e: Event.RoomMessage, res });
       } else {
@@ -50,8 +45,17 @@ export const useServerEvents = () => {
     });
 
     socket.on(Event.UpdateUser, (user) => {
-      console.count("UpdateUser");
+      logGroup(Event.UpdateUser, user);
       dispatch(updateUser(user));
+    });
+
+    socket.on(Event.AcceptFriend, (res) => {
+      logGroup(Event.AcceptFriend, res);
+      getUsers();
+    });
+    socket.on(Event.RemoveFriend, (res) => {
+      logGroup(Event.RemoveFriend, res);
+      getUsers();
     });
   }, []);
 
@@ -63,6 +67,14 @@ export const useServerEvents = () => {
 export const useAppSocket = () => {
   function addFriend(id: number) {
     socket.emit(Event.AddFriend, id);
+  }
+
+  function acceptFriend(id: number) {
+    socket.emit(Event.AcceptFriend, id);
+  }
+
+  function removeFriend(id: number) {
+    socket.emit(Event.RemoveFriend, id);
   }
 
   function login(token: string) {
@@ -81,5 +93,13 @@ export const useAppSocket = () => {
     socket.emit(Event.RoomMessage, msg);
   }
 
-  return { addFriend, login, logout, joinRooms, sendRoomMsg };
+  return {
+    addFriend,
+    login,
+    logout,
+    joinRooms,
+    sendRoomMsg,
+    acceptFriend,
+    removeFriend,
+  };
 };

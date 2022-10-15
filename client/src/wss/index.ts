@@ -8,6 +8,7 @@ export enum Event {
   Disconnect = "disconnect",
   AddFriend = "addFriend",
   AcceptFriend = "acceptFriend",
+  RemoveFriend = "removeFriend",
   Notification = "notification",
   Login = "login",
   Logout = "logout",
@@ -21,11 +22,13 @@ export enum Event {
 type OkOrErr = { ok?: boolean; error?: string };
 
 interface ServerToClientEvents {
-  [Event.Login]: (data: OkOrErr) => void;
-  [Event.AddFriend]: (data: OkOrErr) => void;
-  [Event.JoinRoom]: (data: OkOrErr) => void;
-  [Event.RoomMessage]: (data: { error: string } | IMessage) => void;
-  [Event.UpdateUser]: (user: IUser) => void;
+  [Event.Login]: (res: OkOrErr) => void;
+  [Event.AddFriend]: (res: OkOrErr) => void;
+  [Event.JoinRoom]: (res: OkOrErr) => void;
+  [Event.RoomMessage]: (res: { error: string } | IMessage) => void;
+  [Event.UpdateUser]: (res: IUser) => void;
+  [Event.AcceptFriend]: (res: OkOrErr) => void;
+  [Event.RemoveFriend]: (res: OkOrErr) => void;
 }
 
 interface ClientToServerEvents {
@@ -34,6 +37,8 @@ interface ClientToServerEvents {
   [Event.AddFriend]: (frinedId: number) => void;
   [Event.JoinRoom]: (data: { rooms: number[] }) => void;
   [Event.RoomMessage]: (data: SendRoomMsg) => void;
+  [Event.AcceptFriend]: (friendId: number) => void;
+  [Event.RemoveFriend]: (friendId: number) => void;
 }
 
 export const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io(

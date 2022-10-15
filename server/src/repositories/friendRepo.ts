@@ -3,6 +3,8 @@ import AppUOW from ".";
 import { Event } from "../events";
 import { Friend, FriendshipStatus, IFriend } from "../models/Friend";
 import { RoomType } from "../models/Room";
+import { User } from "../models/User";
+import { parseQuery } from "../utils/prase";
 import BaseRepo from "./baseRepo";
 
 export default class FriendRepo extends BaseRepo {
@@ -13,7 +15,8 @@ export default class FriendRepo extends BaseRepo {
 
   initListeners() {
     const { socket } = this.app;
-    socket.on(Event.AcceptFriend, this.acceptFriendHandler);
+    socket.on(Event.AcceptFriend, this.acceptFriendHandler.bind(this));
+    socket.on(Event.RemoveFriend, this.removeFriend.bind(this));
   }
 
   async getFriendshipRecord(userId: number, friendId: number) {
@@ -60,12 +63,12 @@ export default class FriendRepo extends BaseRepo {
     );
   }
 
-  // Todo: Update this handler to be more generic to handle blocking / accepting frinedship
-  acceptFriendHandler = async ({ friendId }: { friendId: number }) => {
+  async acceptFriendHandler(friendId: number) {
     const { socket } = this.app;
     await this.errorHandler(async () => {
-      let userId: number = this.app.decodeAuthToken();
+      let userId = this.app.decodeAuthToken();
       if (!friendId) throw new Error("Missing friendId");
+      console.log({ userId, friendId });
       const [user, request] = await Promise.all([
         this.app.userRepo.getUsersById([userId]),
         Friend.findOne({
@@ -74,6 +77,7 @@ export default class FriendRepo extends BaseRepo {
           },
         }),
       ]);
+      console.log({ user, request });
       if (!user) throw new Error("User not found");
       if (!request) throw new Error("Request not found");
 
@@ -94,5 +98,28 @@ export default class FriendRepo extends BaseRepo {
         request: info,
       });
     }, Event.AcceptFriend);
-  };
+  }
+
+  async removeFriend(friendId: number) {
+    const { socket } = this.app;
+    await this.errorHandler(async () => {
+      let userId = this.app.decodeAuthToken();
+      await Friend.destroy({
+        where: {
+          [Op.or]: {
+            [Op.and]: {
+              userId,
+              friendId: userId,
+            },
+            [Op.and]: {
+              userId: friendId,
+              friendId: userId,
+            },
+          },
+        },
+      });
+
+      socket.emit(Event.RemoveFriend, { ok: true });
+    }, Event.RemoveFriend);
+  }
 }

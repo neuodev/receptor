@@ -1,7 +1,5 @@
 import { useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
 import { Event, socket } from ".";
-import { ROUTES } from "../constants/routes";
 import { addFriendErr, addFriendRes } from "../state/addFriend/actions";
 import { updateUser } from "../state/friends/actions";
 import { addNewMsg } from "../state/messages/actions";
@@ -18,20 +16,19 @@ export type SendRoomMsg = {
 
 export const useServerEvents = () => {
   const authToken = useAppSelector((state) => state.user.authToken);
-  const { login } = useAppScoket();
+  const { login } = useAppSocket();
   const dispatch = useAppDispatch();
-  const navigate = useNavigate();
 
   useEffect(() => {
     socket.on(Event.Login, () => {
       console.count("login");
-      let path = window.location.pathname;
-      if (path === ROUTES.LOG_IN || path === ROUTES.REGISTER)
-        navigate(ROUTES.ROOT);
     });
 
     socket.on(Event.AddFriend, (res) => {
+      console.group("AddFriend");
       console.count("addFriend");
+      console.log(res);
+      console.groupEnd();
       if (res.error) {
         dispatch(addFriendErr(res.error));
       } else {
@@ -63,9 +60,9 @@ export const useServerEvents = () => {
   }, [authToken]);
 };
 
-export const useAppScoket = () => {
+export const useAppSocket = () => {
   function addFriend(id: number) {
-    socket.emit(Event.AddFriend, { friendId: id });
+    socket.emit(Event.AddFriend, id);
   }
 
   function login(token: string) {

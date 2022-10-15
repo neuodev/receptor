@@ -84,7 +84,7 @@ export default class FriendRepo extends BaseRepo {
         RoomType.DM
       );
 
-      await this.updateStatus(info.id, FriendshipStatus.FRIENDS);
+      await this.updateStatus(info.id, FriendshipStatus.Friends);
       socket.emit(Event.AcceptFriend, { ok: true });
       // Should send notification to his friend
       // Todo: Check if the user is active or now before sending the notification

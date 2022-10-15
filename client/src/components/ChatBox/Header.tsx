@@ -18,7 +18,7 @@ const Header = () => {
   const friends = useAppSelector((state) => state.friends.list);
   const user = useAppSelector((state) => state.user.info);
   const friend = friends.find((f) => f.roomId === currRoom);
-  const friendAvatarProps = avatarProps(friend?.user);
+  const friendAvatarProps = avatarProps(friend);
   const avatarGroup = [friendAvatarProps, avatarProps(user)];
 
   return (
@@ -35,10 +35,10 @@ const Header = () => {
         </Box>
         <Box sx={{ ml: "12px" }}>
           <Typography variant="body1" mb="-4px">
-            {friend?.user.username}
+            {friend?.username}
           </Typography>
           <Typography variant="caption" color="grey.600">
-            {friend?.user.email}
+            {friend?.email}
           </Typography>
         </Box>
         <AvatarGroup sx={{ ml: "auto" }}>

@@ -3,13 +3,13 @@ import { Stack, IconButton, Input } from "@mui/material";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
 import SendIcon from "@mui/icons-material/Send";
 import TagFacesIcon from "@mui/icons-material/TagFaces";
-import { useAppScoket } from "../../wss/appSocket";
+import { useAppSocket } from "../../wss/appSocket";
 import { useAppSelector } from "../../store";
 import { MessageType } from "../../state/messages/reducer";
 
 const MessageBox = () => {
   const [message, setMessage] = useState<string>("");
-  const { sendRoomMsg } = useAppScoket();
+  const { sendRoomMsg } = useAppSocket();
   const currRoom = useAppSelector((state) => state.messages.currRoom);
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {

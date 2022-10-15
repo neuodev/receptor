@@ -25,9 +25,7 @@ export default class UserRepo extends BaseRepo {
       this.handleLogin();
     });
 
-    socket.on(Event.AddFriend, async (data: { friendId: number }) => {
-      this.addFriend(data.friendId);
-    });
+    socket.on(Event.AddFriend, this.addFriend.bind(this));
 
     socket.on(Event.Disconnect, this.handleLogout.bind(this));
     socket.on(Event.Logout, this.handleLogout.bind(this));
@@ -87,7 +85,7 @@ export default class UserRepo extends BaseRepo {
   }
 
   async updateUserStatus(id: number, isActive: boolean) {
-    const user = await User.update(
+    await User.update(
       {
         isActive,
       },
@@ -100,6 +98,7 @@ export default class UserRepo extends BaseRepo {
   }
 
   async addFriend(friendId: number) {
+    console.log({ friendId });
     const { socket } = this.app;
     await this.errorHandler(async () => {
       let userId = this.app.decodeAuthToken();
@@ -120,9 +119,9 @@ export default class UserRepo extends BaseRepo {
 
       if (friendship)
         throw new Error(
-          friendship.status === FriendshipStatus.PENDING
+          friendship.status === FriendshipStatus.Pending
             ? "Request already sent"
-            : friendship.status === FriendshipStatus.FRIENDS
+            : friendship.status === FriendshipStatus.Friends
             ? "Already friends"
             : `You got blocked by ${receiver.username}`
         );
@@ -130,7 +129,7 @@ export default class UserRepo extends BaseRepo {
       await this.app.friendRepo.addFriend(
         sender.id,
         receiver.id,
-        FriendshipStatus.PENDING
+        FriendshipStatus.Pending
       );
 
       const isSent =
@@ -182,7 +181,7 @@ export default class UserRepo extends BaseRepo {
       await this.updateUserStatus(userId, false);
       // Notify all friends that the user is offline
       await this.notifyFriends(userId);
-    }, Event.Disconnect);
+    }, Event.Logout);
   }
 
   handleGetUser = async () => {

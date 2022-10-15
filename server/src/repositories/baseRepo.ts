@@ -31,9 +31,10 @@ export default class BaseRepo {
         msg = error;
       }
 
-      this.app.socket.emit(event, {
-        error: msg,
-      });
+      if (event !== Event.Disconnect)
+        this.app.socket.emit(event, {
+          error: msg,
+        });
     }
   }
 }

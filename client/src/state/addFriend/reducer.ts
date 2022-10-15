@@ -9,11 +9,18 @@ import {
   getUsersRes,
 } from "./actions";
 
+export enum UsersRelation {
+  Friends = "friends",
+  NotFriends = "not-friends",
+  PendingRequest = "pending-request",
+  PendingResponse = "pending-response",
+}
+
 type State = {
   usersList: {
     loading: boolean;
     error: string | null;
-    users: IUser[];
+    users: Array<IUser & { relation: UsersRelation }>;
   };
   addFriend: {
     loading: boolean;

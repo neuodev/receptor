@@ -4,10 +4,11 @@ import { validationResult } from "express-validator";
 import { Op, UniqueConstraintError } from "sequelize";
 import ResponseError from "../utils/error";
 import jwt, { Secret } from "jsonwebtoken";
-import { User } from "../models/User";
+import { IUser, User } from "../models/User";
 import { Participants } from "../models/Participants";
-import { Room } from "../models/Room";
-import { Friend, FriendshipStatus } from "../models/Friend";
+import { Friend, FriendshipStatus, UsersRelation } from "../models/Friend";
+import { parseQuery } from "../utils/prase";
+import { getUserRelation } from "../utils/user";
 
 // @api  POST /api/v1/user/register
 // @desc Register new user
@@ -98,8 +99,9 @@ export const getUsers = asyncHandler(
     const limit = req.query.limit || 10;
     const page = req.query.page || 1;
     const skip = (page - 1) * limit;
+    const userId = req.user.id;
 
-    const [users, count, friends, friendshipReq] = await Promise.all([
+    const [users, count, friends] = await Promise.all([
       User.findAll({
         where: {
           [Op.or]: {
@@ -120,38 +122,35 @@ export const getUsers = asyncHandler(
       User.count(),
       Friend.findAll({
         where: {
-          userId: req.user.id,
+          [Op.or]: {
+            userId,
+            friendId: userId,
+          },
         },
-        attributes: ["friendId", "status"],
-      }),
-      Friend.findAll({
-        where: {
-          friendId: req.user.id,
-        },
-        attributes: ["userId", "status"],
+        attributes: ["friendId", "userId", "status"],
       }),
     ]);
 
-    let mapped = users.map((user) => {
-      let friend =
-        friends.find((f) => f.get("friendId") == user.get("id")) || null;
-      let request =
-        friendshipReq.find((f) => f.get("userId") == user.get("id")) || null;
-      return {
-        ...user.get(),
-        status: friend
-          ? { type: "send", status: friend?.get("status") }
-          : request
-          ? {
-              type: "receive",
-              status: request?.get("status"),
-            }
-          : null,
-      };
+    const friendsMap = new Map<number, UsersRelation>();
+    const friendsList =
+      parseQuery<
+        Array<{ userId: number; friendId: number; status: FriendshipStatus }>
+      >(friends);
+
+    friendsList.forEach((f) => {
+      const relation = getUserRelation(f, userId);
+      friendsMap.set(f.userId, relation);
+      friendsMap.set(f.friendId, relation);
     });
 
+    const usersList = parseQuery<IUser[]>(users);
     await res.status(200).json({
-      users: mapped,
+      users: usersList
+        .filter((user) => user.id !== userId)
+        .map((user) => ({
+          ...user,
+          relation: friendsMap.get(user.id) || UsersRelation.NotFriends,
+        })),
       count,
     });
   }
@@ -160,6 +159,7 @@ export const getUsers = asyncHandler(
 // @api  GET /api/v1/user/friends
 // @desc Get user friends
 // @access  Private/user
+
 export const getFriends = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     let userId = req.user.id;
@@ -196,6 +196,9 @@ export const getFriends = asyncHandler(
       ],
     });
 
-    res.status(200).json(friends);
+    const entries = parseQuery<Array<{ roomId: number; user: IUser }>>(friends);
+    res
+      .status(200)
+      .json(entries.map(({ roomId, user }) => ({ roomId, ...user })));
   }
 );

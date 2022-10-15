@@ -2,6 +2,7 @@ import React from "react";
 import { Badge, styled, Avatar as MuiAvatar } from "@mui/material";
 import { stringAvatar } from "../../utils/colors";
 import { IUser } from "../../state/user/reducer";
+import { IFriend } from "../../state/friends/reducer";
 
 const Avatar: React.FC<{ name: string; isActive: boolean }> = ({
   name,
@@ -36,7 +37,7 @@ const Avatar: React.FC<{ name: string; isActive: boolean }> = ({
 
 export default Avatar;
 
-export function avatarProps(user: IUser | null | undefined) {
+export function avatarProps(user: IUser | IFriend | null | undefined) {
   return {
     name: user?.username || "",
     isActive: user?.isActive === true,

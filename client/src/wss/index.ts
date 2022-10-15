@@ -1,13 +1,13 @@
 import { io, Socket } from "socket.io-client";
-import { IMessage, RoomId } from "../state/messages/reducer";
+import { IMessage } from "../state/messages/reducer";
 import { IUser } from "../state/user/reducer";
 import { SendRoomMsg } from "./appSocket";
 
 export enum Event {
   Connect = "connect",
   Disconnect = "disconnect",
-  AddFriend = "AddFriend",
-  AcceptFriend = "AcceptFriend",
+  AddFriend = "addFriend",
+  AcceptFriend = "acceptFriend",
   Notification = "notification",
   Login = "login",
   Logout = "logout",
@@ -31,7 +31,7 @@ interface ServerToClientEvents {
 interface ClientToServerEvents {
   [Event.Login]: (data: { token: string }) => void;
   [Event.Logout]: () => void;
-  [Event.AddFriend]: (data: { friendId: number }) => void;
+  [Event.AddFriend]: (frinedId: number) => void;
   [Event.JoinRoom]: (data: { rooms: number[] }) => void;
   [Event.RoomMessage]: (data: SendRoomMsg) => void;
 }

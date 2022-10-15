@@ -1,15 +1,18 @@
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import { COMMON_HEADERS, getEndpoint } from "../../constants/api";
+import { ROUTES } from "../../constants/routes";
 import { useAppDispatch, useAppSelector } from "../../store";
 import { getErrMsg } from "../../utils/error";
-import { useAppScoket } from "../../wss/appSocket";
+import { useAppSocket } from "../../wss/appSocket";
 import { resetFriends } from "../friends/actions";
 import { resetMessages } from "../messages/actions";
 import { authUserErr, authUserInfo, authUserReq, userLogout } from "./actions";
 
 export const useUserHooks = () => {
   const dispatch = useAppDispatch();
-  const appSocket = useAppScoket();
+  const appSocket = useAppSocket();
+  const navigate = useNavigate();
 
   const login = async (data: { email: string; password: string }) => {
     try {
@@ -18,8 +21,9 @@ export const useUserHooks = () => {
         headers: COMMON_HEADERS,
       });
       const { user, token } = res.data;
-      dispatch(authUserInfo({ user, token }));
       appSocket.login(token);
+      dispatch(authUserInfo({ user, token }));
+      navigate(ROUTES.ROOT);
     } catch (error) {
       dispatch(authUserErr(getErrMsg(error)));
     }

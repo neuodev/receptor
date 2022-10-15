@@ -1,14 +1,14 @@
 import React from "react";
 import { Stack, Box, Typography, Button } from "@mui/material";
-import { IUser } from "../../state/user/reducer";
 import moment from "moment";
 import { useRoom } from "../../state/messages/hooks";
 import Avatar, { avatarProps } from "../common/Avatar";
+import { IFriend } from "../../state/friends/reducer";
 
 const ChatListItem: React.FC<{
-  friend: { roomId: number; user: IUser };
+  friend: IFriend;
 }> = ({ friend }) => {
-  const { user, roomId } = friend;
+  const { roomId } = friend;
   const { setCurrentRoom, getRoomMessages } = useRoom();
 
   return (
@@ -31,7 +31,7 @@ const ChatListItem: React.FC<{
       }}
     >
       <Box sx={{ mr: "8px" }}>
-        <Avatar {...avatarProps(user)} />
+        <Avatar {...avatarProps(friend)} />
       </Box>
 
       <Stack flexGrow={1} sx={{ ml: "8px" }}>
@@ -40,9 +40,9 @@ const ChatListItem: React.FC<{
           justifyContent="space-between"
           alignItems="center"
         >
-          <Typography color="grey.700">{user.username}</Typography>
+          <Typography color="grey.700">{friend.username}</Typography>
           <Typography fontSize="10px" color="grey.500">
-            {moment(user.updatedAt).format("LT")}
+            {moment(friend.updatedAt).format("LT")}
           </Typography>
         </Stack>
         <Typography
@@ -51,7 +51,7 @@ const ChatListItem: React.FC<{
           color="grey.500"
           textTransform="lowercase"
         >
-          {user.email}
+          {friend.email}
         </Typography>
       </Stack>
     </Button>

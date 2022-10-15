@@ -9,10 +9,12 @@ import {
   updateUser,
 } from "./actions";
 
+export type IFriend = IUser & { roomId: number };
+
 type State = {
   loading: boolean;
   error: string | null;
-  list: Array<{ roomId: number; user: IUser }>;
+  list: IFriend[];
 };
 
 const initalState: State = {
@@ -44,11 +46,13 @@ export const friendsReducer = createReducer<State>(
           draft.list = payload;
         })
       )
-      .addCase(updateUser, (state, { payload: newUser }) =>
+      .addCase(updateUser, (state, { payload: newFriend }) =>
         produce(state, (draftState) => {
-          draftState.list.forEach((friend) => {
-            friend.user = friend.user.id === newUser.id ? newUser : friend.user;
-          });
+          draftState.list = draftState.list.map((friend) =>
+            friend.id === newFriend.id
+              ? { ...newFriend, roomId: friend.roomId }
+              : friend
+          );
         })
       )
       .addCase(resetFriends, () => produce(initalState, () => {}));

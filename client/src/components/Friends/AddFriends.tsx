@@ -12,7 +12,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import AddFriendCard from "./AddFriendCard";
 import { useAddFriend } from "../../state/addFriend/hooks";
 import { useAppSelector } from "../../store";
-import AddFriendModal from "./AddFriendModal";
+import Center from "../common/Center";
 
 const AddFriends = () => {
   const [search, setSearch] = useState<string>("");
@@ -47,20 +47,28 @@ const AddFriends = () => {
         startAdornment={<SearchIcon sx={{ mr: "4px" }} />}
       />
 
-      <Stack spacing={2} minHeight={400}>
+      <Box sx={{ minHeight: "400px" }}>
         {loading ? (
-          <CircularProgress />
+          <Box sx={{ height: "370px" }}>
+            <Center>
+              <CircularProgress />
+            </Center>
+          </Box>
         ) : error ? (
           <Alert severity="error">
             <AlertTitle>Error</AlertTitle>
             {error}
           </Alert>
         ) : (
-          users
-            .filter((u) => u.id !== currUser?.id)
-            .map((user) => <AddFriendCard key={user.id} user={user} />)
+          <Stack spacing={2}>
+            {users
+              .filter((u) => u.id !== currUser?.id)
+              .map((user) => (
+                <AddFriendCard key={user.id} user={user} />
+              ))}
+          </Stack>
         )}
-      </Stack>
+      </Box>
     </Box>
   );
 };

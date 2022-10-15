@@ -5,19 +5,19 @@ import { useAppDispatch, useAppSelector } from "../../store";
 import { getErrMsg } from "../../utils/error";
 import { useAuthHeaders } from "../user/hooks";
 import { getFriendsErr, getFriendsReq, getFriendsRes } from "./actions";
-import { useAppScoket } from "../../wss/appSocket";
-import { IUser } from "../user/reducer";
+import { useAppSocket } from "../../wss/appSocket";
+import { IFriend } from "./reducer";
 
 export const useFriends = () => {
   const dispatch = useAppDispatch();
   const user = useAppSelector((state) => state.user);
   const headers = useAuthHeaders();
-  const { joinRooms } = useAppScoket();
+  const { joinRooms } = useAppSocket();
 
   async function getFriends() {
     try {
       dispatch(getFriendsReq());
-      const { data } = await axios.get<Array<{ roomId: number; user: IUser }>>(
+      const { data } = await axios.get<Array<IFriend>>(
         getEndpoint("getFriends"),
         {
           headers,

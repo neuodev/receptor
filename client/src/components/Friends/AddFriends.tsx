@@ -12,6 +12,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import AddFriendCard from "./AddFriendCard";
 import { useAddFriend } from "../../state/addFriend/hooks";
 import { useAppSelector } from "../../store";
+import AddFriendModal from "./AddFriendModal";
 
 const AddFriends = () => {
   const [search, setSearch] = useState<string>("");

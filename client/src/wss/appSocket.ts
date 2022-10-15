@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Event, socket } from ".";
 import { ROUTES } from "../constants/routes";
 import { useRoomApi } from "../hooks/api/room";
@@ -21,16 +21,22 @@ export type SendRoomMsg = {
 };
 
 export const useServerEvents = () => {
+  const authToken = useAppSelector((state) => state.user.authToken);
+  const { login } = useAppScoket();
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const loc = useLocation();
   const roomApi = useRoomApi();
 
   useEffect(() => {
     socket.on(Event.Login, () => {
-      navigate(ROUTES.ROOT);
+      console.count("login");
+      if (loc.pathname === ROUTES.LOG_IN || loc.pathname === ROUTES.REGISTER)
+        navigate(ROUTES.ROOT);
     });
 
     socket.on(Event.AddFriend, (res) => {
+      console.count("addFriend");
       if (res.error) {
         dispatch(addFriendErr(res.error));
       } else {
@@ -38,11 +44,12 @@ export const useServerEvents = () => {
       }
     });
 
-    socket.on(Event.JoinRoom, (res) => {
-      console.log({ event: Event.JoinRoom, res });
+    socket.on(Event.JoinRoom, () => {
+      console.count("JoinRoom");
     });
 
     socket.on(Event.RoomMessage, async (res) => {
+      console.count("RoomMessage");
       if ("error" in res) {
         console.error({ e: Event.RoomMessage, res });
         return;
@@ -58,10 +65,13 @@ export const useServerEvents = () => {
       });
     });
   }, []);
+
+  useEffect(() => {
+    if (authToken) login(authToken);
+  }, [authToken]);
 };
 
 export const useAppScoket = () => {
-  const authToken = useAppSelector((state) => state.user.authToken);
   function addFriend(id: number) {
     socket.emit(Event.AddFriend, { friendId: id });
   }
@@ -77,10 +87,6 @@ export const useAppScoket = () => {
   function sendRoomMsg(msg: SendRoomMsg) {
     socket.emit(Event.RoomMessage, msg);
   }
-
-  useEffect(() => {
-    if (authToken) login(authToken);
-  }, [authToken]);
 
   return { addFriend, login, joinRooms, sendRoomMsg };
 };

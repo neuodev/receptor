@@ -23,6 +23,8 @@ const MessageBox = () => {
         body: message,
       },
     });
+
+    setMessage("");
   };
   return (
     <form onSubmit={onSubmit}>

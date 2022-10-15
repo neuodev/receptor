@@ -1,17 +1,16 @@
 import {
   Stack,
   Box,
-  Avatar,
   Typography,
   AvatarGroup,
   Tooltip,
   IconButton,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import { stringAvatar } from "../../utils/colors";
 import { theme } from "../../theme";
 import { useAppSelector } from "../../store";
 import { useRoom } from "../../state/messages/hooks";
+import Avatar, { avatarProps } from "../common/Avatar";
 
 const Header = () => {
   const { setCurrentRoom } = useRoom();
@@ -19,7 +18,8 @@ const Header = () => {
   const friends = useAppSelector((state) => state.friends.list);
   const user = useAppSelector((state) => state.user.info);
   const friend = friends.find((f) => f.roomId === currRoom);
-  const avatarGroup = [friend?.user.username, user?.username];
+  const friendAvatarProps = avatarProps(friend?.user);
+  const avatarGroup = [friendAvatarProps, avatarProps(user)];
 
   return (
     <Box>
@@ -31,25 +31,27 @@ const Header = () => {
         }}
       >
         <Box>
-          <Avatar {...stringAvatar(friend?.user.username || "")} />
+          <Avatar {...friendAvatarProps} />
         </Box>
         <Box sx={{ ml: "12px" }}>
           <Typography variant="body1" mb="-4px">
             {friend?.user.username}
           </Typography>
           <Typography variant="caption" color="grey.600">
-            {friend?.user.isActive ? "Online" : "Offline"}
+            {friend?.user.email}
           </Typography>
         </Box>
         <AvatarGroup sx={{ ml: "auto" }}>
           {avatarGroup.map((avatar) => (
             <Tooltip
-              key={avatar}
+              key={avatar.name}
               arrow
               followCursor
-              title={<Typography>{avatar}</Typography>}
+              title={<Typography>{avatar.name}</Typography>}
             >
-              <Avatar {...stringAvatar(avatar || "")} />
+              <span>
+                <Avatar {...avatar} />
+              </span>
             </Tooltip>
           ))}
         </AvatarGroup>

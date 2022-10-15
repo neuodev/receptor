@@ -1,9 +1,10 @@
 import React from "react";
-import { Stack, Box, Avatar, Typography, Button } from "@mui/material";
+import { Stack, Box, Typography, Button } from "@mui/material";
 import { IUser } from "../../state/user/reducer";
 import { stringAvatar } from "../../utils/colors";
 import moment from "moment";
 import { useRoom } from "../../state/messages/hooks";
+import Avatar, { avatarProps } from "../common/Avatar";
 
 const ChatListItem: React.FC<{
   friend: { roomId: number; user: IUser };
@@ -31,7 +32,7 @@ const ChatListItem: React.FC<{
       }}
     >
       <Box sx={{ mr: "8px" }}>
-        <Avatar {...stringAvatar(user.username)} />
+        <Avatar {...avatarProps(user)} />
       </Box>
 
       <Stack flexGrow={1} sx={{ ml: "8px" }}>
@@ -45,8 +46,13 @@ const ChatListItem: React.FC<{
             {moment(user.updatedAt).format("LT")}
           </Typography>
         </Stack>
-        <Typography textAlign="left" fontSize="12px" color="grey.500">
-          {user.isActive ? "Online" : "Offline"}
+        <Typography
+          textAlign="left"
+          fontSize="12px"
+          color="grey.500"
+          textTransform="lowercase"
+        >
+          {user.email}
         </Typography>
       </Stack>
     </Button>

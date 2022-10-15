@@ -1,10 +1,10 @@
 import React from "react";
-import { Stack, Tooltip, Box, Avatar, Typography } from "@mui/material";
-import { stringAvatar } from "../../utils/colors";
+import { Stack, Tooltip, Box, Typography } from "@mui/material";
 import { useAppSelector } from "../../store";
 import moment from "moment";
 import { GroupedMessage } from "../../utils/messages";
-import { theme } from "../../theme";
+import Avatar, { avatarProps } from "../common/Avatar";
+import { IUser } from "../../state/user/reducer";
 
 const Message: React.FC<{
   message: GroupedMessage;
@@ -20,7 +20,7 @@ const Message: React.FC<{
     >
       <Box>
         <Tooltip arrow title={<Typography>{message.user.email}</Typography>}>
-          <Avatar {...stringAvatar(message.user.username)} />
+          <Avatar {...avatarProps(message.user as IUser)} />
         </Tooltip>
       </Box>
       <Stack

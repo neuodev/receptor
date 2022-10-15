@@ -21,12 +21,12 @@ export const useServerEvents = () => {
   const { login } = useAppScoket();
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const loc = useLocation();
 
   useEffect(() => {
     socket.on(Event.Login, () => {
       console.count("login");
-      if (loc.pathname === ROUTES.LOG_IN || loc.pathname === ROUTES.REGISTER)
+      let path = window.location.pathname;
+      if (path === ROUTES.LOG_IN || path === ROUTES.REGISTER)
         navigate(ROUTES.ROOT);
     });
 

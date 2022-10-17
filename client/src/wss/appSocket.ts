@@ -55,6 +55,7 @@ export const useServerEvents = () => {
       await getUsers();
       dispatch(resetMessages());
     });
+
     socket.on(Event.RemoveFriend, async (res) => {
       logGroup(Event.RemoveFriend, res);
       await getUsers();

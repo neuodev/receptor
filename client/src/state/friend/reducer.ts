@@ -1,9 +1,15 @@
 import { createReducer } from "@reduxjs/toolkit";
-import { addFriendErr, addFriendReq, addFriendRes } from "./actions";
+import { setFriendErr, setFriendReq, setFriendRes } from "./actions";
 import produce from "immer";
 import { clone } from "../../utils";
 
 export type UserId = number;
+export enum FriendAction {
+  Add = "add",
+  Accept = "accept",
+  Remove = "remove",
+}
+
 type BaseState = {
   loading: {
     [key: UserId]: boolean;
@@ -31,22 +37,22 @@ const initalState = {
 
 export const friendReducer = createReducer<State>(initalState, (builder) => {
   builder
-    .addCase(addFriendReq, (state, { payload: userId }) =>
+    .addCase(setFriendReq, (state, { payload: { action, userId } }) =>
       produce(state, (draftState) => {
-        draftState.add.loading[userId] = true;
-        draftState.add.error[userId] = null;
+        draftState[action].loading[userId] = true;
+        draftState[action].error[userId] = null;
       })
     )
-    .addCase(addFriendRes, (state, { payload: userId }) =>
+    .addCase(setFriendRes, (state, { payload: { action, userId } }) =>
       produce(state, (draftState) => {
-        draftState.add.loading[userId] = false;
-        draftState.add.error[userId] = null;
+        draftState[action].loading[userId] = false;
+        draftState[action].error[userId] = null;
       })
     )
-    .addCase(addFriendErr, (state, { payload: { userId, error } }) =>
+    .addCase(setFriendErr, (state, { payload: { action, userId, error } }) =>
       produce(state, (draftState) => {
-        draftState.add.loading[userId] = false;
-        draftState.add.error[userId] = error;
+        draftState[action].loading[userId] = false;
+        draftState[action].error[userId] = error;
       })
     );
 });

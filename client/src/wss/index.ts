@@ -20,16 +20,16 @@ export enum Event {
 }
 
 export type OkOrErr = { ok?: boolean; error?: string };
-export type AddFriendRes = { friendId: number; error?: string };
+export type FriendEventRes = { friendId: number; error?: string };
 
 interface ServerToClientEvents {
   [Event.Login]: (res: OkOrErr) => void;
   [Event.JoinRoom]: (res: OkOrErr) => void;
   [Event.RoomMessage]: (res: { error: string } | IMessage) => void;
   [Event.UpdateUser]: (res: IUser) => void;
-  [Event.AddFriend]: (res: AddFriendRes) => void;
-  [Event.AcceptFriend]: (res: OkOrErr) => void;
-  [Event.RemoveFriend]: (res: OkOrErr) => void;
+  [Event.AddFriend]: (res: FriendEventRes) => void;
+  [Event.AcceptFriend]: (res: FriendEventRes) => void;
+  [Event.RemoveFriend]: (res: FriendEventRes) => void;
 }
 
 interface ClientToServerEvents {

@@ -54,14 +54,12 @@ export const useServerEvents = () => {
 
     socket.on(Event.AcceptFriend, async (res) => {
       logGroup(Event.AcceptFriend, res);
-      await getUsers();
-      dispatch(resetMessages());
+      handleAcceptFriendRes(res);
     });
 
     socket.on(Event.RemoveFriend, async (res) => {
       logGroup(Event.RemoveFriend, res);
-      await getUsers();
-      dispatch(resetMessages());
+      handleRemoveFriendRes(res);
     });
   }, []);
 

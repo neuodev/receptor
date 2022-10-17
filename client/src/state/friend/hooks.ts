@@ -1,15 +1,10 @@
 import { useAppDispatch } from "../../store";
-import { AddFriendRes } from "../../wss";
+import { FriendEventRes } from "../../wss";
 import { useAppSocket } from "../../wss/appSocket";
 import { resetMessages } from "../messages/actions";
 import { useUsers } from "../users/hooks";
-import {
-  acceptFriendReq,
-  addFriendErr,
-  addFriendReq,
-  addFriendRes,
-  removeFriendReq,
-} from "./actions";
+import { setFriendErr, setFriendReq, setFriendRes } from "./actions";
+import { FriendAction } from "./reducer";
 
 export const useFriend = () => {
   const dispatch = useAppDispatch();
@@ -17,32 +12,70 @@ export const useFriend = () => {
   const { getUsers } = useUsers();
 
   function addFriend(id: number) {
-    dispatch(addFriendReq(id));
+    dispatch(setFriendReq({ userId: id, action: FriendAction.Add }));
     appSocket.addFriend(id);
   }
 
-  async function handleAddFreindRes(res: AddFriendRes) {
+  async function handleAddFreindRes(res: FriendEventRes) {
     if (res.error) {
-      dispatch(addFriendErr({ userId: res.friendId, error: res.error }));
+      dispatch(
+        setFriendErr({
+          action: FriendAction.Add,
+          userId: res.friendId,
+          error: res.error,
+        })
+      );
     } else {
       await refreshState();
-      dispatch(addFriendRes(res.friendId));
+      dispatch(
+        setFriendRes({ action: FriendAction.Add, userId: res.friendId })
+      );
     }
   }
 
   function acceptFriend(id: number) {
-    dispatch(acceptFriendReq(id));
+    dispatch(setFriendReq({ userId: id, action: FriendAction.Accept }));
     appSocket.acceptFriend(id);
   }
 
-  function handleAcceptFriendRes() {}
+  async function handleAcceptFriendRes(res: FriendEventRes) {
+    if (res.error) {
+      dispatch(
+        setFriendErr({
+          action: FriendAction.Accept,
+          userId: res.friendId,
+          error: res.error,
+        })
+      );
+    } else {
+      await refreshState();
+      dispatch(
+        setFriendRes({ action: FriendAction.Accept, userId: res.friendId })
+      );
+    }
+  }
 
   function removeFriend(id: number) {
-    dispatch(removeFriendReq(id));
+    dispatch(setFriendReq({ userId: id, action: FriendAction.Remove }));
     appSocket.removeFriend(id);
   }
 
-  function handleRemoveFriendRes() {}
+  async function handleRemoveFriendRes(res: FriendEventRes) {
+    if (res.error) {
+      dispatch(
+        setFriendErr({
+          action: FriendAction.Remove,
+          userId: res.friendId,
+          error: res.error,
+        })
+      );
+    } else {
+      await refreshState();
+      dispatch(
+        setFriendRes({ action: FriendAction.Remove, userId: res.friendId })
+      );
+    }
+  }
 
   async function refreshState() {
     await getUsers();

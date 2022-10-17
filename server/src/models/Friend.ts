@@ -1,5 +1,6 @@
 import { DataTypes, ModelDefined, Optional } from "sequelize";
 import sequelize from "../db";
+import { Room } from "./Room";
 import { User } from "./User";
 
 export enum UsersRelation {
@@ -22,11 +23,12 @@ export interface IFriend {
   updatedAt: string;
   userId: number;
   friendId: number;
+  roomId: number;
 }
 
 export const Friend: ModelDefined<
   IFriend,
-  Optional<IFriend, "id" | "createdAt" | "updatedAt">
+  Optional<IFriend, "id" | "createdAt" | "updatedAt" | "roomId">
 > = sequelize.define("friend", {
   status: {
     type: DataTypes.ENUM(
@@ -50,3 +52,9 @@ foreignKeys.forEach((name) => {
   User.hasMany(Friend, options);
   Friend.belongsTo(User, options);
 });
+
+Friend.hasOne(Room, {
+  onDelete: "RESTRICT",
+  onUpdate: "RESTRICT",
+});
+Room.belongsTo(Friend);

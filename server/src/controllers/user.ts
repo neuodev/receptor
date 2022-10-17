@@ -169,7 +169,7 @@ export const getFriends = asyncHandler(
       },
       attributes: ["roomId"],
     });
-    const roomIds = rooms.map((room) => room.getDataValue("roomId") as number);
+    const roomIds = rooms.map((room) => room.getDataValue("roomId"));
     if (roomIds.length === 0) {
       res.status(200).json([]);
       return;

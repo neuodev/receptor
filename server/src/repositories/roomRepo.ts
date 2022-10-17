@@ -1,7 +1,9 @@
 import AppUOW from ".";
 import { Event } from "../events";
 import { MessageType } from "../models/Message";
+import { Participants } from "../models/Participants";
 import { Room, RoomType } from "../models/Room";
+import { parseQuery } from "../utils/prase";
 import BaseRepo from "./baseRepo";
 
 type RoomMessage = {
@@ -100,12 +102,39 @@ export default class RoomRepo extends BaseRepo {
     }, Event.RoomMessage);
   }
 
-  async newRoom(userIds: Array<number>, type: RoomType, name?: string) {
+  async newRoom(
+    userIds: Array<number>,
+    type: RoomType,
+    name?: string
+  ): Promise<number> {
     const room = await Room.create({
       name,
       type,
     });
-    const roomId = room.getDataValue("id") as number;
+    const roomId = room.getDataValue("id");
     await this.app.participants.newParticipants(userIds, roomId);
+    return roomId;
+  }
+
+  async deleteRoomById(id: number) {}
+  async deleteFriendRoom(userId: number, friendId: number) {
+    const roomIds = await this.app.participants.getUserRoomIds(userId);
+    // console.log(roomIds);
+    // Find the room
+    // Delete the messages
+    // Delete the participants
+    // Delet the actual room
+    const result = await Room.findAll({
+      where: {
+        participants: {
+          userId,
+        },
+      },
+      include: {
+        model: Participants,
+      },
+    });
+    const rooms = parseQuery<any>(result);
+    console.log(rooms);
   }
 }

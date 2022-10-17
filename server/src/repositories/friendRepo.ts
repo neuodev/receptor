@@ -3,8 +3,6 @@ import AppUOW from ".";
 import { Event } from "../events";
 import { Friend, FriendshipStatus, IFriend } from "../models/Friend";
 import { RoomType } from "../models/Room";
-import { User } from "../models/User";
-import { parseQuery } from "../utils/prase";
 import BaseRepo from "./baseRepo";
 
 export default class FriendRepo extends BaseRepo {
@@ -63,6 +61,17 @@ export default class FriendRepo extends BaseRepo {
     );
   }
 
+  async updateRoomId(id: number, roomId: number) {
+    await Friend.update(
+      { roomId },
+      {
+        where: {
+          id,
+        },
+      }
+    );
+  }
+
   async acceptFriendHandler(friendId: number) {
     const { socket } = this.app;
     await this.errorHandler(async () => {
@@ -77,18 +86,20 @@ export default class FriendRepo extends BaseRepo {
           },
         }),
       ]);
-      console.log({ user, request });
       if (!user) throw new Error("User not found");
       if (!request) throw new Error("Request not found");
 
       // Create new room with new participants
       let info = request.get();
-      await this.app.roomRepo.newRoom(
+      let roomId = await this.app.roomRepo.newRoom(
         [info.userId, info.friendId],
         RoomType.DM
       );
 
-      await this.updateStatus(info.id, FriendshipStatus.Friends);
+      await Promise.all([
+        this.updateStatus(info.id, FriendshipStatus.Friends),
+        this.updateRoomId(info.id, roomId),
+      ]);
       socket.emit(Event.AcceptFriend, { ok: true });
       // Should send notification to his friend
       // Todo: Check if the user is active or now before sending the notification
@@ -104,20 +115,24 @@ export default class FriendRepo extends BaseRepo {
     const { socket } = this.app;
     await this.errorHandler(async () => {
       let userId = this.app.decodeAuthToken();
-      await Friend.destroy({
-        where: {
-          [Op.or]: {
-            [Op.and]: {
-              userId,
-              friendId: userId,
-            },
-            [Op.and]: {
-              userId: friendId,
-              friendId: userId,
-            },
-          },
-        },
-      });
+      this.app.roomRepo.deleteFriendRoom(userId, friendId);
+      // Delete room messages
+
+      // Delete particpants
+      // await Friend.destroy({
+      //   where: {
+      //     [Op.or]: {
+      //       [Op.and]: {
+      //         userId,
+      //         friendId: userId,
+      //       },
+      //       [Op.and]: {
+      //         userId: friendId,
+      //         friendId: userId,
+      //       },
+      //     },
+      //   },
+      // });
 
       socket.emit(Event.RemoveFriend, { ok: true });
     }, Event.RemoveFriend);

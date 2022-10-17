@@ -4,6 +4,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import { useAppSelector } from "../../store";
 import Center from "../common/Center";
 import ChatListItem from "../Chat/ChatListItem";
+import NoFriends from "../Friends/NoFriends";
 
 const ChatsList = () => {
   const friends = useAppSelector((state) => state.friends);
@@ -44,11 +45,12 @@ const ChatsList = () => {
           <Center>
             <Typography color="error">{friends.error}</Typography>
           </Center>
+        ) : friends.list.length === 0 ? (
+          <Box sx={{ mt: "-20px", height: "100%" }}>
+            <NoFriends />
+          </Box>
         ) : (
           <Box>
-            {friends.list.map((friend) => (
-              <ChatListItem friend={friend} key={friend.id} />
-            ))}
             {friends.list.map((friend) => (
               <ChatListItem friend={friend} key={friend.id} />
             ))}

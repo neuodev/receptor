@@ -97,7 +97,6 @@ export const getUsers = asyncHandler(
     const page = req.query.page || 1;
     const skip = (page - 1) * limit;
     const userId = req.user.id;
-    console.log(req.user);
 
     const [users, count, friends] = await Promise.all([
       User.findAll({

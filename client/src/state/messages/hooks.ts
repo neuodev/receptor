@@ -7,12 +7,14 @@ import {
   getRoomMessagesRes,
   setCrrRoom,
 } from "./actions";
-import { RoomId } from "./reducer";
+import { MessageType, RoomId } from "./reducer";
 import { useRoomApi } from "../../hooks/api/room";
+import { useAppSocket } from "../../wss/appSocket";
 
 export const useRoom = () => {
   const dispatch = useAppDispatch();
   const roomApi = useRoomApi();
+  const socket = useAppSocket();
 
   async function getRoomMessages(roomId: RoomId) {
     try {
@@ -28,5 +30,15 @@ export const useRoom = () => {
     dispatch(setCrrRoom(roomId));
   }
 
-  return { getRoomMessages, setCurrentRoom };
+  async function sendTextMsg(roomId: number, msg: string) {
+    socket.sendRoomMsg({
+      rooms: [roomId],
+      message: {
+        type: MessageType.Text,
+        body: msg,
+      },
+    });
+  }
+
+  return { getRoomMessages, setCurrentRoom, sendTextMsg };
 };

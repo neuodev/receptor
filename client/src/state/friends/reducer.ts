@@ -1,5 +1,6 @@
 import { createReducer } from "@reduxjs/toolkit";
 import produce from "immer";
+import { clone } from "../../utils";
 import { IUser } from "../user/reducer";
 import {
   getFriendsErr,
@@ -24,7 +25,7 @@ const initalState: State = {
 };
 
 export const friendsReducer = createReducer<State>(
-  produce(initalState, () => {}),
+  clone(initalState),
   (builder) => {
     builder
       .addCase(getFriendsReq, (state) =>
@@ -55,6 +56,6 @@ export const friendsReducer = createReducer<State>(
           );
         })
       )
-      .addCase(resetFriends, () => produce(initalState, () => {}));
+      .addCase(resetFriends, () => clone(initalState));
   }
 );

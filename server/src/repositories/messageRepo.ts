@@ -11,4 +11,12 @@ export default class MessageRepo extends BaseRepo {
   }): Promise<IMessage> {
     return (await Message.create(msg)).get();
   }
+
+  async deleteRoommMessages(roomId: number) {
+    await Message.destroy({
+      where: {
+        roomId,
+      },
+    });
+  }
 }

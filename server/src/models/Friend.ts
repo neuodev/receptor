@@ -53,8 +53,5 @@ foreignKeys.forEach((name) => {
   Friend.belongsTo(User, options);
 });
 
-Friend.hasOne(Room, {
-  onDelete: "RESTRICT",
-  onUpdate: "RESTRICT",
-});
-Room.belongsTo(Friend);
+Room.hasOne(Friend); // Should create roomId on the `friends` table
+Friend.belongsTo(Room);

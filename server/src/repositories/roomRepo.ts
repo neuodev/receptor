@@ -116,25 +116,14 @@ export default class RoomRepo extends BaseRepo {
     return roomId;
   }
 
-  async deleteRoomById(id: number) {}
-  async deleteFriendRoom(userId: number, friendId: number) {
-    const roomIds = await this.app.participants.getUserRoomIds(userId);
-    // console.log(roomIds);
-    // Find the room
-    // Delete the messages
-    // Delete the participants
-    // Delet the actual room
-    const result = await Room.findAll({
+  async deletById(id: number) {
+    // Delete messages -> Participants -> Room
+    await this.app.messageRepo.deleteRoommMessages(id);
+    await this.app.participants.deleteByRoomId(id);
+    await Room.destroy({
       where: {
-        participants: {
-          userId,
-        },
-      },
-      include: {
-        model: Participants,
+        id,
       },
     });
-    const rooms = parseQuery<any>(result);
-    console.log(rooms);
   }
 }

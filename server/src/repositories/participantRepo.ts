@@ -1,5 +1,4 @@
-import { IParticipants, Participants } from "../models/Participants";
-import { parseQuery } from "../utils/prase";
+import { Participants } from "../models/Participants";
 import BaseRepo from "./baseRepo";
 
 export default class ParticipantsRepo extends BaseRepo {
@@ -12,14 +11,11 @@ export default class ParticipantsRepo extends BaseRepo {
     );
   }
 
-  async getUserRoomIds(userId: number): Promise<number[]> {
-    const query = await Participants.findAll({
+  async deleteByRoomId(roomId: number) {
+    await Participants.destroy({
       where: {
-        userId,
+        roomId,
       },
-      attributes: ["roomId"],
     });
-    const roomIds = parseQuery<Array<{ roomId: number }>>(query);
-    return roomIds.map(({ roomId }) => roomId);
   }
 }

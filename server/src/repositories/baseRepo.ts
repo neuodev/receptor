@@ -18,7 +18,11 @@ export default class BaseRepo {
     return result.id;
   }
 
-  async errorHandler<T>(func: Function, event: Event) {
+  async errorHandler<T>(
+    func: Function,
+    event: Event,
+    other: { [key: string]: string | number } = {}
+  ) {
     try {
       await func();
     } catch (error) {
@@ -34,6 +38,7 @@ export default class BaseRepo {
       if (event !== Event.Disconnect)
         this.app.socket.emit(event, {
           error: msg,
+          ...other,
         });
     }
   }

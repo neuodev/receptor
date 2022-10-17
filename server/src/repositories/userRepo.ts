@@ -99,64 +99,68 @@ export default class UserRepo extends BaseRepo {
 
   async addFriend(friendId: number) {
     const { socket } = this.app;
-    await this.errorHandler(async () => {
-      let userId = this.app.decodeAuthToken();
-      if (!friendId) throw new Error("Firend Id is missing");
-      if (userId === friendId)
-        throw new Error("User can't add himself as a friend");
-      // Check if the user exist
-      const users = await this.getUsersById([userId, friendId]);
-      const sender = users.find((user) => user.id === userId);
-      const receiver = users.find((user) => user.id === friendId);
-      if (!sender) throw new Error("User doesn't exist");
-      if (!receiver) throw new Error("Receiver no longer exist");
+    await this.errorHandler(
+      async () => {
+        let userId = this.app.decodeAuthToken();
+        if (!friendId) throw new Error("Firend Id is missing");
+        if (userId === friendId)
+          throw new Error("User can't add himself as a friend");
+        // Check if the user exist
+        const users = await this.getUsersById([userId, friendId]);
+        const sender = users.find((user) => user.id === userId);
+        const receiver = users.find((user) => user.id === friendId);
+        if (!sender) throw new Error("User doesn't exist");
+        if (!receiver) throw new Error("Receiver no longer exist");
 
-      const friendship = await this.app.friendRepo.getFriendshipRecord(
-        sender.id,
-        receiver.id
-      );
-
-      if (friendship)
-        throw new Error(
-          friendship.status === FriendshipStatus.Pending
-            ? "Request already sent"
-            : friendship.status === FriendshipStatus.Friends
-            ? "Already friends"
-            : `You got blocked by ${receiver.username}`
-        );
-
-      await this.app.friendRepo.addFriend(
-        sender.id,
-        receiver.id,
-        FriendshipStatus.Pending
-      );
-
-      const isSent =
-        await this.app.notificationRepo.isFriendshipRequestAlreadySent(
+        const friendship = await this.app.friendRepo.getFriendshipRecord(
           sender.id,
           receiver.id
         );
-      if (isSent != null) throw new Error("Notification already sent");
-      // If the receiver active we should send him a notification!
-      if (receiver.isActive) {
-        // Should send a notification
-        // Every user has its own channel which we can ehco the message into
-        socket.to(receiver.id.toString()).emit(Event.Notification, {
-          type: Event.AcceptFriend,
-          from: sender,
+
+        if (friendship)
+          throw new Error(
+            friendship.status === FriendshipStatus.Pending
+              ? "Request already sent"
+              : friendship.status === FriendshipStatus.Friends
+              ? "Already friends"
+              : `You got blocked by ${receiver.username}`
+          );
+
+        await this.app.friendRepo.addFriend(
+          sender.id,
+          receiver.id,
+          FriendshipStatus.Pending
+        );
+
+        const isSent =
+          await this.app.notificationRepo.isFriendshipRequestAlreadySent(
+            sender.id,
+            receiver.id
+          );
+        if (isSent != null) throw new Error("Notification already sent");
+        // If the receiver active we should send him a notification!
+        if (receiver.isActive) {
+          // Should send a notification
+          // Every user has its own channel which we can ehco the message into
+          socket.to(receiver.id.toString()).emit(Event.Notification, {
+            type: Event.AcceptFriend,
+            from: sender,
+          });
+        }
+
+        await this.app.notificationRepo.pushNotification({
+          content: {
+            userId: sender.id,
+          },
+          type: NotificationType.FriendshipRequest,
+          userId: receiver.id,
         });
-      }
-      // Store a copy of the request into the notifications table
-      await this.app.notificationRepo.pushNotification({
-        content: {
-          userId: sender.id,
-        },
-        type: NotificationType.FriendshipRequest,
-        userId: receiver.id,
-      });
-      // Update friends table to be pending
-      socket.emit(Event.AddFriend, { ok: true });
-    }, Event.AddFriend);
+
+        socket.emit(Event.AddFriend, { friendId });
+      },
+      Event.AddFriend,
+      { friendId }
+    );
   }
 
   async handleLogin() {

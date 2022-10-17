@@ -30,6 +30,7 @@ export const register = asyncHandler(
         userId: result.getDataValue("id"),
       });
     } catch (error) {
+      console.log(error);
       if (error instanceof UniqueConstraintError) {
         return next(new ResponseError("User already exist", 404));
       }

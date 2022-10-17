@@ -31,6 +31,9 @@ const FriendCard: React.FC<{ friend: IFriend }> = ({ friend }) => {
         p: "20px 24px",
         bgcolor: "common.white",
         borderRadius: "var(--common-br)",
+        ":hover": {
+          bgcolor: "grey.300",
+        },
       }}
     >
       <Box>

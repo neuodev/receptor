@@ -5,8 +5,14 @@ import { Outlet, useNavigate } from "react-router-dom";
 import ChatBox from "../components/ChatBox";
 import { useAppSelector } from "../store";
 import { ROUTES } from "../constants/routes";
+import { useServerEvents } from "../wss/appSocket";
+import { useFriends } from "../state/friends/hooks";
 
 const HomePage = () => {
+  // Init Socketio and get user friends
+  useServerEvents();
+  useFriends();
+
   const user = useAppSelector((state) => state.user);
   const navigate = useNavigate();
 

@@ -19,23 +19,19 @@ export const register = asyncHandler(
     res: Response,
     next: NextFunction
   ) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      res.status(400).json({ errors: errors.array() });
-      return;
-    }
-    try {
-      let result = await User.create(req.body);
+    const { username, email, password } = req.body;
+    const isExist = await User.findOne({ where: { email } });
+    if (!isExist) {
+      let result = await User.create({
+        username,
+        email,
+        password,
+      });
       res.status(200).json({
         userId: result.getDataValue("id"),
       });
-    } catch (error) {
-      console.log(error);
-      if (error instanceof UniqueConstraintError) {
-        return next(new ResponseError("User already exist", 404));
-      }
-
-      throw error;
+    } else {
+      next(new ResponseError("User already exist", 400));
     }
   }
 );
@@ -101,6 +97,7 @@ export const getUsers = asyncHandler(
     const page = req.query.page || 1;
     const skip = (page - 1) * limit;
     const userId = req.user.id;
+    console.log(req.user);
 
     const [users, count, friends] = await Promise.all([
       User.findAll({

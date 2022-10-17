@@ -20,9 +20,18 @@ import FriendCard from "../Friends/FriendCard";
 const Friends: React.FC<{}> = () => {
   const modal = useAppModal();
   const friends = useAppSelector((state) => state.friends);
+  const friendsList = Object.entries(groupFriendsByFirstLetter(friends.list));
 
   return (
-    <Stack sx={{ height: "100%" }}>
+    <Stack
+      sx={{
+        height: "100%",
+        overflowY: "scroll",
+        "::-webkit-scrollbar": {
+          display: "none",
+        },
+      }}
+    >
       <Typography variant="h5" mb="32px">
         Friends
       </Typography>
@@ -47,6 +56,7 @@ const Friends: React.FC<{}> = () => {
         variant="contained"
         fullWidth
         sx={{
+          flexShrink: 0,
           mb: "20px",
           height: "50px",
           lineHeight: "1px",
@@ -66,26 +76,28 @@ const Friends: React.FC<{}> = () => {
           <Center>
             <Typography color="error">{friends.error}</Typography>
           </Center>
+        ) : friendsList.length === 0 || true ? (
+          <Center>
+            <img src="./images/friends.png" />
+          </Center>
         ) : (
           <Box>
-            {Object.entries(groupFriendsByFirstLetter(friends.list)).map(
-              ([letter, friends]) => (
-                <Box>
-                  <Typography
-                    variant="caption"
-                    color="grey.500"
-                    textTransform="uppercase"
-                    display="inline-block"
-                    mb="8px"
-                  >
-                    {letter}
-                  </Typography>
-                  {friends.map((f) => (
-                    <FriendCard friend={f} />
-                  ))}
-                </Box>
-              )
-            )}
+            {friendsList.map(([letter, friends]) => (
+              <Box key={letter}>
+                <Typography
+                  variant="caption"
+                  color="grey.500"
+                  textTransform="uppercase"
+                  display="inline-block"
+                  mb="8px"
+                >
+                  {letter}
+                </Typography>
+                {friends.map((f, idx) => (
+                  <FriendCard key={f.id} friend={f} />
+                ))}
+              </Box>
+            ))}
           </Box>
         )}
       </Box>

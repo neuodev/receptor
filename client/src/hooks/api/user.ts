@@ -6,6 +6,7 @@ import { IUser } from "../../state/user/reducer";
 
 export const useUserApi = () => {
   const headers = useAuthHeaders();
+
   async function getUsers(
     q?: string,
     limit: number = 10,
@@ -21,5 +22,6 @@ export const useUserApi = () => {
     });
     return data.users;
   }
+
   return { getUsers };
 };

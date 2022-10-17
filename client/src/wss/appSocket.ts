@@ -2,9 +2,8 @@ import { useEffect } from "react";
 import { Event, socket } from ".";
 import { useFriend } from "../state/friend/hooks";
 import { updateUser } from "../state/friends/actions";
-import { addNewMsg, resetMessages } from "../state/messages/actions";
+import { addNewMsg } from "../state/messages/actions";
 import { MessageType, RoomId } from "../state/messages/reducer";
-import { useUsers } from "../state/users/hooks";
 import { useAppDispatch, useAppSelector } from "../store";
 import { logGroup } from "../utils/log";
 

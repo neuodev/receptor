@@ -9,7 +9,15 @@ const ChatsList = () => {
   const friends = useAppSelector((state) => state.friends);
 
   return (
-    <Stack>
+    <Stack
+      sx={{
+        height: "100%",
+        overflowY: "scroll",
+        "::-webkit-scrollbar": {
+          display: "none",
+        },
+      }}
+    >
       <Typography variant="h5" mb="32px">
         Chat
       </Typography>
@@ -38,6 +46,9 @@ const ChatsList = () => {
           </Center>
         ) : (
           <Box>
+            {friends.list.map((friend) => (
+              <ChatListItem friend={friend} key={friend.id} />
+            ))}
             {friends.list.map((friend) => (
               <ChatListItem friend={friend} key={friend.id} />
             ))}

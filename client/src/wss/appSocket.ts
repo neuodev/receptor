@@ -19,18 +19,29 @@ export type SendRoomMsg = {
 export const useServerEvents = () => {
   const authToken = useAppSelector((state) => state.user.authToken);
   const { login } = useAppSocket();
-  const { getUsers } = useUsers();
   const { handleAddFreindRes, handleAcceptFriendRes, handleRemoveFriendRes } =
     useFriend();
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    socket.on(Event.Login, () => {
-      console.count("login");
+    [
+      Event.Login,
+      Event.JoinRoom,
+      Event.RoomMessage,
+      Event.UpdateUser,
+      Event.AddFriend,
+      Event.AcceptFriend,
+      Event.RemoveFriend,
+    ].forEach((e: any) => {
+      socket.off(e);
     });
 
-    socket.on(Event.JoinRoom, () => {
-      console.count("JoinRoom");
+    socket.on(Event.Login, (res) => {
+      logGroup(Event.Login, res);
+    });
+
+    socket.on(Event.JoinRoom, (res) => {
+      logGroup(Event.JoinRoom, res);
     });
 
     socket.on(Event.RoomMessage, async (res) => {

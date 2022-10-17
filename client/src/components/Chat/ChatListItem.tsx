@@ -4,11 +4,13 @@ import moment from "moment";
 import { useRoom } from "../../state/messages/hooks";
 import Avatar, { avatarProps } from "../common/Avatar";
 import { IFriend } from "../../state/friends/reducer";
+import { useAppSelector } from "../../store";
 
 const ChatListItem: React.FC<{
   friend: IFriend;
 }> = ({ friend }) => {
   const { roomId } = friend;
+  const currRoomId = useAppSelector((state) => state.messages.currRoom);
   const { setCurrentRoom, getRoomMessages } = useRoom();
 
   return (
@@ -17,17 +19,18 @@ const ChatListItem: React.FC<{
         setCurrentRoom(roomId);
         getRoomMessages(roomId);
       }}
-      variant="text"
-      color="secondary"
+      variant="outlined"
+      color={currRoomId === roomId ? "primary" : "secondary"}
       sx={{
         display: "flex",
         width: "100%",
         bgcolor: "common.white",
         ":hover": {
-          bgcolor: "grey.300",
+          bgcolor: currRoomId !== roomId ? "grey.300" : "current",
         },
         borderRadius: "0.6rem",
         p: "20px 24px",
+        mb: "8px",
       }}
     >
       <Box sx={{ mr: "8px" }}>

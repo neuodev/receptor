@@ -71,7 +71,15 @@ const Friends: React.FC<{}> = () => {
             {Object.entries(groupFriendsByFirstLetter(friends.list)).map(
               ([letter, friends]) => (
                 <Box>
-                  <Typography>{letter}</Typography>
+                  <Typography
+                    variant="caption"
+                    color="grey.500"
+                    textTransform="uppercase"
+                    display="inline-block"
+                    mb="8px"
+                  >
+                    {letter}
+                  </Typography>
                   {friends.map((f) => (
                     <FriendCard friend={f} />
                   ))}

@@ -1,10 +1,27 @@
 import React from "react";
 import { IFriend } from "../../state/friends/reducer";
-import { Box, Stack, Typography, IconButton } from "@mui/material";
+import {
+  Box,
+  Stack,
+  Typography,
+  IconButton,
+  Menu,
+  MenuItem,
+} from "@mui/material";
 import Avatar, { avatarProps } from "../common/Avatar";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import moment from "moment";
 const FriendCard: React.FC<{ friend: IFriend }> = ({ friend }) => {
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
   return (
     <Stack
       direction="row"
@@ -30,9 +47,24 @@ const FriendCard: React.FC<{ friend: IFriend }> = ({ friend }) => {
         </Typography>
       </Stack>
 
-      <IconButton sx={{ width: "40px", height: "40px", ml: "auto" }}>
+      <IconButton
+        onClick={handleClick}
+        sx={{ width: "40px", height: "40px", ml: "auto" }}
+      >
         <MoreVertIcon />
       </IconButton>
+
+      <Menu
+        id="actions-menu"
+        anchorEl={anchorEl}
+        open={open}
+        onClose={handleClose}
+        MenuListProps={{
+          "aria-labelledby": "actions-button",
+        }}
+      >
+        <MenuItem onClick={handleClose}>Remove</MenuItem>
+      </Menu>
     </Stack>
   );
 };

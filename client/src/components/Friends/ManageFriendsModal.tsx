@@ -1,15 +1,15 @@
 import Modal from "../common/Modal";
-import AddFriends from "./AddFriends";
+import ManageFriends from "./ManageFriends";
 import { useAppModal } from "../../state/app/hooks";
 import { AppModal } from "../../state/app/reducer";
 
-const AddFriendModal = () => {
+const ManageFriendsModal = () => {
   const modal = useAppModal();
   return (
     <Modal open={modal.isShown(AppModal.AddFriend)}>
-      <AddFriends />
+      <ManageFriends />
     </Modal>
   );
 };
 
-export default AddFriendModal;
+export default ManageFriendsModal;

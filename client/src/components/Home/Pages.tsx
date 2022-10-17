@@ -43,12 +43,14 @@ const Pages = () => {
           <Button
             onClick={page.onClick}
             endIcon={
-              <IconButton
+              <Stack
+                alignItems="center"
+                justifyContent="center"
                 sx={{
                   bgcolor: "primary.main",
-                  ":hover": {
-                    bgcolor: "primary.main",
-                  },
+                  width: "35px",
+                  height: "35px",
+                  borderRadius: "50%",
                 }}
               >
                 <ArrowForwardIosIcon
@@ -58,7 +60,7 @@ const Pages = () => {
                     height: "20px",
                   }}
                 />
-              </IconButton>
+              </Stack>
             }
             key={page.title}
             variant="text"

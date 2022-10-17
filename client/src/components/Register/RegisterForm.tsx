@@ -19,13 +19,13 @@ const RegisterForm = () => {
   const { loading, error } = useAppSelector((state) => state.user);
   const [showPass, setShowPass] = useState(false);
   const [state, setState] = useState<{
+    username: string;
     email: string;
     password: string;
-    username: string;
   }>({
+    username: "",
     email: "",
     password: "",
-    username: "",
   });
 
   type FormField = keyof typeof state;

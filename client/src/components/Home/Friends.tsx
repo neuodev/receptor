@@ -13,7 +13,7 @@ import { useAppModal } from "../../state/app/hooks";
 import { AppModal } from "../../state/app/reducer";
 import { useAppSelector } from "../../store";
 import Center from "../common/Center";
-import AddFriendModal from "../Friends/AddFriendModal";
+import ManageFriendsModal from "../Friends/ManageFriendsModal";
 
 const Friends: React.FC<{}> = () => {
   const modal = useAppModal();
@@ -68,7 +68,7 @@ const Friends: React.FC<{}> = () => {
           <Box>{}</Box>
         )}
       </Box>
-      <AddFriendModal />
+      <ManageFriendsModal />
     </Stack>
   );
 };

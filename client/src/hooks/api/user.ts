@@ -1,6 +1,6 @@
 import axios from "axios";
 import { getEndpoint } from "../../constants/api";
-import { UsersRelation } from "../../state/addFriend/reducer";
+import { UsersRelation } from "../../state/users/reducer";
 import { useAuthHeaders } from "../../state/user/hooks";
 import { IUser } from "../../state/user/reducer";
 

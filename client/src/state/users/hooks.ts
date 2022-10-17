@@ -1,12 +1,10 @@
 import { useUserApi } from "../../hooks/api/user";
 import { useAppDispatch } from "../../store";
 import { getErrMsg } from "../../utils/error";
-import { useAppSocket } from "../../wss/appSocket";
-import { addFriendReq, getUsersErr, getUsersReq, getUsersRes } from "./actions";
+import { getUsersErr, getUsersReq, getUsersRes } from "./actions";
 
-export const useAddFriend = () => {
+export const useUsers = () => {
   const dispatch = useAppDispatch();
-  const appSocket = useAppSocket();
   const userApi = useUserApi();
 
   async function getUsers(q?: string, limit: number = 10, page = 1) {
@@ -23,18 +21,5 @@ export const useAddFriend = () => {
     await getUsers(q, limit, page);
   }
 
-  function addFriend(id: number) {
-    // todo: Remove dispatch
-    dispatch(addFriendReq());
-    appSocket.addFriend(id);
-  }
-
-  function acceptFriend(id: number) {
-    appSocket.acceptFriend(id);
-  }
-
-  function removeFriend(id: number) {
-    appSocket.removeFriend(id);
-  }
-  return { getUsersHandler, addFriend, acceptFriend, removeFriend, getUsers };
+  return { getUsersHandler, getUsers };
 };

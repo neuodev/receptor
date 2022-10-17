@@ -1,13 +1,12 @@
 import React from "react";
 import { Stack, Typography, Button } from "@mui/material";
-import { IUser } from "../../state/user/reducer";
 import moment from "moment";
-import { useAddFriend } from "../../state/addFriend/hooks";
+import { useFriend } from "../../state/friend/hooks";
 import Avatar, { avatarProps } from "../common/Avatar";
-import { UsersRelation } from "../../state/addFriend/reducer";
+import { UsersRelation, UserWithRelation } from "../../state/users/reducer";
 
-const AddFriendCard: React.FC<{
-  user: IUser & { relation: UsersRelation };
+const ManageFriendsCard: React.FC<{
+  user: UserWithRelation;
 }> = ({ user }) => {
   const { username, isActive, updatedAt, id, email, relation } = user;
   return (
@@ -26,13 +25,13 @@ const AddFriendCard: React.FC<{
   );
 };
 
-export default AddFriendCard;
+export default ManageFriendsCard;
 
 const CardAction: React.FC<{ relation: UsersRelation; id: number }> = ({
   relation,
   id,
 }) => {
-  const { addFriend, acceptFriend, removeFriend } = useAddFriend();
+  const { addFriend, acceptFriend, removeFriend } = useFriend();
   switch (relation) {
     case UsersRelation.Friends:
       return (

@@ -9,18 +9,15 @@ import {
   AlertTitle,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
-import AddFriendCard from "./AddFriendCard";
-import { useAddFriend } from "../../state/addFriend/hooks";
+import ManageFriendsCard from "./ManageFriendsCard";
 import { useAppSelector } from "../../store";
 import Center from "../common/Center";
+import { useUsers } from "../../state/users/hooks";
 
-const AddFriends = () => {
+const ManageFriends = () => {
   const [search, setSearch] = useState<string>("");
-  const { getUsersHandler } = useAddFriend();
-  const currUser = useAppSelector((state) => state.user.info);
-  const { users, loading, error } = useAppSelector(
-    (state) => state.addFriend.usersList
-  );
+  const { getUsersHandler } = useUsers();
+  const { list, loading, error } = useAppSelector((state) => state.users);
 
   useEffect(() => {
     getUsersHandler(search);
@@ -29,7 +26,7 @@ const AddFriends = () => {
   return (
     <Box>
       <Typography variant="h5" mb="16px">
-        Add Friend
+        Manage Friends
       </Typography>
 
       <Input
@@ -61,11 +58,9 @@ const AddFriends = () => {
           </Alert>
         ) : (
           <Stack spacing={2}>
-            {users
-              .filter((u) => u.id !== currUser?.id)
-              .map((user) => (
-                <AddFriendCard key={user.id} user={user} />
-              ))}
+            {list.map((user) => (
+              <ManageFriendsCard key={user.id} user={user} />
+            ))}
           </Stack>
         )}
       </Box>
@@ -73,4 +68,4 @@ const AddFriends = () => {
   );
 };
 
-export default AddFriends;
+export default ManageFriends;

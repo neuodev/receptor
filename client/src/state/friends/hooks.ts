@@ -11,6 +11,9 @@ import { IFriend } from "./reducer";
 export const useFriends = () => {
   const dispatch = useAppDispatch();
   const user = useAppSelector((state) => state.user);
+  const users = useAppSelector((state) => state.users);
+  const friend = useAppSelector((state) => state.friend);
+
   const headers = useAuthHeaders();
   const { joinRooms } = useAppSocket();
 
@@ -32,5 +35,5 @@ export const useFriends = () => {
 
   useEffect(() => {
     getFriends();
-  }, [user]);
+  }, [user, users, friend]);
 };

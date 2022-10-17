@@ -1,9 +1,9 @@
 import { useEffect } from "react";
 import { Event, socket } from ".";
-import { useAddFriend } from "../state/addFriend/hooks";
 import { updateUser } from "../state/friends/actions";
-import { addNewMsg } from "../state/messages/actions";
+import { addNewMsg, resetMessages } from "../state/messages/actions";
 import { MessageType, RoomId } from "../state/messages/reducer";
+import { useUsers } from "../state/users/hooks";
 import { useAppDispatch, useAppSelector } from "../store";
 import { logGroup } from "../utils/log";
 
@@ -18,17 +18,12 @@ export type SendRoomMsg = {
 export const useServerEvents = () => {
   const authToken = useAppSelector((state) => state.user.authToken);
   const { login } = useAppSocket();
-  const { getUsers } = useAddFriend();
+  const { getUsers } = useUsers();
   const dispatch = useAppDispatch();
 
   useEffect(() => {
     socket.on(Event.Login, () => {
       console.count("login");
-    });
-
-    socket.on(Event.AddFriend, (res) => {
-      logGroup(Event.AddFriend, res);
-      getUsers();
     });
 
     socket.on(Event.JoinRoom, () => {
@@ -49,13 +44,21 @@ export const useServerEvents = () => {
       dispatch(updateUser(user));
     });
 
-    socket.on(Event.AcceptFriend, (res) => {
-      logGroup(Event.AcceptFriend, res);
-      getUsers();
+    socket.on(Event.AddFriend, async (res) => {
+      logGroup(Event.AddFriend, res);
+      await getUsers();
+      dispatch(resetMessages());
     });
-    socket.on(Event.RemoveFriend, (res) => {
+
+    socket.on(Event.AcceptFriend, async (res) => {
+      logGroup(Event.AcceptFriend, res);
+      await getUsers();
+      dispatch(resetMessages());
+    });
+    socket.on(Event.RemoveFriend, async (res) => {
       logGroup(Event.RemoveFriend, res);
-      getUsers();
+      await getUsers();
+      dispatch(resetMessages());
     });
   }, []);
 

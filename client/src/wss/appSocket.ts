@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { Event, socket } from ".";
+import { useFriend } from "../state/friend/hooks";
 import { updateUser } from "../state/friends/actions";
 import { addNewMsg, resetMessages } from "../state/messages/actions";
 import { MessageType, RoomId } from "../state/messages/reducer";
@@ -19,6 +20,8 @@ export const useServerEvents = () => {
   const authToken = useAppSelector((state) => state.user.authToken);
   const { login } = useAppSocket();
   const { getUsers } = useUsers();
+  const { handleAddFreindRes, handleAcceptFriendRes, handleRemoveFriendRes } =
+    useFriend();
   const dispatch = useAppDispatch();
 
   useEffect(() => {
@@ -44,10 +47,9 @@ export const useServerEvents = () => {
       dispatch(updateUser(user));
     });
 
-    socket.on(Event.AddFriend, async (res) => {
+    socket.on(Event.AddFriend, (res) => {
       logGroup(Event.AddFriend, res);
-      await getUsers();
-      dispatch(resetMessages());
+      handleAddFreindRes(res);
     });
 
     socket.on(Event.AcceptFriend, async (res) => {

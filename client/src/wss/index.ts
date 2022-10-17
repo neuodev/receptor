@@ -19,14 +19,15 @@ export enum Event {
   UpdateUser = "updateUser",
 }
 
-type OkOrErr = { ok?: boolean; error?: string };
+export type OkOrErr = { ok?: boolean; error?: string };
+export type AddFriendRes = { friendId: number; error?: string };
 
 interface ServerToClientEvents {
   [Event.Login]: (res: OkOrErr) => void;
-  [Event.AddFriend]: (res: OkOrErr) => void;
   [Event.JoinRoom]: (res: OkOrErr) => void;
   [Event.RoomMessage]: (res: { error: string } | IMessage) => void;
   [Event.UpdateUser]: (res: IUser) => void;
+  [Event.AddFriend]: (res: AddFriendRes) => void;
   [Event.AcceptFriend]: (res: OkOrErr) => void;
   [Event.RemoveFriend]: (res: OkOrErr) => void;
 }

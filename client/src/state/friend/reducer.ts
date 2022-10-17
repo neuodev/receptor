@@ -9,10 +9,7 @@ type BaseState = {
     [key: UserId]: boolean;
   };
   error: {
-    [key: UserId]: boolean;
-  };
-  success: {
-    [key: UserId]: boolean;
+    [key: UserId]: string | null;
   };
 };
 
@@ -24,7 +21,6 @@ type State = {
 const baseState = {
   loading: {},
   error: {},
-  success: {},
 };
 
 const initalState = {
@@ -35,28 +31,22 @@ const initalState = {
 
 export const friendReducer = createReducer<State>(initalState, (builder) => {
   builder
-    .addCase(addFriendReq, (state) =>
+    .addCase(addFriendReq, (state, { payload: userId }) =>
       produce(state, (draftState) => {
-        draftState.add.loading = true;
-        draftState.add.error = null;
+        draftState.add.loading[userId] = true;
+        draftState.add.error[userId] = null;
       })
     )
-    .addCase(addFriendRes, (state) =>
+    .addCase(addFriendRes, (state, { payload: userId }) =>
       produce(state, (draftState) => {
-        draftState = {
-          loading: false,
-          error: null,
-          success: true,
-        };
+        draftState.add.loading[userId] = false;
+        draftState.add.error[userId] = null;
       })
     )
-    .addCase(addFriendErr, (state, { payload }) =>
+    .addCase(addFriendErr, (state, { payload: { userId, error } }) =>
       produce(state, (draftState) => {
-        draftState = {
-          loading: false,
-          error: payload,
-          success: false,
-        };
+        draftState.add.loading[userId] = false;
+        draftState.add.error[userId] = error;
       })
     );
 });

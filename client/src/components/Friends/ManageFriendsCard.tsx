@@ -1,9 +1,11 @@
 import React from "react";
 import { Stack, Typography, Button } from "@mui/material";
+import LoadingButton from "@mui/lab/LoadingButton";
 import moment from "moment";
 import { useFriend } from "../../state/friend/hooks";
 import Avatar, { avatarProps } from "../common/Avatar";
 import { UsersRelation, UserWithRelation } from "../../state/users/reducer";
+import { useAppSelector } from "../../store";
 
 const ManageFriendsCard: React.FC<{
   user: UserWithRelation;
@@ -31,11 +33,14 @@ const CardAction: React.FC<{ relation: UsersRelation; id: number }> = ({
   relation,
   id,
 }) => {
+  const friendState = useAppSelector((state) => state.friend);
   const { addFriend, acceptFriend, removeFriend } = useFriend();
+
   switch (relation) {
     case UsersRelation.Friends:
       return (
-        <Button
+        <LoadingButton
+          loading={friendState.remove.loading[id] === true}
           onClick={() => {
             removeFriend(id);
           }}
@@ -44,23 +49,29 @@ const CardAction: React.FC<{ relation: UsersRelation; id: number }> = ({
           size="small"
         >
           Remove
-        </Button>
+        </LoadingButton>
       );
     case UsersRelation.NotFriends:
       return (
-        <Button onClick={() => addFriend(id)} variant="outlined" size="small">
+        <LoadingButton
+          loading={friendState.add.loading[id] === true}
+          onClick={() => addFriend(id)}
+          variant="outlined"
+          size="small"
+        >
           Add
-        </Button>
+        </LoadingButton>
       );
     case UsersRelation.PendingRequest:
       return (
-        <Button
+        <LoadingButton
+          loading={friendState.accept.loading[id] === true}
           onClick={() => acceptFriend(id)}
           variant="outlined"
           size="small"
         >
           Accept
-        </Button>
+        </LoadingButton>
       );
     case UsersRelation.PendingResponse:
       return (

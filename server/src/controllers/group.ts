@@ -4,8 +4,6 @@ import { IParticipants, Participants } from "../models/Participants";
 import { IRoom, Room, RoomType } from "../models/Room";
 import { IUser, User } from "../models/User";
 import { parseQuery } from "../utils/prase";
-import { Friend } from "../models/Friend";
-import { Op } from "sequelize";
 import ResponseError from "../utils/error";
 import friendUOW from "../database/friend";
 import roomUOW from "../database/room";

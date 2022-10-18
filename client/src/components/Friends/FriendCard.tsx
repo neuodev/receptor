@@ -11,7 +11,9 @@ import {
 import Avatar, { avatarProps } from "../common/Avatar";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import moment from "moment";
+import { useFriend } from "../../state/friend/hooks";
 const FriendCard: React.FC<{ friend: IFriend }> = ({ friend }) => {
+  const { removeFriend } = useFriend();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
 
@@ -66,7 +68,14 @@ const FriendCard: React.FC<{ friend: IFriend }> = ({ friend }) => {
           "aria-labelledby": "actions-button",
         }}
       >
-        <MenuItem onClick={handleClose}>Remove</MenuItem>
+        <MenuItem
+          onClick={() => {
+            removeFriend(friend.id);
+            handleClose();
+          }}
+        >
+          Remove
+        </MenuItem>
       </Menu>
     </Stack>
   );

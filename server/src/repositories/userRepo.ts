@@ -3,8 +3,6 @@ import { Op } from "sequelize";
 import { Event } from "../events";
 import BaseRepo from "./baseRepo";
 import AppUOW from ".";
-import { FriendshipStatus } from "../models/Friend";
-import { NotificationType } from "../models/Notification";
 import { getUserPrivateRoom } from "../utils/user";
 
 export type AddFriendMsg = {
@@ -24,12 +22,9 @@ export default class UserRepo extends BaseRepo {
       this.app.setAuthToken(data.token);
       this.handleLogin();
     });
-
-    socket.on(Event.AddFriend, this.addFriend.bind(this));
-
     socket.on(Event.Disconnect, this.handleLogout.bind(this));
     socket.on(Event.Logout, this.handleLogout.bind(this));
-    socket.on(Event.GetUser, this.handleGetUser);
+    socket.on(Event.GetUser, this.handleGetUser.bind(this));
   }
 
   async registerUser(data: {
@@ -42,11 +37,11 @@ export default class UserRepo extends BaseRepo {
     return user.getDataValue("id");
   }
 
-  async getUsers() {
+  async getAll() {
     return await User.findAll({});
   }
 
-  async getUsersById(ids: Array<number>): Promise<Array<IUser>> {
+  async getByIds(ids: Array<number>): Promise<Array<IUser>> {
     const match = ids.map((id) => ({ id }));
     const users = await User.findAll({
       where: {
@@ -97,72 +92,6 @@ export default class UserRepo extends BaseRepo {
     );
   }
 
-  async addFriend(friendId: number) {
-    const { socket } = this.app;
-    await this.errorHandler(
-      async () => {
-        let userId = this.app.decodeAuthToken();
-        if (!friendId) throw new Error("Firend Id is missing");
-        if (userId === friendId)
-          throw new Error("User can't add himself as a friend");
-        // Check if the user exist
-        const users = await this.getUsersById([userId, friendId]);
-        const sender = users.find((user) => user.id === userId);
-        const receiver = users.find((user) => user.id === friendId);
-        if (!sender) throw new Error("User doesn't exist");
-        if (!receiver) throw new Error("Receiver no longer exist");
-
-        const friendship = await this.app.friendRepo.getFriendshipRecord(
-          sender.id,
-          receiver.id
-        );
-
-        if (friendship)
-          throw new Error(
-            friendship.status === FriendshipStatus.Pending
-              ? "Request already sent"
-              : friendship.status === FriendshipStatus.Friends
-              ? "Already friends"
-              : `You got blocked by ${receiver.username}`
-          );
-
-        await this.app.friendRepo.addFriend(
-          sender.id,
-          receiver.id,
-          FriendshipStatus.Pending
-        );
-
-        const isSent =
-          await this.app.notificationRepo.isFriendshipRequestAlreadySent(
-            sender.id,
-            receiver.id
-          );
-        if (isSent != null) throw new Error("Notification already sent");
-        // If the receiver active we should send him a notification!
-        if (receiver.isActive) {
-          // Should send a notification
-          // Every user has its own channel which we can ehco the message into
-          socket.to(receiver.id.toString()).emit(Event.Notification, {
-            type: Event.AcceptFriend,
-            from: sender,
-          });
-        }
-
-        await this.app.notificationRepo.pushNotification({
-          content: {
-            userId: sender.id,
-          },
-          type: NotificationType.FriendshipRequest,
-          userId: receiver.id,
-        });
-
-        socket.emit(Event.AddFriend, { friendId });
-      },
-      Event.AddFriend,
-      { friendId }
-    );
-  }
-
   async handleLogin() {
     const socket = this.app.socket;
     this.errorHandler(async () => {
@@ -187,14 +116,14 @@ export default class UserRepo extends BaseRepo {
     }, Event.Logout);
   }
 
-  handleGetUser = async () => {
+  async handleGetUser() {
     const { socket } = this.app;
     await this.errorHandler(async () => {
       const userId = this.app.decodeAuthToken();
       let user = await this.getById(userId);
       socket.emit(Event.GetUser, user);
     }, Event.GetUser);
-  };
+  }
 
   async notifyFriends(userId: number) {
     const { socket } = this.app;

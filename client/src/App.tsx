@@ -7,7 +7,7 @@ import { ThemeProvider } from "@mui/material";
 import { theme } from "./theme";
 import HomePage from "./pages/HomePage";
 import ChatsList from "./components/Home/ChatsList";
-import CreateChat from "./components/Home/CreateChat";
+import CreateGroup from "./components/Home/CreateGroup";
 import Pages from "./components/Home/Pages";
 import Friends from "./components/Home/Friends";
 import { Provider } from "react-redux";
@@ -30,7 +30,7 @@ const router = createBrowserRouter([
           },
           {
             path: ROUTES.CREATE_GROUP,
-            element: <CreateChat />,
+            element: <CreateGroup />,
           },
           {
             path: ROUTES.PAGES,

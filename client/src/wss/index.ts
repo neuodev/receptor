@@ -31,7 +31,6 @@ interface ServerToClientEvents {
   [Event.AddFriend]: (res: FriendEventRes) => void;
   [Event.AcceptFriend]: (res: FriendEventRes) => void;
   [Event.RemoveFriend]: (res: FriendEventRes) => void;
-  [Event.CreateGroup]: (res: OkOrErr) => void;
 }
 
 interface ClientToServerEvents {
@@ -42,7 +41,6 @@ interface ClientToServerEvents {
   [Event.RoomMessage]: (data: SendRoomMsg) => void;
   [Event.AcceptFriend]: (friendId: number) => void;
   [Event.RemoveFriend]: (friendId: number) => void;
-  [Event.CreateGroup]: (groupName: string, usersId: number[]) => void;
 }
 
 export const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io(

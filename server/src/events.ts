@@ -12,5 +12,4 @@ export enum Event {
   LeaveRoom = "leaveRoom",
   RoomMessage = "sendRoomMsg",
   UpdateUser = "updateUser",
-  CreateGroup = "createGroup",
 }

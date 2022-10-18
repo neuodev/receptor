@@ -27,33 +27,6 @@ export default class RoomRepo extends BaseRepo {
     socket.on(Event.JoinRoom, this.joinRoom.bind(this));
     socket.on(Event.LeaveRoom, this.leaveRoom.bind(this));
     socket.on(Event.RoomMessage, this.sendMessage.bind(this));
-    socket.on(Event.CreateGroup, this.createGroup.bind(this));
-  }
-
-  async createGroup(name: string, userIds: number[]) {
-    const { socket } = this.app;
-    await this.errorHandler(async () => {
-      const userId = this.app.decodeAuthToken();
-      let err: string;
-      if (!name) err = "Group name is required";
-      if (!userIds || userIds.length === 0)
-        err = "Can't create an empty group. At least one member is required";
-
-      const friends = await friendUOW.getFriends(userId);
-      const friendIds = new Set(
-        friends
-          .map((f) => [f.friendId, f.userId])
-          .reduce((acc, curr) => acc.concat(curr), [])
-      );
-
-      userIds.forEach((id) => {
-        if (!friendIds.has(id))
-          throw new Error(`User with id of '${id}' is not a friend`);
-      });
-
-      await this.newRoom([...userIds, userId], RoomType.Group, name);
-      socket.emit(Event.CreateGroup, { ok: true });
-    }, Event.CreateGroup);
   }
 
   async joinRoom(roomIds: number[]) {

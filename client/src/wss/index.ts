@@ -17,6 +17,7 @@ export enum Event {
   LeaveRoom = "leaveRoom",
   RoomMessage = "sendRoomMsg",
   UpdateUser = "updateUser",
+  CreateGroup = "createGroup",
 }
 
 export type OkOrErr = { ok?: boolean; error?: string };
@@ -33,13 +34,14 @@ interface ServerToClientEvents {
 }
 
 interface ClientToServerEvents {
-  [Event.Login]: (data: { token: string }) => void;
+  [Event.Login]: (token: string) => void;
   [Event.Logout]: () => void;
   [Event.AddFriend]: (frinedId: number) => void;
-  [Event.JoinRoom]: (data: { rooms: number[] }) => void;
+  [Event.JoinRoom]: (rooms: number[]) => void;
   [Event.RoomMessage]: (data: SendRoomMsg) => void;
   [Event.AcceptFriend]: (friendId: number) => void;
   [Event.RemoveFriend]: (friendId: number) => void;
+  [Event.CreateGroup]: (groupName: string, usersId: number[]) => void;
 }
 
 export const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io(

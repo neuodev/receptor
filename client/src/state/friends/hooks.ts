@@ -7,33 +7,41 @@ import { useAuthHeaders } from "../user/hooks";
 import { getFriendsErr, getFriendsReq, getFriendsRes } from "./actions";
 import { useAppSocket } from "../../wss/appSocket";
 import { IFriend } from "./reducer";
+import { useUserApi } from "../../hooks/api/user";
 
 export const useFriends = () => {
   const dispatch = useAppDispatch();
   const user = useAppSelector((state) => state.user);
   const users = useAppSelector((state) => state.users);
   const friend = useAppSelector((state) => state.friend);
-
-  const headers = useAuthHeaders();
+  const userApi = useUserApi();
   const { joinRooms } = useAppSocket();
 
-  async function getFriends() {
+  /**
+   * Update friends list in the background
+   * */
+  async function refreshFriendsList() {
     try {
-      dispatch(getFriendsReq());
-      const { data } = await axios.get<Array<IFriend>>(
-        getEndpoint("getFriends"),
-        {
-          headers,
-        }
-      );
-      joinRooms(data.map((entry) => entry.roomId));
-      dispatch(getFriendsRes(data));
+      const friends = await userApi.getUserFriends();
+      joinRooms(friends.map((friend) => friend.roomId));
+      dispatch(getFriendsRes(friends));
     } catch (error) {
       dispatch(getFriendsErr(getErrMsg(error)));
     }
   }
 
+  async function getFriends() {
+    dispatch(getFriendsReq());
+    await refreshFriendsList();
+  }
+
+  useEffect(() => {
+    refreshFriendsList();
+  }, [user, users, friend]);
+
   useEffect(() => {
     getFriends();
-  }, [user, users, friend]);
+  }, []);
+
+  return { getFriends };
 };

@@ -92,7 +92,7 @@ export const useAppSocket = () => {
   }
 
   function login(token: string) {
-    socket.emit(Event.Login, { token });
+    socket.emit(Event.Login, token);
   }
 
   function logout() {
@@ -100,11 +100,15 @@ export const useAppSocket = () => {
   }
 
   function joinRooms(rooms: number[]) {
-    socket.emit(Event.JoinRoom, { rooms });
+    socket.emit(Event.JoinRoom, rooms);
   }
 
   function sendRoomMsg(msg: SendRoomMsg) {
     socket.emit(Event.RoomMessage, msg);
+  }
+
+  function createGroup(name: string, usersId: number[]) {
+    socket.emit(Event.CreateGroup, name, usersId);
   }
 
   return {
@@ -115,5 +119,6 @@ export const useAppSocket = () => {
     sendRoomMsg,
     acceptFriend,
     removeFriend,
+    createGroup,
   };
 };

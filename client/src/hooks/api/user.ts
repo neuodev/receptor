@@ -3,6 +3,7 @@ import { getEndpoint } from "../../constants/api";
 import { UsersRelation } from "../../state/users/reducer";
 import { useAuthHeaders } from "../../state/user/hooks";
 import { IUser } from "../../state/user/reducer";
+import { IFriend } from "../../state/friends/reducer";
 
 export const useUserApi = () => {
   const headers = useAuthHeaders();
@@ -23,5 +24,13 @@ export const useUserApi = () => {
     return data.users;
   }
 
-  return { getUsers };
+  async function getUserFriends(): Promise<IFriend[]> {
+    const { data } = await axios.get<IFriend[]>(getEndpoint("getFriends"), {
+      headers,
+    });
+
+    return data;
+  }
+
+  return { getUsers, getUserFriends };
 };

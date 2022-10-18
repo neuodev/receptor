@@ -1,8 +1,43 @@
-import React from "react";
-import { Stack, Typography, Input, TextField } from "@mui/material";
+import { useState, useEffect } from "react";
+import {
+  Box,
+  Stack,
+  Typography,
+  Input,
+  TextField,
+  CircularProgress,
+  Button,
+} from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
+import { useAppSelector } from "../../store";
+import Center from "../common/Center";
+import NoFriends from "../Friends/NoFriends";
+import FriendOption from "../Groups/FriendOption";
+import { IFriend } from "../../state/friends/reducer";
+import { clone } from "../../utils";
+import { searchBy } from "../../utils/user";
+import { useAppSocket } from "../../wss/appSocket";
 
 const CreateGroup = () => {
+  const socket = useAppSocket();
+  const friends = useAppSelector((state) => state.friends);
+  const [keyword, setKeyword] = useState<string>("");
+  const [list, setList] = useState<IFriend[]>(clone<IFriend[]>(friends.list));
+  const [groupName, setGroupName] = useState<string>("");
+  const [members, setMembers] = useState<Set<number>>(new Set());
+
+  const isMember = (id: number) => members.has(id);
+  const addMember = (id: number) => setMembers(new Set(members).add(id));
+  const removeMember = (id: number) => {
+    const newMembers = new Set(members);
+    newMembers.delete(id);
+    setMembers(newMembers);
+  };
+
+  useEffect(() => {
+    setList(searchBy(keyword, friends.list, ["username", "email"]));
+  }, [keyword]);
+
   return (
     <Stack
       sx={{
@@ -17,10 +52,19 @@ const CreateGroup = () => {
         Create Group
       </Typography>
 
+      <TextField
+        label="Group name"
+        value={groupName}
+        onChange={(e) => setGroupName(e.target.value)}
+        sx={{ mb: "32px" }}
+      />
+
       <Input
         disableUnderline
         fullWidth
         placeholder="Search for friends"
+        value={keyword}
+        onChange={(e) => setKeyword(e.target.value)}
         sx={{
           p: "14px 18px 14px 14px",
           bgcolor: "grey.300",
@@ -30,7 +74,47 @@ const CreateGroup = () => {
         startAdornment={<SearchIcon sx={{ mr: "4px" }} />}
       />
 
-      <TextField label="Group name" />
+      <Box sx={{ flexGrow: 1 }}>
+        {friends.loading ? (
+          <Center>
+            <CircularProgress />
+          </Center>
+        ) : friends.error ? (
+          <Center>
+            <Typography color="error">{friends.error}</Typography>
+          </Center>
+        ) : friends.list.length === 0 ? (
+          <Box sx={{ mt: "-20px", height: "100%" }}>
+            <NoFriends />
+          </Box>
+        ) : (
+          <Box>
+            {list.slice(0, 5).map((friend) => (
+              <FriendOption
+                friend={friend}
+                key={friend.id}
+                isMember={isMember}
+                onSelect={(id) => {
+                  if (isMember(id)) removeMember(id);
+                  else addMember(id);
+                }}
+              />
+            ))}
+          </Box>
+        )}
+      </Box>
+
+      <Button
+        variant="contained"
+        onClick={() => {
+          if (!groupName || members.size === 0) return;
+          socket.createGroup(groupName, Array.from(members));
+        }}
+        disabled={!groupName || members.size === 0}
+        sx={{ flexShrink: 0, height: "50px" }}
+      >
+        Create group with {members.size} member(s)
+      </Button>
     </Stack>
   );
 };

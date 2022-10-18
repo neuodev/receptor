@@ -46,7 +46,10 @@ export const theme = createTheme({
       styleOverrides: {
         root: {
           boxShadow: "none",
-          textTransform: "capitalize",
+          textTransform: "none",
+          "&::first-letter": {
+            textTransform: "uppercase",
+          },
         },
       },
     },

@@ -7,7 +7,8 @@ import moment from "moment";
 const FriendOption: React.FC<{
   friend: IFriend;
   onSelect(id: number): void;
-}> = ({ friend, onSelect }) => {
+  isMember(id: number): boolean;
+}> = ({ friend, onSelect, isMember }) => {
   return (
     <Stack
       direction="row"
@@ -35,7 +36,12 @@ const FriendOption: React.FC<{
             : "Last seen " + moment(friend.updatedAt).fromNow()}
         </Typography>
       </Stack>
-      <Checkbox />
+
+      <Checkbox
+        onChange={() => onSelect(friend.id)}
+        checked={isMember(friend.id)}
+        sx={{ display: "inline-block", ml: "auto" }}
+      />
     </Stack>
   );
 };

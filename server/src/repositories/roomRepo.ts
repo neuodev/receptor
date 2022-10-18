@@ -21,23 +21,17 @@ export default class RoomRepo extends BaseRepo {
 
   initListeners() {
     const { socket } = this.app;
-    socket.on(Event.JoinRoom, (data: { rooms: Array<number> }) => {
-      this.joinRoom(data.rooms);
-    });
-
-    socket.on(Event.LeaveRoom, (data: { rooms: Array<number> }) => {
-      this.leaveRoom(data.rooms);
-    });
-
-    socket.on(
-      Event.RoomMessage,
-      ({ rooms, message }: { rooms: Array<number>; message: RoomMessage }) => {
-        this.sendMessage(rooms, message);
-      }
-    );
+    socket.on(Event.JoinRoom, this.joinRoom.bind(this));
+    socket.on(Event.CreateGroup, this.createGroup.bind(this));
+    socket.on(Event.LeaveRoom, this.leaveRoom.bind(this));
+    socket.on(Event.RoomMessage, this.sendMessage.bind(this));
   }
 
-  async joinRoom(rooms: Array<number>) {
+  async createGroup(name: string, usersId: number[]) {
+    console.log({ name, usersId });
+  }
+
+  async joinRoom({ rooms }: { rooms: Array<number> }) {
     const { socket } = this.app;
     await this.errorHandler(async () => {
       //Todo: validate ownership of all rooms
@@ -63,7 +57,13 @@ export default class RoomRepo extends BaseRepo {
     }, Event.LeaveRoom);
   }
 
-  async sendMessage(rooms: Array<number>, msg: RoomMessage) {
+  async sendMessage({
+    rooms,
+    message,
+  }: {
+    rooms: Array<number>;
+    message: RoomMessage;
+  }) {
     const { socket } = this.app;
     await this.errorHandler(async () => {
       const userId = this.app.decodeAuthToken();
@@ -73,7 +73,7 @@ export default class RoomRepo extends BaseRepo {
       const messages = await Promise.all(
         rooms.map((room) =>
           this.app.messageRepo.newMessage({
-            ...msg,
+            ...message,
             roomId: room,
             userId,
             read: false,

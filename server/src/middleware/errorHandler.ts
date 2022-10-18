@@ -10,8 +10,8 @@ export const errorHandler = (
 ) => {
   if (process.env.NOD_ENV !== "production") console.log(err);
 
-  let statusCode = 500;
-  let msg = "Unexpected error.";
+  let statusCode = 400;
+  let msg = "Unexpected error, please retry";
   if (err instanceof ResponseError) {
     msg = err.message;
     statusCode = err.statusCode;

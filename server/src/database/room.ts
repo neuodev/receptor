@@ -19,7 +19,7 @@ class RoomUOW {
 
   async getById(
     id: number
-  ): Promise<(IRoom & { participants: IParticipants }) | null> {
+  ): Promise<(IRoom & { participants: IParticipants[] }) | null> {
     const room = await Room.findOne({
       where: {
         id,
@@ -30,7 +30,7 @@ class RoomUOW {
     });
 
     return room
-      ? parseQuery<IRoom & { participants: IParticipants }>(room.get())
+      ? parseQuery<IRoom & { participants: IParticipants[] }>(room.get())
       : null;
   }
 }

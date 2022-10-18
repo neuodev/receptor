@@ -8,6 +8,7 @@ import ResponseError from "../utils/error";
 import friendUOW from "../database/friend";
 import roomUOW from "../database/room";
 import participantsUOW from "../database/participant";
+import messageUOW from "../database/message";
 
 // @api  GET /api/v1/group
 // @desc Get user groups
@@ -124,11 +125,31 @@ export const createGroup = asyncHandler(
 // @access  Onwer only
 export const deleteGroup = asyncHandler(
   async (
-    req: Request<{}, {}, { groupName: string; userIds: number[] }>,
+    req: Request<{ id: string }, {}, { groupName: string; userIds: number[] }>,
     res: Response,
     next: NextFunction
   ) => {
     const userId = req.user.id;
+    let roomId = Number(req.params.id);
+    if (isNaN(roomId)) {
+      next(new ResponseError(`'${roomId}' is not a valid roomId`, 400));
+      return;
+    }
+
+    const room = await roomUOW.getById(roomId);
+    if (!room) throw new Error("Group not found");
+    if (room.type === RoomType.DM) throw new Error("Room is not a group");
+
+    const participant = room.participants.find((p) => p.userId == userId);
+    if (!participant) throw new Error("User isn't part of the room");
+    if (participant.role !== Role.Owner)
+      throw new Error("Only owner can delete the group");
+
+    await messageUOW.deleteRoomMessages(roomId);
+    await participantsUOW.deleteByRoomId(roomId);
+    await roomUOW.deleteById(roomId);
+
+    res.status(200).json();
   }
 );
 

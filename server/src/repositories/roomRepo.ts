@@ -4,6 +4,7 @@ import { MessageType } from "../models/Message";
 import { Participants } from "../models/Participants";
 import { Room, RoomType } from "../models/Room";
 import { parseQuery } from "../utils/prase";
+import { getRoomId } from "../utils/user";
 import BaseRepo from "./baseRepo";
 
 type RoomMessage = {
@@ -15,29 +16,49 @@ type RoomMessage = {
 export default class RoomRepo extends BaseRepo {
   constructor(app: AppUOW) {
     super(app);
-
     this.initListeners();
   }
 
   initListeners() {
     const { socket } = this.app;
     socket.on(Event.JoinRoom, this.joinRoom.bind(this));
-    socket.on(Event.CreateGroup, this.createGroup.bind(this));
     socket.on(Event.LeaveRoom, this.leaveRoom.bind(this));
     socket.on(Event.RoomMessage, this.sendMessage.bind(this));
+    socket.on(Event.CreateGroup, this.createGroup.bind(this));
   }
 
-  async createGroup(name: string, usersId: number[]) {
-    console.log({ name, usersId });
+  async createGroup(name: string, userIds: number[]) {
+    const { socket } = this.app;
+    await this.errorHandler(async () => {
+      const userId = this.app.decodeAuthToken();
+      let err: string;
+      if (!name) err = "Group name is required";
+      if (!userIds || userIds.length === 0)
+        err = "Can't create an empty group. At least one member is required";
+      const friends = await this.app.friendRepo.getFriends(userId);
+      const friendIds = new Set(
+        friends
+          .map((f) => [f.friendId, f.userId])
+          .reduce((acc, curr) => acc.concat(curr), [])
+      );
+
+      userIds.forEach((id) => {
+        if (!friendIds.has(id))
+          throw new Error(`User with id of '${id}' is not a friend`);
+      });
+
+      await this.newRoom([...userIds, userId], RoomType.GROUP, name);
+      socket.emit(Event.CreateGroup, { ok: true });
+    }, Event.CreateGroup);
   }
 
-  async joinRoom({ rooms }: { rooms: Array<number> }) {
+  async joinRoom(roomIds: number[]) {
     const { socket } = this.app;
     await this.errorHandler(async () => {
       //Todo: validate ownership of all rooms
       this.app.decodeAuthToken();
-      rooms.forEach((room) => {
-        socket.join(room.toString());
+      roomIds.forEach((room) => {
+        socket.join(getRoomId(room));
       });
 
       socket.emit(Event.JoinRoom, { ok: true });

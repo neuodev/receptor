@@ -31,6 +31,7 @@ interface ServerToClientEvents {
   [Event.AddFriend]: (res: FriendEventRes) => void;
   [Event.AcceptFriend]: (res: FriendEventRes) => void;
   [Event.RemoveFriend]: (res: FriendEventRes) => void;
+  [Event.CreateGroup]: (res: OkOrErr) => void;
 }
 
 interface ClientToServerEvents {

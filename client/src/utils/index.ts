@@ -1,5 +1,3 @@
-import produce from "immer";
-
 export function clone<T>(data: T) {
-  return produce(data, () => {});
+  return JSON.parse(JSON.stringify(data)) as T;
 }

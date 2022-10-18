@@ -18,8 +18,8 @@ export default class UserRepo extends BaseRepo {
 
   initListeners() {
     const { socket } = this.app;
-    socket.on(Event.Login, async (data: { token: string }) => {
-      this.app.setAuthToken(data.token);
+    socket.on(Event.Login, async (token) => {
+      this.app.setAuthToken(token);
       this.handleLogin();
     });
     socket.on(Event.Disconnect, this.handleLogout.bind(this));

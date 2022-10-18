@@ -71,6 +71,10 @@ export const useServerEvents = () => {
       logGroup(Event.RemoveFriend, res);
       handleRemoveFriendRes(res);
     });
+
+    socket.on(Event.CreateGroup, async (res) => {
+      logGroup(Event.CreateGroup, res);
+    });
   }, []);
 
   useEffect(() => {

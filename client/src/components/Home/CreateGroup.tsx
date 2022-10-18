@@ -36,7 +36,7 @@ const CreateGroup = () => {
 
   useEffect(() => {
     setList(searchBy(keyword, friends.list, ["username", "email"]));
-  }, [keyword]);
+  }, [keyword, friends]);
 
   return (
     <Stack
@@ -87,6 +87,10 @@ const CreateGroup = () => {
           <Box sx={{ mt: "-20px", height: "100%" }}>
             <NoFriends />
           </Box>
+        ) : list.length === 0 ? (
+          <Box sx={{ mt: "20px" }}>
+            <Typography textAlign="center">No friend found</Typography>
+          </Box>
         ) : (
           <Box>
             {list.slice(0, 5).map((friend) => (
@@ -113,7 +117,9 @@ const CreateGroup = () => {
         disabled={!groupName || members.size === 0}
         sx={{ flexShrink: 0, height: "50px" }}
       >
-        Create group with {members.size} member(s)
+        {members.size === 0
+          ? "Create group"
+          : `Create group with ${members.size} member(s)`}
       </Button>
     </Stack>
   );

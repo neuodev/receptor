@@ -1,6 +1,6 @@
 import asyncHandler from "express-async-handler";
 import { Request, Response, NextFunction } from "express";
-import { IParticipants, Participants } from "../models/Participants";
+import { IParticipants, Participants, Role } from "../models/Participants";
 import { IRoom, Room, RoomType } from "../models/Room";
 import { IUser, User } from "../models/User";
 import { parseQuery } from "../utils/prase";
@@ -103,7 +103,13 @@ export const createGroup = asyncHandler(
     });
 
     const roomId = await roomUOW.newRoom(RoomType.Group, groupName);
-    await participantsUOW.newParticipants([...friendIds, userId], roomId);
+    await participantsUOW.newParticipants(
+      [
+        ...userIds.map((id) => ({ id, role: Role.Member })),
+        { id: userId, role: Role.Owner },
+      ],
+      roomId
+    );
     res.status(200).json({
       roomId,
     });

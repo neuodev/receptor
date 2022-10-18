@@ -6,6 +6,7 @@ import roomUOW from "../database/room";
 import userUOW from "../database/user";
 import { Event } from "../events";
 import { MessageType } from "../models/Message";
+import { Role } from "../models/Participants";
 import { Room, RoomType } from "../models/Room";
 import { getRoomId } from "../utils/user";
 import BaseRepo from "./baseRepo";
@@ -101,12 +102,12 @@ export default class RoomRepo extends BaseRepo {
   }
 
   async newRoom(
-    userIds: Array<number>,
+    users: Array<{ id: number; role: Role }>,
     type: RoomType,
     name?: string
   ): Promise<number> {
     const roomId = await roomUOW.newRoom(type, name);
-    await participantsUOW.newParticipants(userIds, roomId);
+    await participantsUOW.newParticipants(users, roomId);
     return roomId;
   }
 

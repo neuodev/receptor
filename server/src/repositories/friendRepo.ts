@@ -1,12 +1,11 @@
-import { Op } from "sequelize";
 import AppUOW from ".";
 import friendUOW from "../database/friend";
 import userUOW from "../database/user";
 import { Event } from "../events";
-import { Friend, FriendshipStatus, IFriend } from "../models/Friend";
+import { FriendshipStatus } from "../models/Friend";
 import { NotificationType } from "../models/Notification";
+import { Role } from "../models/Participants";
 import { RoomType } from "../models/Room";
-import { parseQuery } from "../utils/prase";
 import { getUserPrivateRoom } from "../utils/user";
 import BaseRepo from "./baseRepo";
 
@@ -98,7 +97,10 @@ export default class FriendRepo extends BaseRepo {
 
         // Create new room with new participants
         let roomId = await this.app.roomRepo.newRoom(
-          [request.userId, request.friendId],
+          [request.userId, request.friendId].map((id) => ({
+            id,
+            role: Role.Admin,
+          })),
           RoomType.DM
         );
 

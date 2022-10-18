@@ -124,17 +124,10 @@ export const createGroup = asyncHandler(
 // @desc Delete a group
 // @access  Onwer only
 export const deleteGroup = asyncHandler(
-  async (
-    req: Request<{ id: string }, {}, { groupName: string; userIds: number[] }>,
-    res: Response,
-    next: NextFunction
-  ) => {
+  async (req: Request<{ id: string }>, res: Response, next: NextFunction) => {
     const userId = req.user.id;
     let roomId = Number(req.params.id);
-    if (isNaN(roomId)) {
-      next(new ResponseError(`'${roomId}' is not a valid roomId`, 400));
-      return;
-    }
+    if (isNaN(roomId)) throw new Error(`'${roomId}' is not a valid roomId`);
 
     const room = await roomUOW.getById(roomId);
     if (!room) throw new Error("Group not found");
@@ -146,10 +139,10 @@ export const deleteGroup = asyncHandler(
       throw new Error("Only owner can delete the group");
 
     await messageUOW.deleteRoomMessages(roomId);
-    await participantsUOW.deleteByRoomId(roomId);
+    await participantsUOW.deleteRoomMembers(roomId);
     await roomUOW.deleteById(roomId);
 
-    res.status(200).json();
+    res.status(200).json({ roomId });
   }
 );
 
@@ -157,9 +150,21 @@ export const deleteGroup = asyncHandler(
 // @desc Leave a group
 // @access  Private/user
 export const leaveGroup = asyncHandler(
-  async (
-    req: Request<{}, {}, { groupName: string; userIds: number[] }>,
-    res: Response,
-    next: NextFunction
-  ) => {}
+  async (req: Request<{ id: string }>, res: Response, next: NextFunction) => {
+    const userId = req.user.id;
+    let roomId = Number(req.params.id);
+    if (isNaN(roomId)) throw new Error(`'${roomId}' is not a valid roomId`);
+
+    const room = await roomUOW.getById(roomId);
+    if (!room) throw new Error("Group not found");
+    if (room.type === RoomType.DM) throw new Error("Room is not a group");
+
+    const participant = room.participants.find((p) => p.userId == userId);
+    if (!participant) throw new Error("User isn't part of the room");
+    if (participant.role === Role.Owner)
+      throw new Error("Owner can't leave the gorup.");
+
+    await participantsUOW.deleteRoomMember(userId, roomId);
+    res.status(200).json({ roomId });
+  }
 );

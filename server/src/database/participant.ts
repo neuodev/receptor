@@ -14,10 +14,19 @@ class ParticipantsUOW {
     );
   }
 
-  async deleteByRoomId(roomId: number) {
+  async deleteRoomMembers(roomId: number) {
     await Participants.destroy({
       where: {
         roomId,
+      },
+    });
+  }
+
+  async deleteRoomMember(userId: number, roomId: number) {
+    await Participants.destroy({
+      where: {
+        roomId,
+        userId,
       },
     });
   }

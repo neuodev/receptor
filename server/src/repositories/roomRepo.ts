@@ -114,7 +114,7 @@ export default class RoomRepo extends BaseRepo {
   async deletById(id: number) {
     // Delete messages -> Participants -> Room
     await messageUOW.deleteRoomMessages(id);
-    await participantsUOW.deleteByRoomId(id);
+    await participantsUOW.deleteRoomMembers(id);
     await roomUOW.deleteById(id);
   }
 }

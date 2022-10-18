@@ -76,7 +76,7 @@ export const getGroups = asyncHandler(
 export const createGroup = asyncHandler(
   async (
     req: Request<{}, {}, { groupName: string; userIds: number[] }>,
-    _res: Response,
+    res: Response,
     next: NextFunction
   ) => {
     const userId = req.user.id;
@@ -106,5 +106,8 @@ export const createGroup = asyncHandler(
 
     const roomId = await roomUOW.newRoom(RoomType.Group, groupName);
     await participantsUOW.newParticipants([...friendIds, userId], roomId);
+    res.status(200).json({
+      roomId,
+    });
   }
 );

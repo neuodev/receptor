@@ -4,8 +4,14 @@ import { IParticipants, Participants } from "../models/Participants";
 import { IRoom, Room, RoomType } from "../models/Room";
 import { IUser, User } from "../models/User";
 import { parseQuery } from "../utils/prase";
+import { Friend } from "../models/Friend";
+import { Op } from "sequelize";
+import ResponseError from "../utils/error";
+import friendUOW from "../database/friend";
+import roomUOW from "../database/room";
+import participantsUOW from "../database/participant";
 
-// @api  GET /api/v1/user/groups
+// @api  GET /api/v1/group
 // @desc Get user groups
 // @access  Private/user
 export const getGroups = asyncHandler(
@@ -61,5 +67,44 @@ export const getGroups = asyncHandler(
         })),
       }))
     );
+  }
+);
+
+// @api  POST /api/v1/group
+// @desc Create new group
+// @access  Private/user
+export const createGroup = asyncHandler(
+  async (
+    req: Request<{}, {}, { groupName: string; userIds: number[] }>,
+    _res: Response,
+    next: NextFunction
+  ) => {
+    const userId = req.user.id;
+    const { userIds, groupName } = req.body;
+
+    let err: string | null = null;
+    if (!groupName) err = "Group name is required";
+    else if (!userIds || userIds.length === 0)
+      err = "Can't create an empty group. At least one member is required";
+
+    if (err) {
+      next(new ResponseError(err, 400));
+      return;
+    }
+
+    let friends = await friendUOW.getFriends(userId);
+    const friendIds = new Set(
+      friends
+        .map((f) => [f.friendId, f.userId])
+        .reduce((acc, curr) => acc.concat(curr), [])
+    );
+
+    userIds.forEach((id) => {
+      if (!friendIds.has(id))
+        throw new Error(`User with id of '${id}' is not a friend`);
+    });
+
+    const roomId = await roomUOW.newRoom(RoomType.Group, groupName);
+    await participantsUOW.newParticipants([...friendIds, userId], roomId);
   }
 );

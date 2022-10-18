@@ -1,5 +1,7 @@
 import { Op } from "sequelize";
 import AppUOW from ".";
+import friendUOW from "../database/friend";
+import userUOW from "../database/user";
 import { Event } from "../events";
 import { Friend, FriendshipStatus, IFriend } from "../models/Friend";
 import { NotificationType } from "../models/Notification";
@@ -21,61 +23,6 @@ export default class FriendRepo extends BaseRepo {
     socket.on(Event.RemoveFriend, this.removeFriend.bind(this));
   }
 
-  async getFriendshipRecord(userId: number, friendId: number) {
-    const result = await Friend.findOne({
-      where: {
-        userId,
-        friendId,
-      },
-    });
-
-    if (!result) return null;
-    return result.get();
-  }
-
-  async newFriend(userId: number, friendId: number, status: FriendshipStatus) {
-    await Friend.create({
-      userId,
-      friendId,
-      status,
-    });
-  }
-
-  async getFriends(userId: number): Promise<IFriend[]> {
-    let friends = await Friend.findAll({
-      where: {
-        [Op.or]: {
-          userId,
-          friendId: userId,
-        },
-      },
-    });
-
-    return friends.map((f) => f.get());
-  }
-
-  async updateStatus(id: number, status: FriendshipStatus) {
-    await Friend.update(
-      { status },
-      {
-        where: {
-          id,
-        },
-      }
-    );
-  }
-
-  async markAsFriends(id: number, roomId: number) {
-    await Friend.update(
-      { roomId, status: FriendshipStatus.Friends },
-      {
-        where: {
-          id,
-        },
-      }
-    );
-  }
-
   async addFriend(friendId: number) {
     const { socket } = this.app;
     await this.errorHandler(
@@ -85,16 +32,13 @@ export default class FriendRepo extends BaseRepo {
         if (userId === friendId)
           throw new Error("User can't add himself as a friend");
         // Check if the user exist
-        const users = await this.app.userRepo.getByIds([userId, friendId]);
+        const users = await userUOW.getByIds([userId, friendId]);
         const sender = users.find((user) => user.id === userId);
         const receiver = users.find((user) => user.id === friendId);
         if (!sender) throw new Error("User doesn't exist");
         if (!receiver) throw new Error("Receiver no longer exist");
 
-        const friendship = await this.app.friendRepo.getFriendshipRecord(
-          sender.id,
-          receiver.id
-        );
+        const friendship = await friendUOW.getFriend(sender.id, receiver.id);
 
         if (friendship)
           throw new Error(
@@ -105,7 +49,11 @@ export default class FriendRepo extends BaseRepo {
               : `You got blocked by ${receiver.username}`
           );
 
-        await this.newFriend(sender.id, receiver.id, FriendshipStatus.Pending);
+        await friendUOW.newFriend(
+          sender.id,
+          receiver.id,
+          FriendshipStatus.Pending
+        );
         const isSent =
           await this.app.notificationRepo.isFriendshipRequestAlreadySent(
             sender.id,
@@ -142,31 +90,26 @@ export default class FriendRepo extends BaseRepo {
         let userId = this.app.decodeAuthToken();
         if (!friendId) throw new Error("Missing friendId");
         const [user, request] = await Promise.all([
-          this.app.userRepo.getById(userId),
-          Friend.findOne({
-            where: {
-              userId: friendId,
-            },
-          }),
+          userUOW.getById(userId),
+          friendUOW.getFriendRequest(friendId),
         ]);
         if (!user) throw new Error("User not found");
         if (!request) throw new Error("Request not found");
 
         // Create new room with new participants
-        let info = request.get();
         let roomId = await this.app.roomRepo.newRoom(
-          [info.userId, info.friendId],
+          [request.userId, request.friendId],
           RoomType.DM
         );
 
-        await this.markAsFriends(info.id, roomId);
+        await friendUOW.markAsFriends(request.id, roomId);
         socket.emit(Event.AcceptFriend, { friendId });
         // Should send notification to his friend
         // Todo: Check if the user is active or now before sending the notification
-        socket.to(info.userId.toString()).emit(Event.Notification, {
+        socket.to(getUserPrivateRoom(request.userId)).emit(Event.Notification, {
           type: Event.AcceptFriend,
           user,
-          request: info,
+          request,
         });
       },
       Event.AcceptFriend,
@@ -179,29 +122,10 @@ export default class FriendRepo extends BaseRepo {
     await this.errorHandler(
       async () => {
         let userId = this.app.decodeAuthToken();
-        const query = await Friend.findOne({
-          where: {
-            [Op.or]: [
-              {
-                [Op.and]: {
-                  userId,
-                  friendId,
-                },
-              },
-              {
-                [Op.and]: {
-                  userId: friendId,
-                  friendId: userId,
-                },
-              },
-            ],
-          },
-        });
-
-        const friend = parseQuery<IFriend>(query);
+        const friend = await friendUOW.getFriend(userId, friendId);
+        if (!friend) throw new Error("Friend not found");
         await this.app.roomRepo.deletById(friend.roomId);
-        await this.deleteById(friend.id);
-
+        await friendUOW.deleteById(friend.id);
         socket.emit(Event.RemoveFriend, { friendId });
       },
       Event.RemoveFriend,
@@ -209,11 +133,22 @@ export default class FriendRepo extends BaseRepo {
     );
   }
 
-  async deleteById(id: number) {
-    await Friend.destroy({
-      where: {
-        id,
-      },
-    });
+  async notifyFriends(userId: number) {
+    const { socket } = this.app;
+    await this.errorHandler(async () => {
+      const user = await userUOW.getById(userId);
+      if (!user) throw new Error("User not found");
+      const friends = await friendUOW.getFriends(user.id);
+      socket.broadcast
+        .to(
+          friends
+            .map((f) => [
+              getUserPrivateRoom(f.userId),
+              getUserPrivateRoom(f.friendId),
+            ])
+            .reduce((acc, curr) => acc.concat(curr), [])
+        )
+        .emit(Event.UpdateUser, user);
+    }, Event.UpdateUser);
   }
 }

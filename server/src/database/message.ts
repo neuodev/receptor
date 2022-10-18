@@ -1,7 +1,6 @@
 import { IMessage, Message, MessageType } from "../models/Message";
-import BaseRepo from "./baseRepo";
 
-export default class MessageRepo extends BaseRepo {
+class MessageUOW {
   async newMessage(msg: {
     type: MessageType;
     body: string;
@@ -12,7 +11,7 @@ export default class MessageRepo extends BaseRepo {
     return (await Message.create(msg)).get();
   }
 
-  async deleteRoommMessages(roomId: number) {
+  async deleteRoomMessages(roomId: number) {
     await Message.destroy({
       where: {
         roomId,
@@ -20,3 +19,6 @@ export default class MessageRepo extends BaseRepo {
     });
   }
 }
+
+const messageUOW = new MessageUOW();
+export default messageUOW;

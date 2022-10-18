@@ -1,9 +1,12 @@
 import AppUOW from ".";
+import friendUOW from "../database/friend";
+import messageUOW from "../database/message";
+import participantsUOW from "../database/participant";
+import roomUOW from "../database/room";
+import userUOW from "../database/user";
 import { Event } from "../events";
 import { MessageType } from "../models/Message";
-import { Participants } from "../models/Participants";
 import { Room, RoomType } from "../models/Room";
-import { parseQuery } from "../utils/prase";
 import { getRoomId } from "../utils/user";
 import BaseRepo from "./baseRepo";
 
@@ -35,7 +38,8 @@ export default class RoomRepo extends BaseRepo {
       if (!name) err = "Group name is required";
       if (!userIds || userIds.length === 0)
         err = "Can't create an empty group. At least one member is required";
-      const friends = await this.app.friendRepo.getFriends(userId);
+
+      const friends = await friendUOW.getFriends(userId);
       const friendIds = new Set(
         friends
           .map((f) => [f.friendId, f.userId])
@@ -88,12 +92,12 @@ export default class RoomRepo extends BaseRepo {
     const { socket } = this.app;
     await this.errorHandler(async () => {
       const userId = this.app.decodeAuthToken();
-      const user = await this.app.userRepo.getById(userId);
+      const user = await userUOW.getById(userId);
       if (!user) throw new Error("User not found");
 
       const messages = await Promise.all(
         rooms.map((room) =>
-          this.app.messageRepo.newMessage({
+          messageUOW.newMessage({
             ...message,
             roomId: room,
             userId,
@@ -128,23 +132,15 @@ export default class RoomRepo extends BaseRepo {
     type: RoomType,
     name?: string
   ): Promise<number> {
-    const room = await Room.create({
-      name,
-      type,
-    });
-    const roomId = room.getDataValue("id");
-    await this.app.participants.newParticipants(userIds, roomId);
+    const roomId = await roomUOW.newRoom(type, name);
+    await participantsUOW.newParticipants(userIds, roomId);
     return roomId;
   }
 
   async deletById(id: number) {
     // Delete messages -> Participants -> Room
-    await this.app.messageRepo.deleteRoommMessages(id);
-    await this.app.participants.deleteByRoomId(id);
-    await Room.destroy({
-      where: {
-        id,
-      },
-    });
+    await messageUOW.deleteRoomMessages(id);
+    await participantsUOW.deleteByRoomId(id);
+    await roomUOW.deleteById(id);
   }
 }

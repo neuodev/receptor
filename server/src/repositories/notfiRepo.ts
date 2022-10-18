@@ -8,6 +8,8 @@ import AppUOW from ".";
 import { Event } from "../events";
 import BaseRepo from "./baseRepo";
 import "colors";
+import userUOW from "../database/user";
+import notificationUOW from "../database/notification";
 
 export default class NotificationRepo extends BaseRepo {
   constructor(app: AppUOW) {
@@ -36,6 +38,7 @@ export default class NotificationRepo extends BaseRepo {
     // });
   }
 
+  // Todo: Should be removed
   async isFriendshipRequestAlreadySent(sender: number, receiver: number) {
     let notif = await Notification.findOne({
       where: {
@@ -49,23 +52,13 @@ export default class NotificationRepo extends BaseRepo {
     return notif?.get();
   }
 
-  async getNotifications(userId: number): Promise<INotification[]> {
-    let all = await Notification.findAll({
-      where: {
-        userId: userId,
-      },
-    });
-
-    return all.map((n) => n.get());
-  }
-
   async handleNotificationsEvent() {
     const { socket } = this.app;
     await this.errorHandler(async () => {
       const userId = this.app.decodeAuthToken();
-      const user = await this.app.userRepo.getById(userId);
+      const user = await userUOW.getById(userId);
       if (!user) throw new Error("User not foudn");
-      let notifications = this.getNotifications(user.id);
+      let notifications = notificationUOW.getUserNotifications(user.id);
 
       socket.emit(Event.Notification, notifications);
     }, Event.Notification);

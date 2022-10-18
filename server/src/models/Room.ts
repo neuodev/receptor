@@ -1,17 +1,28 @@
-import { DataTypes } from "sequelize";
+import { DataTypes, ModelDefined, Optional } from "sequelize";
 import sequelize from "../db";
 
 export enum RoomType {
   DM = "DM", // Direct Message
-  GROUP = "GROUP",
+  Group = "GROUP",
 }
 
-export const Room = sequelize.define("room", {
+export interface IRoom {
+  id: number;
+  name: string | null;
+  type: RoomType;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export const Room: ModelDefined<
+  IRoom,
+  Optional<IRoom, "id" | "createdAt" | "updatedAt" | "name">
+> = sequelize.define("room", {
   name: {
     type: DataTypes.TEXT,
     allowNull: true,
   },
   type: {
-    type: DataTypes.ENUM(RoomType.DM, RoomType.GROUP),
+    type: DataTypes.ENUM(RoomType.DM, RoomType.Group),
   },
 });

@@ -6,7 +6,7 @@ import ResponseError from "../utils/error";
 import { User } from "../models/User";
 
 // @api  GET /api/v1/room/:id
-// @desc Get user friends
+// @desc Get room messages
 // @access  Private/user
 export const getRoomMessages = asyncHandler(
   async (req: Request<{ id: string }>, res: Response, next: NextFunction) => {

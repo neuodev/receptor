@@ -9,6 +9,7 @@ import { Participants } from "../models/Participants";
 import { Friend, FriendshipStatus, UsersRelation } from "../models/Friend";
 import { parseQuery } from "../utils/prase";
 import { getUserRelation } from "../utils/user";
+import { Room } from "../models/Room";
 
 // @api  POST /api/v1/user/register
 // @desc Register new user
@@ -156,7 +157,6 @@ export const getUsers = asyncHandler(
 // @api  GET /api/v1/user/friends
 // @desc Get user friends
 // @access  Private/user
-
 export const getFriends = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     let userId = req.user.id;

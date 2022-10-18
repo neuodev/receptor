@@ -47,7 +47,7 @@ export default class RoomRepo extends BaseRepo {
           throw new Error(`User with id of '${id}' is not a friend`);
       });
 
-      await this.newRoom([...userIds, userId], RoomType.GROUP, name);
+      await this.newRoom([...userIds, userId], RoomType.Group, name);
       socket.emit(Event.CreateGroup, { ok: true });
     }, Event.CreateGroup);
   }

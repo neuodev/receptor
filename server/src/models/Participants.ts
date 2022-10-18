@@ -7,11 +7,13 @@ export interface IParticipants {
   id: number;
   userId: number;
   roomId: number;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export const Participants: ModelDefined<
   IParticipants,
-  Optional<IParticipants, "id">
+  Optional<IParticipants, "id" | "createdAt" | "updatedAt">
 > = sequelize.define("participants", {
   id: {
     type: DataTypes.INTEGER,

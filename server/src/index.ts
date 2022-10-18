@@ -3,16 +3,16 @@ import http from "http";
 import { Server, Socket } from "socket.io";
 import dotenv from "dotenv";
 import { Event } from "./events";
-import { userRouter } from "./routes/user";
 import { errorHandler } from "./middleware/errorHandler";
 import AppUOW from "./repositories";
 import cors from "cors";
+import roomRouter from "./routes/room";
+import userRouter from "./routes/user";
+import groupRouter from "./routes/group";
 import "./seed";
 import "colors";
-import { roomRouter } from "./routes/room";
 
 dotenv.config();
-
 const app = express();
 
 const server = http.createServer(app);
@@ -30,6 +30,7 @@ app.use(cors());
 app.use(express.json());
 app.use("/api/v1/user", userRouter);
 app.use("/api/v1/room", roomRouter);
+app.use("/api/v1/group", groupRouter);
 app.use(errorHandler);
 
 const PORT = process.env.PORT || 8080;

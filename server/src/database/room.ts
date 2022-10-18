@@ -1,4 +1,6 @@
-import { Room, RoomType } from "../models/Room";
+import { IParticipants, Participants } from "../models/Participants";
+import { IRoom, Room, RoomType } from "../models/Room";
+import { parseQuery } from "../utils/prase";
 
 class RoomUOW {
   async deleteById(id: number) {
@@ -13,6 +15,23 @@ class RoomUOW {
       type,
     });
     return room.getDataValue("id");
+  }
+
+  async getById(
+    id: number
+  ): Promise<(IRoom & { participants: IParticipants }) | null> {
+    const room = await Room.findOne({
+      where: {
+        id,
+      },
+      include: {
+        model: Participants,
+      },
+    });
+
+    return room
+      ? parseQuery<IRoom & { participants: IParticipants }>(room.get())
+      : null;
   }
 }
 

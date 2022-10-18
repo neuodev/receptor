@@ -3,7 +3,7 @@ import sequelize from "../db";
 
 export enum RoomType {
   DM = "DM", // Direct Message
-  Group = "GROUP",
+  Group = "group",
 }
 
 export interface IRoom {

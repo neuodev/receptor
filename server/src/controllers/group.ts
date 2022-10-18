@@ -118,3 +118,27 @@ export const createGroup = asyncHandler(
     });
   }
 );
+
+// @api  DELETE /api/v1/group/:id
+// @desc Delete a group
+// @access  Onwer only
+export const deleteGroup = asyncHandler(
+  async (
+    req: Request<{}, {}, { groupName: string; userIds: number[] }>,
+    res: Response,
+    next: NextFunction
+  ) => {
+    const userId = req.user.id;
+  }
+);
+
+// @api  DELETE /api/v1/group/:id/leave
+// @desc Leave a group
+// @access  Private/user
+export const leaveGroup = asyncHandler(
+  async (
+    req: Request<{}, {}, { groupName: string; userIds: number[] }>,
+    res: Response,
+    next: NextFunction
+  ) => {}
+);

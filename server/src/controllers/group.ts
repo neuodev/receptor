@@ -61,6 +61,7 @@ export const getGroups = asyncHandler(
         ...room,
         participants: room.participants.map((p) => ({
           joinedAt: p.createdAt,
+          role: p.role,
           ...p.user,
         })),
       }))
@@ -105,7 +106,9 @@ export const createGroup = asyncHandler(
     const roomId = await roomUOW.newRoom(RoomType.Group, groupName);
     await participantsUOW.newParticipants(
       [
-        ...userIds.map((id) => ({ id, role: Role.Member })),
+        ...userIds
+          .filter((id) => id != userId)
+          .map((id) => ({ id, role: Role.Member })),
         { id: userId, role: Role.Owner },
       ],
       roomId

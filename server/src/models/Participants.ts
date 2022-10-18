@@ -34,8 +34,7 @@ export const Participants: ModelDefined<
   role: {
     type: DataTypes.ENUM(Role.Admin, Role.Owner, Role.Member),
     allowNull: false,
-    primaryKey: true,
-    autoIncrement: true,
+    defaultValue: Role.Member,
   },
 });
 

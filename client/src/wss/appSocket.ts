@@ -71,10 +71,6 @@ export const useServerEvents = () => {
       logGroup(Event.RemoveFriend, res);
       handleRemoveFriendRes(res);
     });
-
-    socket.on(Event.CreateGroup, async (res) => {
-      logGroup(Event.CreateGroup, res);
-    });
   }, []);
 
   useEffect(() => {
@@ -111,10 +107,6 @@ export const useAppSocket = () => {
     socket.emit(Event.RoomMessage, msg);
   }
 
-  function createGroup(name: string, usersId: number[]) {
-    socket.emit(Event.CreateGroup, name, usersId);
-  }
-
   return {
     addFriend,
     login,
@@ -123,6 +115,5 @@ export const useAppSocket = () => {
     sendRoomMsg,
     acceptFriend,
     removeFriend,
-    createGroup,
   };
 };

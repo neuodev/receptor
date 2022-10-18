@@ -112,7 +112,7 @@ const CreateGroup = () => {
         variant="contained"
         onClick={() => {
           if (!groupName || members.size === 0) return;
-          socket.createGroup(groupName, Array.from(members));
+          alert("Not yet implemented");
         }}
         disabled={!groupName || members.size === 0}
         sx={{ flexShrink: 0, height: "50px" }}

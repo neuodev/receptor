@@ -1,9 +1,7 @@
 import asyncHandler from "express-async-handler";
 import { Request, Response, NextFunction } from "express";
-import { IParticipants, Participants, Role } from "../models/Participants";
-import { IRoom, Room, RoomType } from "../models/Room";
-import { IUser, User } from "../models/User";
-import { parseQuery } from "../utils/prase";
+import { Role } from "../models/Participants";
+import { RoomType } from "../models/Room";
 import ResponseError from "../utils/error";
 import friendUOW from "../database/friend";
 import roomUOW from "../database/room";
@@ -16,47 +14,7 @@ import messageUOW from "../database/message";
 export const getGroups = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     let userId = req.user.id;
-    const query = await Participants.findAll({
-      where: {
-        userId,
-      },
-      include: [
-        {
-          model: Room,
-          where: {
-            type: RoomType.Group,
-          },
-          include: [
-            {
-              model: Participants,
-              attributes: {
-                exclude: ["id", "userId", "roomId"],
-              },
-              include: [
-                {
-                  model: User,
-                  attributes: {
-                    exclude: ["password"],
-                  },
-                },
-              ],
-            },
-          ],
-        },
-      ],
-    });
-
-    const rooms = parseQuery<
-      Array<{
-        id: number;
-        userId: number;
-        roomId: number;
-        createdAt: string;
-        updatedAt: string;
-        room: IRoom & { participants: Array<IParticipants & { user: IUser }> };
-      }>
-    >(query);
-
+    const rooms = await roomUOW.getGroups(userId);
     res.status(200).json(
       rooms.map(({ room }) => ({
         ...room,

@@ -1,5 +1,6 @@
 import { IParticipants, Participants } from "../models/Participants";
 import { IRoom, Room, RoomType } from "../models/Room";
+import { IUser, User } from "../models/User";
 import { parseQuery } from "../utils/prase";
 
 class RoomUOW {
@@ -32,6 +33,51 @@ class RoomUOW {
     return room
       ? parseQuery<IRoom & { participants: IParticipants[] }>(room.get())
       : null;
+  }
+
+  async getGroups(userId: number) {
+    const query = await Participants.findAll({
+      where: {
+        userId,
+      },
+      include: [
+        {
+          model: Room,
+          where: {
+            type: RoomType.Group,
+          },
+          include: [
+            {
+              model: Participants,
+              attributes: {
+                exclude: ["id", "userId", "roomId"],
+              },
+              include: [
+                {
+                  model: User,
+                  attributes: {
+                    exclude: ["password"],
+                  },
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    });
+
+    const rooms = parseQuery<
+      Array<{
+        id: number;
+        userId: number;
+        roomId: number;
+        createdAt: string;
+        updatedAt: string;
+        room: IRoom & { participants: Array<IParticipants & { user: IUser }> };
+      }>
+    >(query);
+
+    return rooms;
   }
 }
 

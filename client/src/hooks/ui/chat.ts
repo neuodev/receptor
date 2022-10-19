@@ -1,7 +1,6 @@
 import { IFriend } from "../../state/friends/reducer";
 import { IUser } from "../../state/user/reducer";
 import { useAppSelector } from "../../store";
-import { clone } from "../../utils";
 
 export interface IChat {
   id: number;
@@ -15,8 +14,8 @@ export interface IChat {
 }
 
 export const useChat = () => {
-  const { currRoom, friends, groups, user } = useAppSelector((state) => ({
-    currRoom: state.messages.currRoom,
+  const { currChatId, friends, groups, user } = useAppSelector((state) => ({
+    currChatId: state.messages.currRoom,
     friends: state.friends,
     groups: state.groups.groups,
     user: state.user.info,
@@ -55,13 +54,15 @@ export const useChat = () => {
     return chatsList;
   }
 
-  const isCurrentRoom = (id: number) => id === currRoom;
+  const isCurrentRoom = (id: number) => id === currChatId;
   const chatsList = getChatList();
+  const currChat = chatsList.find((chat) => chat.id === currChatId) || null;
 
   return {
-    currRoom,
+    currChatId,
     chatsList,
     isCurrentRoom,
+    currChat,
     loading: groups.loading || friends.loading,
     error: groups.error || friends.error,
   };

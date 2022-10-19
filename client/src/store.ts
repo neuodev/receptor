@@ -8,6 +8,7 @@ import { save, load } from "redux-localstorage-simple";
 import { friendsReducer } from "./state/friends/reducer";
 import { messagesReducer } from "./state/messages/reducer";
 import { usersReducer } from "./state/users/reducer";
+import { gorupsReducer } from "./state/groups/reducer";
 
 const savedStates = ["user"];
 const namespace = "app_state";
@@ -20,6 +21,7 @@ export const store = configureStore({
     friend: friendReducer,
     friends: friendsReducer,
     messages: messagesReducer,
+    groups: gorupsReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat([

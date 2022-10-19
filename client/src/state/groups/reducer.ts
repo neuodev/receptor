@@ -19,7 +19,7 @@ export interface IGroup {
   participants: IUser & { joinedAt: string };
 }
 
-type GropuId = number;
+export type GropuId = number;
 
 type BaseState = {
   loading: { [key: GropuId]: boolean };

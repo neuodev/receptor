@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../../store";
 import { getErrMsg } from "../../utils/error";
 import {
@@ -12,6 +11,7 @@ import { useRoomApi } from "../../hooks/api/room";
 import { useAppSocket } from "../../wss/appSocket";
 import { IFriend } from "../friends/reducer";
 import { IUser } from "../user/reducer";
+import { Role } from "../groups/reducer";
 
 export interface IRoom {
   id: number;
@@ -20,7 +20,7 @@ export interface IRoom {
   email: string | null;
   updatedAt: string;
   createdAt: string;
-  participants: Array<IFriend | IUser>;
+  participants: Array<(IFriend | IUser) & { role: Role }>;
   isActive: boolean;
 }
 
@@ -85,7 +85,10 @@ export const useRoom = () => {
           createdAt: friend.createdAt,
           updatedAt: friend.updatedAt,
           name: friend.username,
-          participants: [user, friend],
+          participants: [
+            { ...user, role: Role.Owner },
+            { ...friend, role: Role.Owner },
+          ],
         });
       });
     }

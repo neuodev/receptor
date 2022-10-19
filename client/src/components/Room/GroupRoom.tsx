@@ -1,5 +1,12 @@
 import React from "react";
-import { Box, Stack, Typography, Button, AvatarGroup } from "@mui/material";
+import {
+  Box,
+  Stack,
+  Typography,
+  Button,
+  AvatarGroup,
+  Avatar as MuiAvatar,
+} from "@mui/material";
 import { stringAvatar } from "../../utils/colors";
 import { useAppSelector } from "../../store";
 import { IRoom, useRoom } from "../../state/messages/hooks";
@@ -32,7 +39,7 @@ const GroupRoom: React.FC<{ group: IRoom }> = ({ group }) => {
       }}
     >
       <Box sx={{ mr: "8px" }}>
-        <Avatar {...avatarProps(group)} />
+        <MuiAvatar {...stringAvatar(name)} />
       </Box>
 
       <Stack
@@ -57,7 +64,7 @@ const GroupRoom: React.FC<{ group: IRoom }> = ({ group }) => {
             Created {moment(createdAt).fromNow()}
           </Typography>
         </Stack>
-        <AvatarGroup max={3}>
+        <AvatarGroup max={2}>
           {participants.map((p) => (
             <Avatar {...avatarProps(p)} />
           ))}

@@ -15,12 +15,21 @@ import {
   groupActionRes,
 } from "./actions";
 
+export enum Role {
+  // Control any thing
+  Owner = "owner",
+  // Add/remove/block members
+  Admin = "admin",
+  // Members can send and receive messages
+  Member = "member",
+}
+
 export interface IGroup {
   id: number;
   name: string;
   createdAt: string;
   updatedAt: string;
-  participants: Array<IUser & { joinedAt: string }>;
+  participants: Array<IUser & { joinedAt: string; role: Role }>;
 }
 
 export type GropuId = number;

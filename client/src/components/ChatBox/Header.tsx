@@ -7,6 +7,7 @@ import {
   IconButton,
   Avatar as MuiAvatar,
 } from "@mui/material";
+import { LoadingButton } from "@mui/lab";
 import CloseIcon from "@mui/icons-material/Close";
 import { theme } from "../../theme";
 import { useAppSelector } from "../../store";
@@ -14,22 +15,28 @@ import { useRoom } from "../../state/messages/hooks";
 import Avatar, { avatarProps } from "../common/Avatar";
 import { stringAvatar } from "../../utils/colors";
 import moment from "moment";
+import { useGroups } from "../../state/groups/hooks";
+import { Role } from "../../state/groups/reducer";
 
 const Header = () => {
   const { setCurrentRoom, currRoom } = useRoom();
+  const { leaveGroup, deleteGroup } = useGroups();
   const user = useAppSelector((state) => state.user.info);
-
-  if (!currRoom) return null;
-
-  const { isGroup, participants, name, email, updatedAt } = currRoom;
-
+  const groups = useAppSelector((state) => state.groups);
+  if (!currRoom || !user) return null;
+  const { isGroup, participants, name, email, updatedAt, id } = currRoom;
   const friend =
     isGroup === false ? participants.find((p) => p.id !== user?.id) : null;
+
+  const isGroupOwner =
+    participants.find((p) => p.id === user?.id && p.role === Role.Owner) !==
+    undefined;
 
   return (
     <Box>
       <Stack
         direction="row"
+        alignItems="center"
         sx={{
           borderBottom: `1px solid ${theme.palette.grey["300"]}`,
           p: "24px 0px",
@@ -65,9 +72,27 @@ const Header = () => {
           ))}
         </AvatarGroup>
 
+        {isGroup && (
+          <LoadingButton
+            variant="outlined"
+            loading={
+              groups[isGroupOwner ? "delete" : "leave"].loading[id] === true
+            }
+            size="small"
+            color="error"
+            sx={{ mx: "8px" }}
+            onClick={() => {
+              isGroupOwner ? deleteGroup(id) : leaveGroup(id);
+              setCurrentRoom(null);
+            }}
+          >
+            {isGroupOwner ? "Delete" : "Leave"}
+          </LoadingButton>
+        )}
+
         <IconButton
           onClick={() => setCurrentRoom(null)}
-          sx={{ width: "44px", height: "44px", ml: "8px" }}
+          sx={{ width: "30px", height: "30px" }}
         >
           <CloseIcon />
         </IconButton>

@@ -28,13 +28,13 @@ export const useGroupApi = () => {
   }
 
   async function deleteGroup(id: GropuId) {
-    await axios.post(getEndpoint("deleteGroup", id), {
+    await axios.delete(getEndpoint("deleteGroup", id), {
       headers,
     });
   }
 
   async function leaveGroup(id: GropuId) {
-    await axios.post(getEndpoint("leaveGroup", id), {
+    await axios.delete(getEndpoint("leaveGroup", id), {
       headers,
     });
   }

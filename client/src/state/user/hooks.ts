@@ -32,7 +32,7 @@ export const useUserHooks = () => {
     try {
       logout();
       dispatch(authUserReq());
-      userApi.register(data);
+      await userApi.register(data);
       login({ email: data.email, password: data.password });
     } catch (error) {
       dispatch(authUserErr(getErrMsg(error)));

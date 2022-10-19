@@ -20,7 +20,7 @@ export interface IGroup {
   name: string;
   createdAt: string;
   updatedAt: string;
-  participants: IUser & { joinedAt: string };
+  participants: Array<IUser & { joinedAt: string }>;
 }
 
 export type GropuId = number;

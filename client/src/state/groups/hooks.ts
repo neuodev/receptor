@@ -1,5 +1,6 @@
+import { useEffect } from "react";
 import { useGroupApi } from "../../hooks/api/group";
-import { useAppDispatch } from "../../store";
+import { useAppDispatch, useAppSelector } from "../../store";
 import { getErrMsg } from "../../utils/error";
 import { UserId } from "../friend/reducer";
 import {
@@ -19,6 +20,7 @@ import { GropuId, GroupAction } from "./reducer";
 export const useGroups = () => {
   const groupApi = useGroupApi();
   const dispatch = useAppDispatch();
+  const authToken = useAppSelector((state) => state.user.authToken);
 
   /**
    * Update groups list. Should be run the background without loading state
@@ -75,6 +77,10 @@ export const useGroups = () => {
       dispatch(groupActionErr({ action, groupId, error: getErrMsg(error) }));
     }
   }
+
+  useEffect(() => {
+    if (authToken) getGroups();
+  }, [authToken]);
 
   return {
     getGroups,

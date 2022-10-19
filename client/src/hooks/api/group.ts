@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import axios from "axios";
 import { getEndpoint } from "../../constants/api";
 import { UserId } from "../../state/friend/reducer";
@@ -39,10 +38,6 @@ export const useGroupApi = () => {
       headers,
     });
   }
-
-  useEffect(() => {
-    getGroups();
-  }, []);
 
   return { getGroups, createGroup, deleteGroup, leaveGroup };
 };

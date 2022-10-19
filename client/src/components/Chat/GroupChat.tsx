@@ -1,5 +1,4 @@
 import React from "react";
-import { IGroup } from "../../state/groups/reducer";
 import {
   Box,
   Stack,
@@ -12,9 +11,10 @@ import { stringAvatar } from "../../utils/colors";
 import { useAppSelector } from "../../store";
 import { useRoom } from "../../state/messages/hooks";
 import moment from "moment";
+import { IChat } from "../../hooks/ui/chat";
 
-const GroupCard: React.FC<{ group: IGroup }> = ({ group }) => {
-  const { id, name, participants, createdAt } = group;
+const GroupChat: React.FC<{ chat: IChat }> = ({ chat }) => {
+  const { id, name, participants, createdAt } = chat;
   const currRoomId = useAppSelector((state) => state.messages.currRoom);
   const { setCurrentRoom, getRoomMessages } = useRoom();
 
@@ -74,4 +74,4 @@ const GroupCard: React.FC<{ group: IGroup }> = ({ group }) => {
   );
 };
 
-export default GroupCard;
+export default GroupChat;

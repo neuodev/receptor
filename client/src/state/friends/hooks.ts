@@ -1,12 +1,8 @@
 import { useEffect } from "react";
-import axios from "axios";
-import { getEndpoint } from "../../constants/api";
 import { useAppDispatch, useAppSelector } from "../../store";
 import { getErrMsg } from "../../utils/error";
-import { useAuthHeaders } from "../user/hooks";
 import { getFriendsErr, getFriendsReq, getFriendsRes } from "./actions";
 import { useAppSocket } from "../../wss/appSocket";
-import { IFriend } from "./reducer";
 import { useUserApi } from "../../hooks/api/user";
 
 export const useFriends = () => {

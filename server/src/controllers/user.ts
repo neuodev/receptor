@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import asyncHandler from "express-async-handler";
 import { validationResult } from "express-validator";
-import { Op, UniqueConstraintError } from "sequelize";
+import { Op } from "sequelize";
 import ResponseError from "../utils/error";
 import jwt, { Secret } from "jsonwebtoken";
 import { IUser, User } from "../models/User";
@@ -9,7 +9,7 @@ import { Participants } from "../models/Participants";
 import { Friend, FriendshipStatus, UsersRelation } from "../models/Friend";
 import { parseQuery } from "../utils/prase";
 import { getUserRelation } from "../utils/user";
-import { Room } from "../models/Room";
+import { Room, RoomType } from "../models/Room";
 
 // @api  POST /api/v1/user/register
 // @desc Register new user
@@ -158,15 +158,23 @@ export const getUsers = asyncHandler(
 // @desc Get user friends
 // @access  Private/user
 export const getFriends = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response, _next: NextFunction) => {
     let userId = req.user.id;
     const rooms = await Participants.findAll({
       where: {
         userId,
       },
+      include: {
+        model: Room,
+        where: {
+          type: RoomType.DM,
+        },
+      },
       attributes: ["roomId"],
     });
     const roomIds = rooms.map((room) => room.getDataValue("roomId"));
+    console.log({ roomIds });
+
     if (roomIds.length === 0) {
       res.status(200).json([]);
       return;

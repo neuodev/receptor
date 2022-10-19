@@ -28,6 +28,7 @@ class ParticipantsUOW {
         roomId,
         userId,
       },
+      cascade: false,
     });
   }
 }

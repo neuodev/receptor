@@ -7,7 +7,6 @@ export function groupFriendsByFirstLetter(friends: IFriend[]) {
   cloned
     .sort((a, b) => a.username.localeCompare(b.username))
     .forEach((f) => {
-      console.log({ f });
       let firstLetter = f.username[0].toUpperCase();
       if (!result[firstLetter]) result[firstLetter] = [f];
       else result[firstLetter].push(f);

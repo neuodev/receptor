@@ -5,6 +5,7 @@ import { UserId } from "../friend/reducer";
 import {
   createGroupsErr,
   createGroupsReq,
+  createGroupsRes,
   getGroupsErr,
   getGroupsReq,
   getGroupsRes,
@@ -39,7 +40,7 @@ export const useGroups = () => {
     try {
       dispatch(createGroupsReq());
       await groupApi.createGroup(groupName, userIds);
-      dispatch(createGroupsReq());
+      dispatch(createGroupsRes());
       await refreshGroupsList();
     } catch (error) {
       dispatch(createGroupsErr(getErrMsg(error)));

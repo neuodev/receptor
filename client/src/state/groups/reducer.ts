@@ -3,6 +3,9 @@ import produce from "immer";
 import { clone } from "../../utils";
 import { IUser } from "../user/reducer";
 import {
+  createGroupsErr,
+  createGroupsReq,
+  createGroupsRes,
   getGroupsErr,
   getGroupsReq,
   getGroupsRes,
@@ -45,6 +48,7 @@ type State = {
   create: {
     loading: boolean;
     error: string | null;
+    success: boolean;
   };
   delete: BaseState;
   leave: BaseState;
@@ -60,6 +64,7 @@ export const gorupsReducer = createReducer<State>(
     create: {
       loading: false,
       error: null,
+      success: false,
     },
     delete: clone(baseState),
     leave: clone(baseState),
@@ -83,6 +88,26 @@ export const gorupsReducer = createReducer<State>(
         produce(state, (draftState) => {
           draftState.groups.loading = false;
           draftState.groups.error = payload;
+        })
+      )
+      .addCase(createGroupsReq, (state) =>
+        produce(state, (draftState) => {
+          draftState.create.loading = true;
+          draftState.create.error = null;
+        })
+      )
+      .addCase(createGroupsRes, (state) =>
+        produce(state, (draftState) => {
+          draftState.create.loading = false;
+          draftState.create.error = null;
+          draftState.create.success = true;
+        })
+      )
+      .addCase(createGroupsErr, (state, { payload }) =>
+        produce(state, (draftState) => {
+          draftState.create.loading = false;
+          draftState.create.error = payload;
+          draftState.create.success = false;
         })
       )
       .addCase(groupActionReq, (state, { payload: { action, groupId } }) =>

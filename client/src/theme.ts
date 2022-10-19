@@ -8,12 +8,6 @@ export const theme = createTheme({
     secondary: {
       main: "#d9e4f0",
     },
-    success: {
-      main: "#ecad8f",
-    },
-    error: {
-      main: "#fe6571",
-    },
     warning: {
       main: "#ffc107",
     },
@@ -38,7 +32,6 @@ export const theme = createTheme({
   typography: {
     body1: {
       fontSize: "0.9375rem",
-      lineHeight: 1.6,
     },
   },
   components: {

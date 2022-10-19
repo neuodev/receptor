@@ -2,6 +2,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { COMMON_HEADERS, getEndpoint } from "../../constants/api";
 import { ROUTES } from "../../constants/routes";
+import { LoginReq, RegisterReq, useUserApi } from "../../hooks/api/user";
 import { useAppDispatch, useAppSelector } from "../../store";
 import { getErrMsg } from "../../utils/error";
 import { useAppSocket } from "../../wss/appSocket";
@@ -10,17 +11,15 @@ import { resetMessages } from "../messages/actions";
 import { authUserErr, authUserInfo, authUserReq, userLogout } from "./actions";
 
 export const useUserHooks = () => {
-  const dispatch = useAppDispatch();
   const appSocket = useAppSocket();
+  const userApi = useUserApi();
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
-  const login = async (data: { email: string; password: string }) => {
+  const login = async (data: LoginReq) => {
     try {
       dispatch(authUserReq());
-      const res = await axios.post(getEndpoint("login"), data, {
-        headers: COMMON_HEADERS,
-      });
-      const { user, token } = res.data;
+      const { token, user } = await userApi.login(data);
       appSocket.login(token);
       dispatch(authUserInfo({ user, token }));
       navigate(ROUTES.ROOT);
@@ -29,19 +28,13 @@ export const useUserHooks = () => {
     }
   };
 
-  const register = async (data: {
-    username: string;
-    email: string;
-    password: string;
-  }) => {
+  const register = async (data: RegisterReq) => {
     try {
+      logout();
       dispatch(authUserReq());
-      await axios.post(getEndpoint("register"), data, {
-        headers: COMMON_HEADERS,
-      });
+      userApi.register(data);
       login({ email: data.email, password: data.password });
     } catch (error) {
-      console.log(error);
       dispatch(authUserErr(getErrMsg(error)));
     }
   };

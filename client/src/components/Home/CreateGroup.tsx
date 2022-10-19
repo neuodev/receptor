@@ -6,7 +6,6 @@ import {
   Input,
   TextField,
   CircularProgress,
-  Button,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import { useAppSelector } from "../../store";
@@ -16,15 +15,18 @@ import FriendOption from "../Groups/FriendOption";
 import { IFriend } from "../../state/friends/reducer";
 import { clone } from "../../utils";
 import { searchBy } from "../../utils/user";
-import { useAppSocket } from "../../wss/appSocket";
+import { LoadingButton } from "@mui/lab";
+import { useGroups } from "../../state/groups/hooks";
+import Snackbar from "../common/Snackbar";
 
 const CreateGroup = () => {
-  const socket = useAppSocket();
   const friends = useAppSelector((state) => state.friends);
   const [keyword, setKeyword] = useState<string>("");
   const [list, setList] = useState<IFriend[]>(clone<IFriend[]>(friends.list));
   const [groupName, setGroupName] = useState<string>("");
   const [members, setMembers] = useState<Set<number>>(new Set());
+  const createGroup = useAppSelector((state) => state.groups.create);
+  const groupsHandler = useGroups();
 
   const isMember = (id: number) => members.has(id);
   const addMember = (id: number) => setMembers(new Set(members).add(id));
@@ -108,11 +110,14 @@ const CreateGroup = () => {
         )}
       </Box>
 
-      <Button
+      <LoadingButton
         variant="contained"
-        onClick={() => {
+        loading={createGroup.loading}
+        onClick={async () => {
           if (!groupName || members.size === 0) return;
-          alert("Not yet implemented");
+          groupsHandler.createGroup(groupName, Array.from(members));
+          setMembers(new Set());
+          setGroupName("");
         }}
         disabled={!groupName || members.size === 0}
         sx={{ flexShrink: 0, height: "50px" }}
@@ -120,7 +125,21 @@ const CreateGroup = () => {
         {members.size === 0
           ? "Create group"
           : `Create group with ${members.size} member(s)`}
-      </Button>
+      </LoadingButton>
+
+      <Snackbar
+        open={createGroup.error !== null}
+        onClose={() => {}}
+        message={createGroup.error}
+        severity="error"
+      />
+
+      <Snackbar
+        open={createGroup.success}
+        onClose={() => {}}
+        message="Group created successfully"
+        severity="success"
+      />
     </Stack>
   );
 };

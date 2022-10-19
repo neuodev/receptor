@@ -1,9 +1,20 @@
 import axios from "axios";
-import { getEndpoint } from "../../constants/api";
+import { COMMON_HEADERS, getEndpoint } from "../../constants/api";
 import { UsersRelation } from "../../state/users/reducer";
 import { useAuthHeaders } from "../../state/user/hooks";
 import { IUser } from "../../state/user/reducer";
 import { IFriend } from "../../state/friends/reducer";
+
+export type RegisterReq = {
+  username: string;
+  email: string;
+  password: string;
+};
+
+export type LoginReq = {
+  email: string;
+  password: string;
+};
 
 export const useUserApi = () => {
   const headers = useAuthHeaders();
@@ -32,5 +43,21 @@ export const useUserApi = () => {
     return data;
   }
 
-  return { getUsers, getUserFriends };
+  async function register(data: RegisterReq) {
+    await axios.post(getEndpoint("register"), data, {
+      headers: COMMON_HEADERS,
+    });
+  }
+
+  async function login(
+    body: LoginReq
+  ): Promise<{ token: string; user: IUser }> {
+    const { data } = await axios.post(getEndpoint("login"), body, {
+      headers: COMMON_HEADERS,
+    });
+
+    return data;
+  }
+
+  return { getUsers, getUserFriends, register, login };
 };

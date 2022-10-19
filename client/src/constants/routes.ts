@@ -1,6 +1,6 @@
 export const ROUTES = {
   ROOT: "/",
-  CHATS_LIST: "/",
+  ROOMS: "/",
   CREATE_GROUP: "/create-group",
   FRIENDS: "/friends",
   PAGES: "/pages",

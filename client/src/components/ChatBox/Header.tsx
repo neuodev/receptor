@@ -12,21 +12,19 @@ import { theme } from "../../theme";
 import { useAppSelector } from "../../store";
 import { useRoom } from "../../state/messages/hooks";
 import Avatar, { avatarProps } from "../common/Avatar";
-import { useChat } from "../../hooks/ui/chat";
 import { stringAvatar } from "../../utils/colors";
 import moment from "moment";
 
 const Header = () => {
-  const { setCurrentRoom } = useRoom();
+  const { setCurrentRoom, currRoom } = useRoom();
   const user = useAppSelector((state) => state.user.info);
-  const { currChat } = useChat();
 
-  if (!currChat) return null;
+  if (!currRoom) return null;
+
+  const { isGroup, participants, name, email, updatedAt } = currRoom;
 
   const friend =
-    currChat.isGroup === false
-      ? currChat.participants.find((p) => p.id !== user?.id)
-      : null;
+    isGroup === false ? participants.find((p) => p.id !== user?.id) : null;
 
   return (
     <Box>
@@ -38,23 +36,22 @@ const Header = () => {
         }}
       >
         <Box>
-          {currChat.isGroup ? (
-            <MuiAvatar {...stringAvatar(currChat.name)} />
+          {isGroup ? (
+            <MuiAvatar {...stringAvatar(name)} />
           ) : (
             <Avatar {...avatarProps(friend)} />
           )}
         </Box>
         <Box sx={{ ml: "12px" }}>
           <Typography variant="body1" mb="-4px">
-            {currChat.name}
+            {name}
           </Typography>
           <Typography variant="caption" color="grey.600">
-            {currChat.email ||
-              "Created " + moment(currChat.updatedAt).fromNow()}
+            {email || "Created " + moment(updatedAt).fromNow()}
           </Typography>
         </Box>
         <AvatarGroup sx={{ ml: "auto" }}>
-          {currChat.participants.map((p) => (
+          {participants.map((p) => (
             <Tooltip
               key={p.username}
               arrow

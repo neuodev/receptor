@@ -1,16 +1,14 @@
 import React from "react";
 import { Stack, Box, Typography, Button } from "@mui/material";
 import moment from "moment";
-import { useRoom } from "../../state/messages/hooks";
-import Avatar, { avatarProps } from "../common/Avatar";
-import { IChat, useChat } from "../../hooks/ui/chat";
+import { IRoom, useRoom } from "../../state/messages/hooks";
+import Avatar from "../common/Avatar";
 
-const FriendChat: React.FC<{
-  chat: IChat;
-}> = ({ chat }) => {
-  const { id } = chat;
-  const { setCurrentRoom, getRoomMessages } = useRoom();
-  const { isCurrentRoom } = useChat();
+const FriendRoom: React.FC<{
+  friend: IRoom;
+}> = ({ friend }) => {
+  const { id, name, isActive, email, updatedAt } = friend;
+  const { setCurrentRoom, getRoomMessages, isCurrentRoom } = useRoom();
   const isCurr = isCurrentRoom(id);
 
   return (
@@ -34,7 +32,7 @@ const FriendChat: React.FC<{
       }}
     >
       <Box sx={{ mr: "8px" }}>
-        <Avatar name={chat.name} isActive={chat.isActive} />
+        <Avatar name={name} isActive={isActive} />
       </Box>
 
       <Stack flexGrow={1} sx={{ ml: "8px" }}>
@@ -43,9 +41,9 @@ const FriendChat: React.FC<{
           justifyContent="space-between"
           alignItems="center"
         >
-          <Typography color="grey.700">{chat.name}</Typography>
+          <Typography color="grey.700">{name}</Typography>
           <Typography fontSize="10px" color="grey.500">
-            {moment(chat.updatedAt).format("LT")}
+            {moment(updatedAt).format("LT")}
           </Typography>
         </Stack>
         <Typography
@@ -54,11 +52,11 @@ const FriendChat: React.FC<{
           color="grey.500"
           textTransform="lowercase"
         >
-          {chat.email}
+          {email}
         </Typography>
       </Stack>
     </Button>
   );
 };
 
-export default FriendChat;
+export default FriendRoom;

@@ -24,7 +24,7 @@ const TABS = [
   {
     title: "Chat",
     Icon: ChatBubbleOutlineIcon,
-    route: ROUTES.CHATS_LIST,
+    route: ROUTES.ROOT,
   },
   {
     title: "Other pages",

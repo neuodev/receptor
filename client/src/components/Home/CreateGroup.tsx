@@ -10,7 +10,7 @@ import {
 import SearchIcon from "@mui/icons-material/Search";
 import { useAppSelector } from "../../store";
 import Center from "../common/Center";
-import NoFriends from "../Friends/NoFriends";
+import NoFriends from "../Friends/NoRoom";
 import FriendOption from "../Groups/FriendOption";
 import { IFriend } from "../../state/friends/reducer";
 import { clone } from "../../utils";

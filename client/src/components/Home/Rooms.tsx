@@ -1,15 +1,15 @@
 import { Stack, Typography, Input, Box, CircularProgress } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import Center from "../common/Center";
-import FriendChat from "../Chat/FriendChat";
-import GroupChat from "../Chat/GroupChat";
-import NoChat from "../Friends/NoFriends";
-import { useChat } from "../../hooks/ui/chat";
+import FriendRoom from "../Room/FriendRoom";
+import GroupRoom from "../Room/GroupRoom";
+import NoRoom from "../Friends/NoRoom";
+import { useRoom } from "../../state/messages/hooks";
 
 const ChatsList = () => {
   // const friends = useAppSelector((state) => state.friends);
   // const groups = useAppSelector((state) => state.groups.groups);
-  const { loading, error, chatsList } = useChat();
+  const { loading, error, rooms } = useRoom();
 
   return (
     <Stack
@@ -47,17 +47,17 @@ const ChatsList = () => {
           <Center>
             <Typography color="error">{error}</Typography>
           </Center>
-        ) : chatsList.length === 0 ? (
+        ) : rooms.length === 0 ? (
           <Box sx={{ mt: "-20px", height: "100%" }}>
-            <NoChat />
+            <NoRoom />
           </Box>
         ) : (
           <Box>
-            {chatsList.map((chat) =>
-              chat.isGroup ? (
-                <GroupChat chat={chat} />
+            {rooms.map((room) =>
+              room.isGroup ? (
+                <GroupRoom group={room} />
               ) : (
-                <FriendChat chat={chat} />
+                <FriendRoom friend={room} />
               )
             )}
           </Box>

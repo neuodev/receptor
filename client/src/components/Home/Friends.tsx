@@ -16,7 +16,7 @@ import Center from "../common/Center";
 import ManageFriendsModal from "../Friends/ManageFriendsModal";
 import { groupFriendsByFirstLetter } from "../../utils/user";
 import FriendCard from "../Friends/FriendCard";
-import NoFriends from "../Friends/NoFriends";
+import NoFriends from "../Friends/NoRoom";
 
 const Friends: React.FC<{}> = () => {
   const modal = useAppModal();

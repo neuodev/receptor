@@ -3,7 +3,7 @@ import { Badge, styled, Avatar as MuiAvatar } from "@mui/material";
 import { stringAvatar } from "../../utils/colors";
 import { IUser } from "../../state/user/reducer";
 import { IFriend } from "../../state/friends/reducer";
-import { IChat } from "../../hooks/ui/chat";
+import { IRoom } from "../../state/messages/hooks";
 
 const Avatar: React.FC<{ name: string; isActive: boolean }> = ({
   name,
@@ -38,7 +38,7 @@ const Avatar: React.FC<{ name: string; isActive: boolean }> = ({
 
 export default Avatar;
 
-export function avatarProps(chat: IChat | IUser | IFriend | null | undefined) {
+export function avatarProps(chat: IRoom | IUser | IFriend | null | undefined) {
   let name =
     chat && "isGroup" in chat && chat.isGroup === true
       ? chat.name

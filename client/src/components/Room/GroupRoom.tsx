@@ -1,20 +1,13 @@
 import React from "react";
-import {
-  Box,
-  Stack,
-  Avatar,
-  Typography,
-  Button,
-  AvatarGroup,
-} from "@mui/material";
+import { Box, Stack, Typography, Button, AvatarGroup } from "@mui/material";
 import { stringAvatar } from "../../utils/colors";
 import { useAppSelector } from "../../store";
-import { useRoom } from "../../state/messages/hooks";
+import { IRoom, useRoom } from "../../state/messages/hooks";
 import moment from "moment";
-import { IChat } from "../../hooks/ui/chat";
+import Avatar, { avatarProps } from "../common/Avatar";
 
-const GroupChat: React.FC<{ chat: IChat }> = ({ chat }) => {
-  const { id, name, participants, createdAt } = chat;
+const GroupRoom: React.FC<{ group: IRoom }> = ({ group }) => {
+  const { id, name, participants, createdAt } = group;
   const currRoomId = useAppSelector((state) => state.messages.currRoom);
   const { setCurrentRoom, getRoomMessages } = useRoom();
 
@@ -39,7 +32,7 @@ const GroupChat: React.FC<{ chat: IChat }> = ({ chat }) => {
       }}
     >
       <Box sx={{ mr: "8px" }}>
-        <Avatar {...stringAvatar(name)} />
+        <Avatar {...avatarProps(group)} />
       </Box>
 
       <Stack
@@ -66,7 +59,7 @@ const GroupChat: React.FC<{ chat: IChat }> = ({ chat }) => {
         </Stack>
         <AvatarGroup max={3}>
           {participants.map((p) => (
-            <Avatar {...stringAvatar(p.username)} />
+            <Avatar {...avatarProps(p)} />
           ))}
         </AvatarGroup>
       </Stack>
@@ -74,4 +67,4 @@ const GroupChat: React.FC<{ chat: IChat }> = ({ chat }) => {
   );
 };
 
-export default GroupChat;
+export default GroupRoom;

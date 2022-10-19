@@ -6,7 +6,7 @@ import Root from "./components/Layout/Root";
 import { ThemeProvider } from "@mui/material";
 import { theme } from "./theme";
 import HomePage from "./pages/HomePage";
-import ChatsList from "./components/Home/ChatsList";
+import Rooms from "./components/Home/Rooms";
 import CreateGroup from "./components/Home/CreateGroup";
 import Pages from "./components/Home/Pages";
 import Friends from "./components/Home/Friends";
@@ -25,8 +25,8 @@ const router = createBrowserRouter([
         element: <HomePage />,
         children: [
           {
-            path: ROUTES.CHATS_LIST,
-            element: <ChatsList />,
+            path: ROUTES.ROOMS,
+            element: <Rooms />,
           },
           {
             path: ROUTES.CREATE_GROUP,

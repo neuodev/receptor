@@ -3,6 +3,7 @@ import { useAppDispatch } from "../../store";
 import { getErrMsg } from "../../utils/error";
 import { UserId } from "../friend/reducer";
 import {
+  creageGroupRest,
   createGroupsErr,
   createGroupsReq,
   createGroupsRes,
@@ -47,6 +48,10 @@ export const useGroups = () => {
     }
   }
 
+  function resetCreateGroupState() {
+    dispatch(creageGroupRest());
+  }
+
   async function deleteGroup(groupId: GropuId) {
     const action = GroupAction.Delete;
     try {
@@ -71,5 +76,11 @@ export const useGroups = () => {
     }
   }
 
-  return { getGroups, createGroup, deleteGroup, leaveGroup };
+  return {
+    getGroups,
+    createGroup,
+    deleteGroup,
+    leaveGroup,
+    resetCreateGroupState,
+  };
 };

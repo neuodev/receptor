@@ -18,6 +18,7 @@ import { searchBy } from "../../utils/user";
 import { LoadingButton } from "@mui/lab";
 import { useGroups } from "../../state/groups/hooks";
 import Snackbar from "../common/Snackbar";
+import SnackbarGroup from "../common/SnackbarGroup";
 
 const CreateGroup = () => {
   const friends = useAppSelector((state) => state.friends);
@@ -127,18 +128,21 @@ const CreateGroup = () => {
           : `Create group with ${members.size} member(s)`}
       </LoadingButton>
 
-      <Snackbar
-        open={createGroup.error !== null}
-        onClose={() => {}}
-        message={createGroup.error}
-        severity="error"
-      />
-
-      <Snackbar
-        open={createGroup.success}
-        onClose={() => {}}
-        message="Group created successfully"
-        severity="success"
+      <SnackbarGroup
+        list={[
+          {
+            open: createGroup.error !== null,
+            onClose: groupsHandler.resetCreateGroupState,
+            message: createGroup.error,
+            severity: "error",
+          },
+          {
+            open: createGroup.success,
+            onClose: groupsHandler.resetCreateGroupState,
+            message: "Group created successfully",
+            severity: "success",
+          },
+        ]}
       />
     </Stack>
   );

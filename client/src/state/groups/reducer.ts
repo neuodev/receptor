@@ -3,6 +3,7 @@ import produce from "immer";
 import { clone } from "../../utils";
 import { IUser } from "../user/reducer";
 import {
+  creageGroupRest,
   createGroupsErr,
   createGroupsReq,
   createGroupsRes,
@@ -107,6 +108,13 @@ export const gorupsReducer = createReducer<State>(
         produce(state, (draftState) => {
           draftState.create.loading = false;
           draftState.create.error = payload;
+          draftState.create.success = false;
+        })
+      )
+      .addCase(creageGroupRest, (state) =>
+        produce(state, (draftState) => {
+          draftState.create.loading = false;
+          draftState.create.error = null;
           draftState.create.success = false;
         })
       )

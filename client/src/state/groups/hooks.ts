@@ -20,7 +20,8 @@ import { GropuId, GroupAction } from "./reducer";
 export const useGroups = () => {
   const groupApi = useGroupApi();
   const dispatch = useAppDispatch();
-  const authToken = useAppSelector((state) => state.user.authToken);
+  const user = useAppSelector((state) => state.user.info);
+  const friends = useAppSelector((state) => state.friends);
 
   /**
    * Update groups list. Should be run the background without loading state
@@ -79,8 +80,12 @@ export const useGroups = () => {
   }
 
   useEffect(() => {
-    if (authToken) getGroups();
-  }, [authToken]);
+    refreshGroupsList();
+  }, [user, friends]);
+
+  useEffect(() => {
+    getGroups();
+  }, []);
 
   return {
     getGroups,

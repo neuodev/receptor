@@ -28,13 +28,6 @@ const Header = () => {
       ? currChat.participants.find((p) => p.id !== user?.id)
       : null;
 
-  // const currRoom = useAppSelector((state) => state.messages.currRoom);
-  // const friends = useAppSelector((state) => state.friends.list);
-  // const user = useAppSelector((state) => state.user.info);
-  // const friend = friends.find((f) => f.roomId === currRoom);
-  // const friendAvatarProps = avatarProps(friend);
-  // const avatarGroup = [friendAvatarProps, avatarProps(user)];
-
   return (
     <Box>
       <Stack

@@ -5,6 +5,10 @@ export const getGroupsReq = createAction("groups/get-req");
 export const getGroupsRes = createAction<IGroup[]>("groups/get-res");
 export const getGroupsErr = createAction<string>("groups/get-err");
 
+export const createGroupsReq = createAction("groups/create-req");
+export const createGroupsRes = createAction("groups/create-res");
+export const createGroupsErr = createAction<string>("groups/create-err");
+
 export const groupActionReq = createAction<{
   action: GroupAction;
   groupId: number;

@@ -32,7 +32,6 @@ const baseState = {
 };
 
 export enum GroupAction {
-  Create = "create",
   Delete = "delete",
   Leave = "leave",
 }
@@ -43,7 +42,10 @@ type State = {
     error: string | null;
     list: IGroup[];
   };
-  create: BaseState;
+  create: {
+    loading: boolean;
+    error: string | null;
+  };
   delete: BaseState;
   leave: BaseState;
 };
@@ -55,7 +57,10 @@ export const gorupsReducer = createReducer<State>(
       error: null,
       list: [],
     },
-    create: clone(baseState),
+    create: {
+      loading: false,
+      error: null,
+    },
     delete: clone(baseState),
     leave: clone(baseState),
   },

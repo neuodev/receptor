@@ -1,15 +1,29 @@
-import { Stack, Typography, Input, Box, CircularProgress } from "@mui/material";
+import { useState, useEffect } from "react";
+import {
+  Stack,
+  Typography,
+  Input,
+  Box,
+  CircularProgress,
+  IconButton,
+} from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
+import CloseIcon from "@mui/icons-material/Close";
 import Center from "../common/Center";
 import FriendRoom from "../Room/FriendRoom";
 import GroupRoom from "../Room/GroupRoom";
 import NoRoom from "../Friends/NoRoom";
-import { useRoom } from "../../state/messages/hooks";
+import { IRoom, useRoom } from "../../state/messages/hooks";
+import { searchBy } from "../../utils/user";
 
 const ChatsList = () => {
-  // const friends = useAppSelector((state) => state.friends);
-  // const groups = useAppSelector((state) => state.groups.groups);
   const { loading, error, rooms } = useRoom();
+  const [filteredList, setFilteredList] = useState<IRoom[]>(rooms);
+  const [search, setSearch] = useState<string>("");
+
+  useEffect(() => {
+    setFilteredList(searchBy(search, rooms, ["email", "name"]));
+  }, [search, loading, error]);
 
   return (
     <Stack
@@ -28,14 +42,30 @@ const ChatsList = () => {
       <Input
         disableUnderline
         fullWidth
-        placeholder="Search messages or friends"
+        placeholder="Search friends"
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
         sx={{
           p: "14px 18px 14px 14px",
           bgcolor: "grey.300",
           borderRadius: "0.6rem",
           mb: "15px",
+          fontWeight: 500,
+          color: "grey.700",
         }}
         startAdornment={<SearchIcon sx={{ mr: "4px", color: "grey.500" }} />}
+        endAdornment={
+          <IconButton
+            disabled={!search}
+            sx={{
+              width: "30px",
+              height: "30px",
+            }}
+            onClick={() => setSearch("")}
+          >
+            <CloseIcon />
+          </IconButton>
+        }
       />
 
       <Box sx={{ flexGrow: 1 }}>
@@ -53,7 +83,7 @@ const ChatsList = () => {
           </Box>
         ) : (
           <Box>
-            {rooms.map((room) =>
+            {filteredList.map((room) =>
               room.isGroup ? (
                 <GroupRoom group={room} />
               ) : (

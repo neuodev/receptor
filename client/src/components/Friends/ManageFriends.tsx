@@ -7,12 +7,14 @@ import {
   CircularProgress,
   Alert,
   AlertTitle,
+  IconButton,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import ManageFriendsCard from "./ManageFriendsCard";
 import { useAppSelector } from "../../store";
 import Center from "../common/Center";
 import { useUsers } from "../../state/users/hooks";
+import CloseIcon from "@mui/icons-material/Close";
 
 const ManageFriends = () => {
   const [search, setSearch] = useState<string>("");
@@ -42,6 +44,18 @@ const ManageFriends = () => {
           mb: "20px",
         }}
         startAdornment={<SearchIcon sx={{ mr: "4px" }} />}
+        endAdornment={
+          <IconButton
+            disabled={!search}
+            sx={{
+              width: "30px",
+              height: "30px",
+            }}
+            onClick={() => setSearch("")}
+          >
+            <CloseIcon />
+          </IconButton>
+        }
       />
 
       <Box sx={{ minHeight: "400px" }}>

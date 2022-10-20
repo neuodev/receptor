@@ -95,7 +95,7 @@ export default class RoomRepo extends BaseRepo {
           },
         };
 
-        socket.broadcast.to(room.toString()).emit(Event.RoomMessage, msg);
+        socket.broadcast.to(getRoomId(room)).emit(Event.RoomMessage, msg);
         socket.emit(Event.RoomMessage, msg);
       });
     }, Event.RoomMessage);

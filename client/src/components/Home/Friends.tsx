@@ -6,7 +6,9 @@ import {
   Button,
   CircularProgress,
   Stack,
+  IconButton,
 } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
 import SearchIcon from "@mui/icons-material/Search";
 import PersonAddAltIcon from "@mui/icons-material/PersonAddAlt";
 import { useAppModal } from "../../state/app/hooks";

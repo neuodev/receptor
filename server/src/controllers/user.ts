@@ -104,10 +104,10 @@ export const getUsers = asyncHandler(
         where: {
           [Op.or]: {
             username: {
-              [Op.like]: keyword,
+              [Op.iLike]: keyword,
             },
             email: {
-              [Op.like]: keyword,
+              [Op.iLike]: keyword,
             },
           },
         },

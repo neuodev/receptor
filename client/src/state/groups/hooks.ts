@@ -3,6 +3,7 @@ import { useGroupApi } from "../../hooks/api/group";
 import { useAppDispatch, useAppSelector } from "../../store";
 import { getErrMsg } from "../../utils/error";
 import { UserId } from "../friend/reducer";
+import { useRoom } from "../messages/hooks";
 import {
   creageGroupRest,
   createGroupsErr,
@@ -20,6 +21,7 @@ import { GropuId, GroupAction } from "./reducer";
 export const useGroups = () => {
   const groupApi = useGroupApi();
   const dispatch = useAppDispatch();
+  const { setCurrentRoom } = useRoom();
   const user = useAppSelector((state) => state.user.info);
   const friends = useAppSelector((state) => state.friends);
 
@@ -44,8 +46,8 @@ export const useGroups = () => {
     try {
       dispatch(createGroupsReq());
       await groupApi.createGroup(groupName, userIds);
-      dispatch(createGroupsRes());
       await refreshGroupsList();
+      dispatch(createGroupsRes());
     } catch (error) {
       dispatch(createGroupsErr(getErrMsg(error)));
     }
@@ -60,8 +62,9 @@ export const useGroups = () => {
     try {
       dispatch(groupActionReq({ action, groupId }));
       await groupApi.deleteGroup(groupId);
-      dispatch(groupActionRes({ action, groupId }));
       await refreshGroupsList();
+      dispatch(groupActionRes({ action, groupId }));
+      setCurrentRoom(null);
     } catch (error) {
       dispatch(groupActionErr({ action, groupId, error: getErrMsg(error) }));
     }
@@ -72,8 +75,9 @@ export const useGroups = () => {
     try {
       dispatch(groupActionReq({ action, groupId }));
       await groupApi.leaveGroup(groupId);
-      dispatch(groupActionRes({ action, groupId }));
       await refreshGroupsList();
+      dispatch(groupActionRes({ action, groupId }));
+      setCurrentRoom(null);
     } catch (error) {
       dispatch(groupActionErr({ action, groupId, error: getErrMsg(error) }));
     }

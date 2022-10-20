@@ -35,23 +35,9 @@ const Messages: React.FC<{ messages: IMessage[] }> = ({ messages }) => {
         flexGrow: 1,
       }}
     >
-      {messages.length === 0 ? (
-        <Center>
-          <ForumIcon sx={{ fontSize: "9rem", color: "grey.500" }} />
-          <Button
-            onClick={() => currRoom !== null && sendTextMsg(currRoom, "Hi 👋")}
-            size="large"
-            variant="text"
-            sx={{ color: "grey.500" }}
-          >
-            Say hello 👋
-          </Button>
-        </Center>
-      ) : (
-        groupedMessages.map((message, idx) => (
-          <Message message={message} key={idx} />
-        ))
-      )}
+      {groupedMessages.map((message, idx) => (
+        <Message message={message} key={idx} />
+      ))}
     </Box>
   );
 };

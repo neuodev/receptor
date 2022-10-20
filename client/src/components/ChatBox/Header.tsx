@@ -81,10 +81,7 @@ const Header = () => {
             size="small"
             color="error"
             sx={{ mx: "8px" }}
-            onClick={() => {
-              isGroupOwner ? deleteGroup(id) : leaveGroup(id);
-              setCurrentRoom(null);
-            }}
+            onClick={() => (isGroupOwner ? deleteGroup(id) : leaveGroup(id))}
           >
             {isGroupOwner ? "Delete" : "Leave"}
           </LoadingButton>

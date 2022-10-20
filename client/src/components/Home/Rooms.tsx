@@ -15,6 +15,7 @@ import GroupRoom from "../Room/GroupRoom";
 import NoRoom from "../Friends/NoRoom";
 import { IRoom, useRoom } from "../../state/messages/hooks";
 import { searchBy } from "../../utils/user";
+import SearchInput from "../common/SearchInput";
 
 const ChatsList = () => {
   const { loading, error, rooms } = useRoom();
@@ -39,33 +40,10 @@ const ChatsList = () => {
         Chat
       </Typography>
 
-      <Input
-        disableUnderline
-        fullWidth
-        placeholder="Search friends"
+      <SearchInput
         value={search}
-        onChange={(e) => setSearch(e.target.value)}
-        sx={{
-          p: "14px 18px 14px 14px",
-          bgcolor: "grey.300",
-          borderRadius: "0.6rem",
-          mb: "15px",
-          fontWeight: 500,
-          color: "grey.700",
-        }}
-        startAdornment={<SearchIcon sx={{ mr: "4px", color: "grey.500" }} />}
-        endAdornment={
-          <IconButton
-            disabled={!search}
-            sx={{
-              width: "30px",
-              height: "30px",
-            }}
-            onClick={() => setSearch("")}
-          >
-            <CloseIcon />
-          </IconButton>
-        }
+        setValue={setSearch}
+        placeholder="Search your friends..."
       />
 
       <Box sx={{ flexGrow: 1 }}>

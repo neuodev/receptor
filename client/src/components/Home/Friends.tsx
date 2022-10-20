@@ -1,29 +1,33 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
-  Input,
   Typography,
   Button,
   CircularProgress,
   Stack,
-  IconButton,
 } from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
-import SearchIcon from "@mui/icons-material/Search";
 import PersonAddAltIcon from "@mui/icons-material/PersonAddAlt";
 import { useAppModal } from "../../state/app/hooks";
 import { AppModal } from "../../state/app/reducer";
 import { useAppSelector } from "../../store";
 import Center from "../common/Center";
 import ManageFriendsModal from "../Friends/ManageFriendsModal";
-import { groupFriendsByFirstLetter } from "../../utils/user";
+import { groupFriendsByFirstLetter, searchBy } from "../../utils/user";
 import FriendCard from "../Friends/FriendCard";
 import NoFriends from "../Friends/NoRoom";
+import SearchInput from "../common/SearchInput";
+import { IFriend } from "../../state/friends/reducer";
 
 const Friends: React.FC<{}> = () => {
   const modal = useAppModal();
+  const [search, setSearch] = useState<string>("");
   const friends = useAppSelector((state) => state.friends);
-  const friendsList = Object.entries(groupFriendsByFirstLetter(friends.list));
+  const [filteredList, setFilteredList] = useState<IFriend[]>(friends.list);
+  const friendsList = Object.entries(groupFriendsByFirstLetter(filteredList));
+
+  useEffect(() => {
+    setFilteredList(searchBy(search, friends.list, ["email", "username"]));
+  }, [search, friends]);
 
   return (
     <Stack
@@ -39,17 +43,10 @@ const Friends: React.FC<{}> = () => {
         Friends
       </Typography>
 
-      <Input
-        disableUnderline
-        fullWidth
-        placeholder="Search messages or friends"
-        sx={{
-          p: "14px 18px 14px 14px",
-          bgcolor: "grey.300",
-          borderRadius: "0.6rem",
-          mb: "15px",
-        }}
-        startAdornment={<SearchIcon sx={{ mr: "4px" }} />}
+      <SearchInput
+        value={search}
+        setValue={setSearch}
+        placeholder="Search your friends..."
       />
 
       <Button
@@ -79,7 +76,7 @@ const Friends: React.FC<{}> = () => {
           <Center>
             <Typography color="error">{friends.error}</Typography>
           </Center>
-        ) : friendsList.length === 0 ? (
+        ) : friends.list.length === 0 ? (
           <Box sx={{ mt: "-20px", height: "100%" }}>
             <NoFriends />
           </Box>

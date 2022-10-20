@@ -20,6 +20,8 @@ const SearchInput: React.FC<{
         bgcolor: "grey.300",
         borderRadius: "0.6rem",
         mb: "20px",
+        fontWeight: 500,
+        color: "grey.700",
       }}
       startAdornment={<SearchIcon sx={{ mr: "4px" }} />}
       endAdornment={

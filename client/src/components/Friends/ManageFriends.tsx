@@ -7,14 +7,12 @@ import {
   CircularProgress,
   Alert,
   AlertTitle,
-  IconButton,
 } from "@mui/material";
-import SearchIcon from "@mui/icons-material/Search";
 import ManageFriendsCard from "./ManageFriendsCard";
 import { useAppSelector } from "../../store";
 import Center from "../common/Center";
 import { useUsers } from "../../state/users/hooks";
-import CloseIcon from "@mui/icons-material/Close";
+import SearchInput from "../common/SearchInput";
 
 const ManageFriends = () => {
   const [search, setSearch] = useState<string>("");
@@ -31,31 +29,10 @@ const ManageFriends = () => {
         Manage Friends
       </Typography>
 
-      <Input
-        disableUnderline
-        fullWidth
+      <SearchInput
         value={search}
-        onChange={(e) => setSearch(e.target.value)}
+        setValue={setSearch}
         placeholder="Search for friends..."
-        sx={{
-          p: "14px 18px 14px 14px",
-          bgcolor: "grey.300",
-          borderRadius: "0.6rem",
-          mb: "20px",
-        }}
-        startAdornment={<SearchIcon sx={{ mr: "4px" }} />}
-        endAdornment={
-          <IconButton
-            disabled={!search}
-            sx={{
-              width: "30px",
-              height: "30px",
-            }}
-            onClick={() => setSearch("")}
-          >
-            <CloseIcon />
-          </IconButton>
-        }
       />
 
       <Box sx={{ minHeight: "400px" }}>

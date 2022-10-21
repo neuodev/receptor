@@ -1,14 +1,5 @@
 import { useState, useEffect } from "react";
-import {
-  Stack,
-  Typography,
-  Input,
-  Box,
-  CircularProgress,
-  IconButton,
-} from "@mui/material";
-import SearchIcon from "@mui/icons-material/Search";
-import CloseIcon from "@mui/icons-material/Close";
+import { Stack, Typography, Box, CircularProgress } from "@mui/material";
 import Center from "../common/Center";
 import FriendRoom from "../Room/FriendRoom";
 import GroupRoom from "../Room/GroupRoom";

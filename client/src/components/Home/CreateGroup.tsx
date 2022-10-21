@@ -3,11 +3,9 @@ import {
   Box,
   Stack,
   Typography,
-  Input,
   TextField,
   CircularProgress,
 } from "@mui/material";
-import SearchIcon from "@mui/icons-material/Search";
 import { useAppSelector } from "../../store";
 import Center from "../common/Center";
 import NoFriends from "../Friends/NoRoom";
@@ -17,8 +15,8 @@ import { clone } from "../../utils";
 import { searchBy } from "../../utils/user";
 import { LoadingButton } from "@mui/lab";
 import { useGroups } from "../../state/groups/hooks";
-import Snackbar from "../common/Snackbar";
 import SnackbarGroup from "../common/SnackbarGroup";
+import SearchInput from "../common/SearchInput";
 
 const CreateGroup = () => {
   const friends = useAppSelector((state) => state.friends);
@@ -62,19 +60,10 @@ const CreateGroup = () => {
         sx={{ mb: "32px" }}
       />
 
-      <Input
-        disableUnderline
-        fullWidth
+      <SearchInput
         placeholder="Search for friends"
         value={keyword}
-        onChange={(e) => setKeyword(e.target.value)}
-        sx={{
-          p: "14px 18px 14px 14px",
-          bgcolor: "grey.300",
-          borderRadius: "0.6rem",
-          mb: "15px",
-        }}
-        startAdornment={<SearchIcon sx={{ mr: "4px" }} />}
+        setValue={setKeyword}
       />
 
       <Box sx={{ flexGrow: 1 }}>

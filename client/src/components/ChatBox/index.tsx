@@ -10,7 +10,13 @@ const ChatBox = () => {
   const messages = useAppSelector((state) => state.messages);
 
   return (
-    <Box sx={{ bgcolor: "common.white", flex: 1 }}>
+    <Box
+      sx={{
+        bgcolor: "common.white",
+        flex: 1,
+        background: "url(/images/chat-bg-pattern-dark.png)",
+      }}
+    >
       {messages.currRoom === null ? (
         <SelectChat />
       ) : messages.loading[messages.currRoom] ? (

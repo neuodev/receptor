@@ -13,7 +13,6 @@ export default class AppUOW {
   friendRepo: FriendRepo;
   roomRepo: RoomRepo;
   notificationRepo: NotificationRepo;
-
   socket: Socket;
   private authToken: string | null;
 

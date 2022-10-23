@@ -1,5 +1,4 @@
 import AppUOW from ".";
-import friendUOW from "../database/friend";
 import messageUOW from "../database/message";
 import participantsUOW from "../database/participant";
 import roomUOW from "../database/room";
@@ -7,7 +6,7 @@ import userUOW from "../database/user";
 import { Event } from "../events";
 import { MessageType } from "../models/Message";
 import { Role } from "../models/Participants";
-import { Room, RoomType } from "../models/Room";
+import { RoomType } from "../models/Room";
 import { getRoomId } from "../utils/user";
 import BaseRepo from "./baseRepo";
 

@@ -1,5 +1,4 @@
-import React from "react";
-import { Stack, Tooltip, Typography, IconButton } from "@mui/material";
+import { Stack, Avatar, Tooltip, Typography, IconButton } from "@mui/material";
 import Link from "../common/Link";
 import { ROUTES } from "../../constants/routes";
 import DriveFileRenameOutlineIcon from "@mui/icons-material/DriveFileRenameOutline";
@@ -9,6 +8,8 @@ import BackupTableIcon from "@mui/icons-material/BackupTable";
 import CableIcon from "@mui/icons-material/Cable";
 import { useNavigate } from "react-router-dom";
 import { useIsActive } from "../../hooks/ui/isActive";
+import { useAppSelector } from "../../store";
+import { stringAvatar } from "../../utils/colors";
 
 const TABS = [
   {
@@ -34,6 +35,7 @@ const TABS = [
 ];
 
 const Sidebar = () => {
+  const user = useAppSelector((state) => state.user.info);
   const navigate = useNavigate();
   const isActive = useIsActive();
 
@@ -66,6 +68,19 @@ const Sidebar = () => {
           </Tooltip>
         ))}
       </Stack>
+
+      {user && (
+        <Stack alignItems="center" mb="25px">
+          <Tooltip
+            arrow
+            followCursor
+            placement="top"
+            title={<Typography>{user.email}</Typography>}
+          >
+            <Avatar {...stringAvatar(user.username)} />
+          </Tooltip>
+        </Stack>
+      )}
     </Stack>
   );
 };

@@ -2,7 +2,7 @@ import express from "express";
 import http from "http";
 import { Server, Socket } from "socket.io";
 import dotenv from "dotenv";
-import { Event } from "./events";
+import { ClientToServerEvents, Event, ServerToClientEvents } from "./events";
 import { errorHandler } from "./middleware/errorHandler";
 import AppUOW from "./repositories";
 import cors from "cors";
@@ -16,11 +16,14 @@ dotenv.config();
 const app = express();
 
 const server = http.createServer(app);
-const io = new Server(server, {
-  cors: {
-    origin: "*",
-  },
-});
+const io = new Server<ClientToServerEvents, ServerToClientEvents, {}, {}>(
+  server,
+  {
+    cors: {
+      origin: "*",
+    },
+  }
+);
 
 io.on(Event.Connect, (socket: Socket) => {
   new AppUOW(socket);

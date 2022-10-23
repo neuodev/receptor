@@ -50,6 +50,10 @@ const Rooms = () => {
           <Box sx={{ mt: "-20px", height: "100%" }}>
             <NoRoom />
           </Box>
+        ) : filteredList.length === 0 ? (
+          <Box sx={{ mt: "20px" }}>
+            <Typography textAlign="center">No friend found</Typography>
+          </Box>
         ) : (
           <Box>
             {filteredList.map((room) =>

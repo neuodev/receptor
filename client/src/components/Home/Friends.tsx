@@ -79,6 +79,10 @@ const Friends: React.FC<{}> = () => {
           <Box sx={{ mt: "-20px", height: "100%" }}>
             <NoFriends />
           </Box>
+        ) : friendsList.length === 0 ? (
+          <Box sx={{ mt: "20px" }}>
+            <Typography textAlign="center">No friend found</Typography>
+          </Box>
         ) : (
           <Box>
             {friendsList.map(([letter, friends]) => (

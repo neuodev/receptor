@@ -47,6 +47,10 @@ const ManageFriends = () => {
             <AlertTitle>Error</AlertTitle>
             {error}
           </Alert>
+        ) : list.length === 0 ? (
+          <Box>
+            <Typography textAlign="center">No friend found</Typography>
+          </Box>
         ) : (
           <Stack spacing={2}>
             {list.map((user) => (

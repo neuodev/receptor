@@ -11,7 +11,6 @@ import { useAppModal } from "../../state/app/hooks";
 import { AppModal } from "../../state/app/reducer";
 import { useAppSelector } from "../../store";
 import Center from "../common/Center";
-import ManageFriendsModal from "../Friends/ManageFriendsModal";
 import { groupFriendsByFirstLetter, searchBy } from "../../utils/user";
 import FriendCard from "../Friends/FriendCard";
 import NoFriends from "../Friends/NoRoom";
@@ -80,6 +79,10 @@ const Friends: React.FC<{}> = () => {
           <Box sx={{ mt: "-20px", height: "100%" }}>
             <NoFriends />
           </Box>
+        ) : friendsList.length === 0 ? (
+          <Box sx={{ mt: "20px" }}>
+            <Typography textAlign="center">No friend found</Typography>
+          </Box>
         ) : (
           <Box>
             {friendsList.map(([letter, friends]) => (
@@ -101,7 +104,6 @@ const Friends: React.FC<{}> = () => {
           </Box>
         )}
       </Box>
-      <ManageFriendsModal />
     </Stack>
   );
 };

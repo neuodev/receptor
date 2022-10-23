@@ -7,14 +7,15 @@ Real-time messaging app. Available as a website and as MacOS, Linux, and Windows
 </p>
 
 ![group_chat](./preview/group_chat.png)
+![friends](./preview/friends.png)
 
 <details>
 <summary>See more?</summary>
 
-![group_chat](./preview/chat.png)
-![group_chat](./preview/closed_group.png)
-![group_chat](./preview/empty.png)
-![group_chat](./preview/sign_in.png)
+![receptor-chat](./preview/chat.png)
+![receptor-chat](./preview/closed_group.png)
+![receptor-chat](./preview/empty.png)
+![receptor-chat](./preview/sign_in.png)
 
 </details>
 

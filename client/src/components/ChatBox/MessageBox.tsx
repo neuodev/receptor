@@ -1,15 +1,22 @@
-import React, { useState } from "react";
-import { Stack, IconButton, Input } from "@mui/material";
-import AttachFileIcon from "@mui/icons-material/AttachFile";
+import React, { useRef, useState } from "react";
+import { Box, Stack, IconButton, Input } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
 import TagFacesIcon from "@mui/icons-material/TagFaces";
 import { useAppSelector } from "../../store";
 import { useRoom } from "../../state/messages/hooks";
+import EmojiPicker from "emoji-picker-react";
+import { useOutside } from "../../hooks/ui/useOutside";
 
 const MessageBox = () => {
   const [message, setMessage] = useState<string>("");
-  const { sendTextMsg } = useRoom();
   const currRoom = useAppSelector((state) => state.messages.currRoom);
+  const { sendTextMsg } = useRoom();
+  const [showEmoji, setShowEmoji] = useState<boolean>(false);
+  const emojiRef = useRef<HTMLDivElement>(null);
+
+  useOutside(emojiRef, () => {
+    setShowEmoji(false);
+  });
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -17,6 +24,7 @@ const MessageBox = () => {
     sendTextMsg(currRoom, message);
     setMessage("");
   };
+
   return (
     <form onSubmit={onSubmit}>
       <Stack
@@ -28,10 +36,6 @@ const MessageBox = () => {
           mb: "20px",
         }}
       >
-        <IconButton sx={{ width: "50px", height: "50px" }}>
-          <AttachFileIcon />
-        </IconButton>
-
         <Input
           disableUnderline
           value={message}
@@ -46,9 +50,30 @@ const MessageBox = () => {
           }}
         />
 
-        <IconButton sx={{ width: "50px", height: "50px" }}>
-          <TagFacesIcon />
-        </IconButton>
+        <Box
+          sx={{
+            position: "relative",
+          }}
+        >
+          {showEmoji && (
+            <Box
+              sx={{ position: "absolute", bottom: 40, right: 40 }}
+              ref={emojiRef}
+            >
+              <EmojiPicker
+                onEmojiClick={({ emoji }) => {
+                  setMessage(message + emoji);
+                }}
+              />
+            </Box>
+          )}
+          <IconButton
+            onClick={() => setShowEmoji(!showEmoji)}
+            sx={{ width: "50px", height: "50px" }}
+          >
+            <TagFacesIcon />
+          </IconButton>
+        </Box>
 
         <IconButton type="submit" sx={{ width: "50px", height: "50px" }}>
           <SendIcon />

@@ -24,8 +24,12 @@ export const seedDB = async () => {
 export const flush = async () => {
   console.log("Delete all database tables".red.underline.bold);
   try {
-    const models = [User, Room, Notification, Participants, Friend, Message];
-    await Promise.all(models.map((model) => model.drop({ cascade: true })));
+    await User.drop({ cascade: true });
+    await Room.drop({ cascade: true });
+    await Notification.drop({ cascade: true });
+    await Participants.drop({ cascade: true });
+    await Friend.drop({ cascade: true });
+    await Message.drop({ cascade: true });
     process.exit(0);
   } catch (error) {
     let msg;

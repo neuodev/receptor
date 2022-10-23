@@ -8,7 +8,7 @@ import { IRoom, useRoom } from "../../state/messages/hooks";
 import { searchBy } from "../../utils/user";
 import SearchInput from "../common/SearchInput";
 
-const ChatsList = () => {
+const Rooms = () => {
   const { loading, error, rooms } = useRoom();
   const [filteredList, setFilteredList] = useState<IRoom[]>(rooms);
   const [search, setSearch] = useState<string>("");
@@ -66,4 +66,4 @@ const ChatsList = () => {
   );
 };
 
-export default ChatsList;
+export default Rooms;

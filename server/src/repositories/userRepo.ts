@@ -34,7 +34,6 @@ export default class UserRepo extends BaseRepo {
       const userId = this.app.userRepo.decodeAuthToken(token);
       await userUOW.updateUserStatus(userId, true);
       socket.emit(Event.Login, { ok: true });
-      // Add user to a private room so we can send notifications and other stuff
       socket.join(getUserPrivateRoom(userId));
       this.app.friendRepo.notifyFriends(userId);
     }, Event.Login);

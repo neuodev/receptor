@@ -3,3 +3,4 @@
 /**/.env
 /client/src-tauri/target
 /server/dist
+/**/.DS_Store

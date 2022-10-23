@@ -8,6 +8,7 @@ import { ROUTES } from "../constants/routes";
 import { useServerEvents } from "../wss/appSocket";
 import { useFriends } from "../state/friends/hooks";
 import { useGroups } from "../state/groups/hooks";
+import ManageFriendsModal from "../components/Friends/ManageFriendsModal";
 
 const HomePage = () => {
   // Init Socketio and get user friends/gorups
@@ -35,6 +36,7 @@ const HomePage = () => {
         <Outlet />
       </Box>
       <ChatBox />
+      <ManageFriendsModal />
     </Stack>
   );
 };

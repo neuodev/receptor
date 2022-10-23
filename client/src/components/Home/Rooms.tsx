@@ -54,9 +54,9 @@ const ChatsList = () => {
           <Box>
             {filteredList.map((room) =>
               room.isGroup ? (
-                <GroupRoom group={room} />
+                <GroupRoom key={room.id} group={room} />
               ) : (
-                <FriendRoom friend={room} />
+                <FriendRoom key={room.id} friend={room} />
               )
             )}
           </Box>

@@ -1,7 +1,5 @@
 import { Outlet } from "react-router-dom";
 import { Box } from "@mui/system";
-import { useServerEvents } from "../../wss/appSocket";
-import { useFriends } from "../../state/friends/hooks";
 
 const Root = () => {
   return (

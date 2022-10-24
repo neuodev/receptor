@@ -19,7 +19,7 @@ Real-time messaging app. Available as a website and as MacOS, Linux, and Windows
 
 </details>
 
-## [Database Schema (drawsql.app)](https://drawsql.app/teams/no-sim/diagrams/rustchat)
+## [Database Schema](https://drawsql.app/teams/no-sim/diagrams/rustchat)
 
 ![Schema](./schema.png)
 
@@ -27,7 +27,7 @@ Real-time messaging app. Available as a website and as MacOS, Linux, and Windows
 
 ```ts
 // Websocket events
-export enum Event {
+enum Event {
   Connect = "connect",
   Disconnect = "disconnect",
   AddFriend = "addFriend",

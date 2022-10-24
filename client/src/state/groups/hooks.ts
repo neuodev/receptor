@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useGroupApi } from "../../hooks/api/group";
 import { useAppDispatch, useAppSelector } from "../../store";
 import { getErrMsg } from "../../utils/error";
+import { useAppSocket } from "../../wss/appSocket";
 import { UserId } from "../friend/reducer";
 import { useRoom } from "../messages/hooks";
 import {
@@ -22,6 +23,7 @@ export const useGroups = () => {
   const groupApi = useGroupApi();
   const dispatch = useAppDispatch();
   const { setCurrentRoom } = useRoom();
+  const { joinRooms } = useAppSocket();
   const user = useAppSelector((state) => state.user.info);
   const friends = useAppSelector((state) => state.friends);
 
@@ -31,6 +33,7 @@ export const useGroups = () => {
   async function refreshGroupsList() {
     try {
       const groups = await groupApi.getGroups();
+      joinRooms(groups.map((g) => g.id));
       dispatch(getGroupsRes(groups));
     } catch (error) {
       dispatch(getGroupsErr(getErrMsg(error)));

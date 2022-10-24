@@ -76,6 +76,9 @@ export default class FriendRepo extends BaseRepo {
         });
 
         socket.emit(Event.AddFriend, { friendId });
+        socket.to(getUserPrivateRoom(receiver.id)).emit(Event.AddFriend, {
+          userId,
+        });
       },
       Event.AddFriend,
       { friendId }
@@ -106,12 +109,8 @@ export default class FriendRepo extends BaseRepo {
 
         await friendUOW.markAsFriends(request.id, roomId);
         socket.emit(Event.AcceptFriend, { friendId });
-        // Should send notification to his friend
-        // Todo: Check if the user is active or now before sending the notification
-        socket.to(getUserPrivateRoom(request.userId)).emit(Event.Notification, {
-          type: Event.AcceptFriend,
-          user,
-          request,
+        socket.to(getUserPrivateRoom(friendId)).emit(Event.AddFriend, {
+          userId,
         });
       },
       Event.AcceptFriend,
@@ -129,6 +128,9 @@ export default class FriendRepo extends BaseRepo {
         await this.app.roomRepo.deletById(friend.roomId);
         await friendUOW.deleteById(friend.id);
         socket.emit(Event.RemoveFriend, { friendId });
+        socket.to(getUserPrivateRoom(friendId)).emit(Event.AddFriend, {
+          userId,
+        });
       },
       Event.RemoveFriend,
       { friendId }

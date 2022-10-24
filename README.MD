@@ -1,30 +1,48 @@
 # Receptor
 
+Real-time messaging app. Available as a website and as MacOS, Linux, and Windows application.
+
 <p align="center"> 
    <img src="https://user-images.githubusercontent.com/72753578/184505323-7f76a321-28cc-480a-ac9a-ec72a3fd91de.gif" alt="Logo" title="Receptor"/>
 </p>
+
+![group_chat](./preview/group_chat.png)
+![friends](./preview/friends.png)
+
+<details>
+<summary>See more?</summary>
+
+![receptor-chat](./preview/chat.png)
+![receptor-chat](./preview/closed_group.png)
+![receptor-chat](./preview/empty.png)
+![receptor-chat](./preview/sign_in.png)
+
+</details>
+
+## [Database Schema (drawsql.app)](https://drawsql.app/teams/no-sim/diagrams/rustchat)
+
+![Schema](./schema.png)
 
 ## Events
 
 ```ts
 // Websocket events
-enum Event {
+export enum Event {
   Connect = "connect",
   Disconnect = "disconnect",
-  AddFriend = "friend/add",
-  AcceptFriend = "friend/accept",
+  AddFriend = "addFriend",
+  AcceptFriend = "acceptFriend",
+  RemoveFriend = "removeFriend",
   Notification = "notification",
-  Login = "user/login",
-  GetUser = "user/get",
-  JoinRoom = "room/join",
-  LeaveRoom = "room/leave",
-  RoomMessage = "room/msg",
+  Login = "login",
+  Logout = "logout",
+  GetUser = "getUser",
+  JoinRoom = "joinRoom",
+  LeaveRoom = "leaveRoom",
+  RoomMessage = "sendRoomMsg",
+  UpdateUser = "updateUser",
 }
 ```
-
-## [Database Schema (drawsql.app)](https://drawsql.app/teams/no-sim/diagrams/rustchat)
-
-![Schema](./schema.png)
 
 ## API
 

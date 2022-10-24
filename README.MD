@@ -28,70 +28,226 @@ enum Event {
 
 ## API
 
+For full API documentation try import this [postman collection](./receptor-api.postman_collection.json)
+
 <details>
    <summary>
-      Create User - POST /api/v1/user/register
+      Register - POST /api/v1/user/register
    </summary>
 
 ### Reqeust
 
-```json
-{
-  "username": "Karianne",
-  "password": "123456"
-}
+```ts
+type Body = {
+  username: string;
+  email: string;
+  password: string;
+};
 ```
 
 ### Response
 
-```json
-{
-  "userId": 4
-}
+```ts
+type Response = {
+  userId: number;
+};
 ```
 
 </details>
 
 <details>
    <summary>
-      Login - GET /api/v1/user/login
+      Login - POST /api/v1/user/login
    </summary>
 
 ### Reqeust
 
-```json
-{
-  "username": "Karianne",
-  "password": "123456"
-}
+```ts
+type Body = {
+  email: string;
+  password: string;
+};
 ```
 
 ### Response
 
-```json
-{
-  "user": {
-    "id": 2,
-    "username": "Bret",
-    "isActive": false,
-    "createdAt": "2022-08-14T15:52:48.319Z",
-    "updatedAt": "2022-08-14T16:33:53.159Z"
-  },
-  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiaWF0IjoxNjYwNDk2NDUzLCJleHAiOjE2NjExMDEyNTN9.7THobk-iSSspgKrJQ1Z6e3rlWACIItz62TfJ2D0mTIg",
-  "roomsId": [1],
-  "friends": [
-    {
-      "roomId": 1,
-      "User": {
-        "id": 1,
-        "username": "keytolearn",
-        "isActive": true,
-        "createdAt": "2022-08-14T15:52:48.319Z",
-        "updatedAt": "2022-08-14T16:16:11.036Z"
-      }
-    }
-  ]
-}
+```ts
+type Response = {
+  user: User;
+  token: string;
+};
+```
+
+</details>
+
+<details>
+  <summary>
+    Get users - GET /api/v1/user
+  </summary>
+
+### Reqeust
+
+| Query Param. | Description                      | Type   | Default      |
+| ------------ | -------------------------------- | ------ | ------------ |
+| q            | Search by `email` and `username` | string | Empty string |
+| page         | Number of the current page       | number | 1            |
+| limit        | Number of items per response     | number | 10           |
+
+### Response
+
+```ts
+type Reponse = {
+  users: Array<User>;
+  count: number;
+};
+```
+
+</details>
+
+<details>
+  <summary>
+    Get friends - GET /api/v1/user/friends
+  </summary>
+
+### Reqeust
+
+Access only by authorized users
+
+```ts
+type Headers = {
+  authorization: string; // Bearer auth token
+};
+```
+
+### Response
+
+```ts
+type Reponse = Array<User & { roomId: number }>;
+```
+
+</details>
+
+<details>
+  <summary>
+    Get room messages - GET /api/v1/room/:roomId
+  </summary>
+
+### Reqeust
+
+Access only by authorized users
+
+```ts
+type Headers = {
+  authorization: string; // Bearer auth token
+};
+```
+
+### Response
+
+```ts
+type Reponse = Array<Message & { user: User }>;
+```
+
+</details>
+
+<details>
+  <summary>
+    Get user groups - GET /api/v1/group
+  </summary>
+
+### Reqeust
+
+Access only by authorized users
+
+```ts
+type Headers = {
+  authorization: string; // Bearer auth token
+};
+```
+
+### Response
+
+```ts
+type Reponse = Array<{
+  id: number;
+  name: string;
+  type: string;
+  createdAt: Date;
+  updatedAt: Data;
+  participants: Array<User>;
+}>;
+```
+
+</details>
+<details>
+  <summary>
+    Create new group- POST /api/v1/group
+  </summary>
+
+### Reqeust
+
+```ts
+type Body = {
+  groupName: string;
+  userIds: number[];
+};
+```
+
+### Response
+
+```ts
+type Reponse = {
+  roomId: number;
+};
+```
+
+</details>
+
+<details>
+  <summary>
+    Delete group - DELETE /api/v1/group/:groupId - Owner only
+  </summary>
+
+### Reqeust
+
+Access only by authorized users
+
+```ts
+type Headers = {
+  authorization: string; // Bearer auth token
+};
+```
+
+### Response
+
+```ts
+type Reponse = {
+  roomId: number;
+};
+```
+
+</details>
+<details>
+  <summary>
+    Leave group - DELETE /api/v1/group/:groupId/leave 
+  </summary>
+
+### Reqeust
+
+Access only by authorized users
+
+```ts
+type Headers = {
+  authorization: string; // Bearer auth token
+};
+```
+
+### Response
+
+```ts
+type Reponse = {
+  roomId: number;
+};
 ```
 
 </details>

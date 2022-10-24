@@ -7,11 +7,15 @@
     "distDir": "../build"
   },
   "package": {
-    "productName": "receptor",
-    "version": "0.1.0"
+    "productName": "Receptor",
+    "version": "1.0.0"
   },
   "tauri": {
     "allowlist": {
+      "http": {
+        "all": true,
+        "request": true
+      },
       "all": true
     },
     "bundle": {
@@ -23,7 +27,7 @@
       },
       "externalBin": [],
       "icon": ["icons/32x32.png", "icons/128x128.png", "icons/icon.ico"],
-      "identifier": "com.tauri.dev",
+      "identifier": "com.tauri.build",
       "longDescription": "",
       "macOS": {
         "entitlements": null,

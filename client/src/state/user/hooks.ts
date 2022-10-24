@@ -1,6 +1,5 @@
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { COMMON_HEADERS, getEndpoint } from "../../constants/api";
+import { COMMON_HEADERS } from "../../constants/api";
 import { ROUTES } from "../../constants/routes";
 import { LoginReq, RegisterReq, useUserApi } from "../../hooks/api/user";
 import { useAppDispatch, useAppSelector } from "../../store";

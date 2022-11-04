@@ -1,6 +1,6 @@
 # Receptor
 
-Real-time messaging app. Available as a website and as MacOS, Linux, and Windows application.
+Real-time messaging app. Available as a web, MacOS, Linux, and Windows application.
 
 <p align="center"> 
    <img src="https://user-images.githubusercontent.com/72753578/184505323-7f76a321-28cc-480a-ac9a-ec72a3fd91de.gif" alt="Logo" title="Receptor"/>
